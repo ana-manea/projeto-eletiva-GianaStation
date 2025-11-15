@@ -1,0 +1,276 @@
+/* CSS Padrao */
+@import 'style-padrao.css';
+
+body {
+    overflow-x: hidden;
+    padding-top: var(--header-height);
+}
+
+body.menu-open {
+    overflow: hidden;
+}
+
+/* Header */
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: var(--header-height);
+    background: rgba(10, 10, 10, 0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border-primary);
+    z-index: 1000;
+}
+
+.header-content {
+    max-width: 1400px;
+    height: 100%;
+    margin: 0 auto;
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+}
+
+/* Logo */
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    text-decoration: none;
+    color: white;
+    font-weight: 600;
+    font-size: 1.125rem;
+    transition: opacity var(--transition-normal);
+    flex-shrink: 0;
+}
+
+.logo:hover {
+    opacity: 0.8;
+}
+
+.logo img {
+    border-radius: 8px;
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+}
+
+/* Navegação Desktop */
+.nav-desktop {
+    display: none;
+    align-items: center;
+    gap: 2rem;
+    flex: 1;
+    justify-content: center;
+}
+
+.nav-link {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    transition: color var(--transition-normal);
+    position: relative;
+    padding: 0.5rem 0;
+    white-space: nowrap;
+}
+
+.nav-link:hover {
+    color: var(--primary);
+}
+
+.nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: var(--gradient-primary);
+    transition: width var(--transition-normal);
+}
+
+.nav-link:hover::after {
+    width: 100%;
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-shrink: 0;
+}
+
+.language-selector {
+    position: relative;
+}
+
+.language-text {
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+/* Botões */
+.header-actions .btn-ghost,
+.header-actions .btn-primary {
+    display: none;
+    white-space: nowrap;
+    height: 40px;
+}
+
+.mobile-menu-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    color: white;
+    cursor: pointer;
+    padding: 0.5rem;
+    transition: opacity var(--transition-normal);
+    width: 40px;
+    height: 40px;
+}
+
+.mobile-menu-toggle:hover {
+    opacity: 0.7;
+}
+
+.menu-icon,
+.close-icon {
+    width: 24px;
+    height: 24px;
+}
+
+/* Navegação Mobile */
+.nav-mobile {
+    position: fixed;
+    top: var(--header-height);
+    right: -100%;
+    width: 100%;
+    max-width: 320px;
+    height: calc(100vh - var(--header-height));
+    background: var(--gradient-background-reverse);
+    border-left: 1px solid var(--border-primary);
+    padding: 2rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    transition: right var(--transition-normal);
+    overflow-y: auto;
+    z-index: 999;
+}
+
+.nav-mobile.active {
+    right: 0;
+}
+
+.nav-mobile .nav-link {
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    background: var(--overlay-light);
+    border: 1px solid var(--border);
+    display: block;
+}
+
+.nav-mobile .nav-link:hover {
+    background: rgba(213, 24, 238, 0.1);
+    border-color: var(--primary);
+}
+
+.nav-mobile .nav-link::after {
+    display: none;
+}
+
+.mobile-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+}
+
+.mobile-actions .btn-language {
+    width: 100%;
+    justify-content: center;
+}
+
+.mobile-actions .btn-ghost,
+.mobile-actions .btn-primary {
+    width: 100%;
+    text-align: center;
+    display: flex;
+}
+
+.mobile-menu-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--overlay-darker);
+    backdrop-filter: var(--blur-sm);
+    opacity: 0;
+    visibility: hidden;
+    transition: all var(--transition-normal);
+    z-index: 998;
+}
+
+.mobile-menu-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Responsividade */
+@media (max-width: 1023px) {
+    .header-content {
+        padding: 0 1rem;
+    }
+    
+    .language-selector .language-text {
+        display: none;
+    }
+    
+    .nav-mobile {
+        max-width: 280px;
+    }
+}
+
+@media (max-width: 768px) {
+    .logo span {
+        font-size: 1rem;
+    }
+    
+    .logo img {
+        width: 32px;
+        height: 32px;
+    }
+    
+    .nav-mobile {
+        width: 100%;
+        max-width: 100%;
+    }
+}
+
+@media (min-width: 1024px) {
+    .nav-desktop {
+        display: flex;
+    }
+    
+    .mobile-menu-toggle {
+        display: none;
+    }
+    
+    .header-actions .btn-ghost,
+    .header-actions .btn-primary {
+        display: flex;
+    }
+    
+    .language-selector .language-text {
+        display: inline;
+    }
+}

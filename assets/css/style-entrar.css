@@ -1,11 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap');
-
-:root {
-    --font-inter: 'Inter';
-    --font-sans: var(--font-inter), 'Helvetica Neue', helvetica, arial, sans-serif;
-    --primary: #d518ee;
-    --primary-light: #e88bf5;
-}
+/* CSS Padrao */
+@import 'style-padrao.css';
 
 * {
     margin: 0;
@@ -16,7 +10,7 @@
 
 body {
     color: #fff;
-    background-color: #121212;
+    background-color: var(--background-medium);
 }
 
 .conteudo {
@@ -30,8 +24,6 @@ body {
     margin: 20px auto;
     border-radius: 10px;
     padding: 40px 20px;
-
-    /* Variável CSS */
     --tamanhoInput: 60%;
 }
 
@@ -43,7 +35,7 @@ body {
     align-self: flex-start;
     width: 20px;
     opacity: .8;
-    transition: opacity .2s;
+    transition: opacity var(--transition-fast);
     cursor: pointer;
 }
 
@@ -75,23 +67,23 @@ form .inputSpace {
 
 form input,
 form button#reenviar_btn {
-    border: 1px #9b9b9b solid;
+    border: 1px var(--border-input) solid;
     border-radius: 10px;
     color: #fff;
     font-weight: 900;
     background-color: transparent;
-    transition: all 0.2s;
+    transition: all var(--transition-fast);
 }
 
 form input[type="submit"],
 form button#reenviar_btn {
-    border-radius: 50px;
+    border-radius: var(--border-radius-full);
 }
 
 form button#reenviar_btn:hover {
     cursor: pointer;
     border-color: white;
-    background-color: rgb(26, 26, 26);
+    background-color: var(--background-hover);
 }
 
 form label {
@@ -128,7 +120,7 @@ input::-webkit-inner-spin-button {
 
 .conteudo .linha {
     width: 80%;
-    border-top: 1px solid #232323;
+    border-top: 1px solid var(--border-dark);
 }
 
 .conteudo form button#reenviar_btn {
@@ -159,11 +151,11 @@ input::-webkit-inner-spin-button {
 
 .conteudo .linkSenha,
 .conteudo .linkCodigo {
-    color: #a7a7a7;
+    color: var(--text-gray);
     font-size: .9em;
     font-weight: 700;
     text-decoration: none;
-    transition: color .2s;
+    transition: color var(--transition-fast);
 }
 
 .conteudo .linkSenha:hover,
