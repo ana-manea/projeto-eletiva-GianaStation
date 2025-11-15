@@ -1,8 +1,15 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap');
+
+:root {
+    --font-inter: 'Inter';
+    --font-sans: var(--font-inter), 'Helvetica Neue', helvetica, arial, sans-serif;
+}
+
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: var(--font-sans);
 }
 
 body {
@@ -61,7 +68,7 @@ form input {
     padding: 16px 32px;
     color: #fff;
     font-size: 1rem;
-    font-weight: 900;
+    font-weight: 700;
     background-color: transparent;
     transition: all 0.2s;
 }
