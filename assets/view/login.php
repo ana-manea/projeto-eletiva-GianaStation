@@ -35,7 +35,7 @@
 
         <div class="linha"></div>
 
-        <form method="POST" action="../assets/view/entrarSenha.php">
+        <form method="POST" action="../view/entrarSenha.php">
             <label for="email-login">E-mail ou nome de usuário</label>
             <input type="text" name="email" id="email-login" placeholder="Email ou nome de usuário">
             
