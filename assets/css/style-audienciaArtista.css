@@ -1,0 +1,198 @@
+/* CSS Compartilhado */
+@import '../styles/style-dashboardPadrao.css';
+
+/* Container */
+.content-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 32px;
+}
+
+.content-main {
+    flex: 2;
+}
+
+.content-sidebar {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+}
+
+/* Musica */
+.song-item {
+    padding: 16px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: var(--radius);
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.song-item:hover {
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.song-position {
+    font-size: 24px;
+    font-weight: bold;
+    color: var(--muted);
+    width: 24px;
+    text-align: center;
+}
+
+.song-info {
+    flex: 1;
+}
+
+.song-title {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 2px;
+}
+
+.song-details {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 4px;
+}
+
+.song-streams {
+    font-size: 12px;
+    color: var(--muted);
+}
+
+.song-change {
+    font-size: 14px;
+    padding: 4px 12px;
+    border-radius: 12px;
+    border: 1px solid;
+}
+
+.song-change.positive {
+    color: var(--green);
+    background: rgba(16, 185, 129, 0.1);
+    border-color: rgba(16, 185, 129, 0.3);
+}
+
+.song-change.negative {
+    color: var(--red);
+    background: rgba(239, 68, 68, 0.1);
+    border-color: rgba(239, 68, 68, 0.3);
+}
+
+.song-change.neutral {
+    color: var(--muted);
+    background: rgba(255, 255, 255, 0.05);
+    border-color: var(--border);
+}
+
+.song-change-text {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.song-change-text svg {
+    width: 12px;
+    height: 12px;
+}
+
+.song-change-text.positive {
+    color: var(--green);
+}
+
+.song-change-text.negative {
+    color: var(--red);
+}
+
+.song-change-text.neutral {
+    color: var(--muted);
+}
+
+/* Países */
+.countries-list,
+.demographics-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.country-item,
+.demo-item {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.country-header,
+.demo-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.country-name {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.country-flag {
+    font-size: 24px;
+}
+
+.country-percentage,
+.demo-percentage {
+    font-size: 14px;
+    color: var(--muted);
+}
+
+.progress-bar {
+    width: 100%;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: var(--primary);
+    border-radius: 4px;
+    transition: width 0.3s;
+}
+
+.progress-fill.blue {
+    background: var(--blue);
+}
+
+.country-listeners,
+.demo-count {
+    font-size: 12px;
+    color: var(--muted);
+}
+
+.demo-age {
+    font-size: 14px;
+    font-weight: 500;
+}
+
+/* Top músicas */
+.top-songs-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+@media (max-width: 1024px) {
+    .content-grid {
+        grid-template-columns: 1fr;
+    }
+}

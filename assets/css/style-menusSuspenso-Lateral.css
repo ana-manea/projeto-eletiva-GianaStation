@@ -1,0 +1,99 @@
+/* MENU SUSPENSO */
+.perfil-btn {
+    position: relative;
+}
+
+.perfil-btn ul#perfil-menu-suspenso {
+    display: none;
+    position: absolute;
+    top: 120%;
+    right: 0%;
+    z-index: 2;
+
+    border-radius: calc(var(--valor-pad) - 4px);
+    padding: 5px;
+
+    font-size: .9rem;
+    list-style: none;
+
+    background-color: #282828;
+}
+
+.perfil-btn ul#perfil-menu-suspenso li {
+    display: flex;
+    align-items: center;
+    
+    width: 180px;
+    height: 38px;
+    border-radius: calc(var(--valor-pad) - 7px);
+    padding: 0px 8px;
+}
+
+.perfil-btn ul#perfil-menu-suspenso li:hover {
+    text-decoration: underline;
+    background-color: #3d3d3d;
+}
+
+.perfil-btn ul#perfil-menu-suspenso div {
+    border-top: 1px solid #3d3d3d;
+}
+
+.perfil-btn ul#perfil-menu-suspenso a {
+    color: currentColor;
+    text-decoration: none;
+    cursor: auto;
+}
+
+.perfil-btn ul#perfil-menu-suspenso.aberto {
+    display: block;
+}
+/* MENU SUSPENSO FIM*/
+
+/* MENU LATERAL*/
+.lateral-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 25vw;
+    padding: 10px;
+    border-radius: var(--raio-borda);
+    background-color: #121212;
+}
+
+.lateral-menu section.lateral-menu-top {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.lateral-menu section h3 {
+    font-size: 1em;
+}
+
+.lateral-menu section.lateral-menu-content {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+
+    border-radius: var(--raio-borda);
+    padding: 15px;
+    background-color: #1f1f1f;
+}
+
+.lateral-menu section.lateral-menu-content p {
+    font-size: .8em;
+}
+
+.lateral-menu .lateral-menu-top button {
+    width: 20%;
+    color: #fff;
+    background-color: #292929;
+}
+
+.lateral-menu .lateral-menu-content button {
+    width: 10vw;
+    color: #000;
+    background-color: #fff;
+}
+/* MENU LATERAL FIM*/

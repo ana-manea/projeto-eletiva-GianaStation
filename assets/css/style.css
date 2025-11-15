@@ -1,0 +1,136 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+    color: #fff;
+    background-image: linear-gradient(180deg, #292929, #000000);
+}
+
+.cabecalho {
+    text-align: center;
+    margin-bottom: 2rem;
+    max-width: 600px;
+    width: 60%;
+}
+
+.cabecalho h1 {
+    font-size: 2.5rem;
+    font-weight: bold;
+    line-height: 1.1;
+}
+
+.cabecalho img {
+    width: 25%;
+}
+
+.conteudo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 40px;
+    margin: 20px auto;
+    border-radius: 10px;
+    padding: 40px;
+    background-color: rgb(18, 18, 18);
+    max-width: 750px;
+    width: 100%;
+    /* Variável CSS */
+    --tamanhoInput: 90%;
+}
+
+.conectar-btn,
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 10px;
+    width: 60%;
+}
+
+.conectar-btn button,
+form input {
+    width: var(--tamanhoInput);
+    border: 1px #9b9b9b solid;
+    border-radius: 50px;
+    padding: 16px 32px;
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 900;
+    background-color: transparent;
+    transition: all 0.2s;
+}
+
+.conectar-btn button {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+    gap: 5px;
+}
+
+.conectar-btn button:hover {
+    cursor: pointer;
+    background-color: rgb(26, 26, 26);
+    border-color: white;
+}
+
+.conectar-btn button img {
+    width: 10%;
+}
+
+.conteudo .linha {
+    width: 80%;
+    border-top: 1px solid #232323;
+}
+
+form label {
+    width: calc(var(--tamanhoInput) - 5%);
+}
+
+.conteudo form input[type="email"],
+.conteudo form input[type="password"] {
+    border-radius: 10px;
+}
+
+.conteudo form input[type="submit"] {
+    border: none;
+    color: #000;
+    background-color: #d518ee;
+}
+
+.conteudo form input[type="submit"]:hover {
+    background-color: #e88bf5;
+    cursor: pointer;
+    transform: scale(1.02);
+}
+
+.conteudo .linkCadastrar {
+    color: #a7a7a7;
+    font-size: 0.875rem;
+    text-align: center;
+}
+
+.conteudo .linkCadastrar a {
+    color: #fff;
+    transition: color 0.2s;
+}
+
+.conteudo .linkCadastrar a:hover {
+    color: #e88bf5;
+}
+
+footer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 15vh;
+    font-size: .8em;
+    background-color: #121212;
+}

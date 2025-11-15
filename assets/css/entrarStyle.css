@@ -1,0 +1,186 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+    color: #fff;
+    background-color: #121212;
+}
+
+.conteudo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 40px;
+
+    height: 90vh;
+    margin: 0vh 22%;
+    border-radius: 10px;
+    padding: 40px 20px;
+
+    /* Variável CSS */
+    --tamanhoInput: 60%;
+}
+
+.conteudo .top {
+    width: calc(var(--tamanhoInput) - 10%);
+}
+
+.conteudo .top img {
+    align-self: flex-start;
+    width: 20px;
+    opacity: .8;
+    transition: opacity .2s;
+}
+
+.conteudo .top img:hover {
+    opacity: 1;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 15px;
+    width: 80%;
+}
+
+.conteudo .titulo {
+    width: var(--tamanhoInput);
+    font-size: 1.6em;
+}
+
+form .inputSpace {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+form input,
+form button#reenviar_btn {
+    border: 1px #9b9b9b solid;
+    border-radius: 10px;
+    color: #fff;
+    font-weight: 900;
+    font-weight: 900;
+    background-color: transparent;
+    transition: all 0.2s;
+}
+
+form input[type="submit"],
+form button#reenviar_btn {
+    border-radius: 50px;
+}
+
+form button#reenviar_btn:hover {
+    cursor: pointer;
+    border-color: white;
+    background-color: rgb(26, 26, 26);
+}
+
+form label {
+    width: var(--tamanhoInput);
+    font-weight: 600;
+    text-align: left;
+}
+
+form .codigo_btns {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: var(--tamanhoInput);
+}
+
+form .codigo_btns input[type="number"] {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 60px;
+    padding: 15px;
+}
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.conteudo .linha {
+    width: 80%;
+    border-top: 1px solid #232323;
+}
+
+.conteudo form button#reenviar_btn {
+    padding: 5px 10px;
+    font-size: .7em;
+}
+
+.conteudo form .inputSenha,
+.conteudo form input[type="submit"] {
+    width: var(--tamanhoInput);
+    padding: 16px 32px;
+    font-size: 1rem;
+}
+
+.conteudo form input[type="submit"] {
+    margin: 25px 0px;
+    border: none;
+    color: #000;
+    background-color: #d518ee;
+}
+
+.conteudo form input[type="submit"]:hover {
+    cursor: pointer;
+    background-color: #e88bf5;
+    transform: scale(1.02);
+}
+
+.conteudo .linkSenha,
+.conteudo .linkCodigo {
+    color: #a7a7a7;
+    font-size: .8em;
+    font-weight: 900;
+    text-decoration: none;
+    transition: color .2s;
+}
+
+.conteudo .linkSenha:hover,
+.conteudo .linkCodigo:hover {
+    color: #fff;
+}
+
+footer {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: flex-end;
+    height: 10vh;
+    padding: 8px 20px;
+    font-size: .8em;
+}
+
+footer.footerSenha {
+    align-items: center;
+    justify-content: center;
+}
+
+footer.footerSenha p {
+    width: 30%;
+    font-size: .9em;
+    text-align: center;
+}
+
+footer.footerSenha a {
+    color: #fff;
+}

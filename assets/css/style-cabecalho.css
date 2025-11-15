@@ -1,0 +1,137 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Helvetica, Arial, sans-serif;
+}
+
+body {
+    position: relative;
+    min-height: 100vh;
+    color: rgb(255, 255, 255);
+    background-image: linear-gradient(180deg, rgb(41, 41, 41), rgb(0, 0, 0));
+    overflow: auto;
+
+    /* Variáveis CSS */
+    --valor-pad: 8px;
+}
+
+header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+
+    width: 100%;
+    padding: var(--valor-pad);
+    background-color: #000;
+}
+
+.top-menu button {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+
+    height: 25px;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 12px;
+    font-size: .8em;
+    background-color: transparent;
+    opacity: .8;
+}
+
+.top-menu,
+.top-menu section {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.top-menu img {
+    width: 40px;
+}
+
+.top-menu form {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+
+    border: 1px transparent solid;
+    border-radius: 20px;
+    padding: 5px 10px;
+    background-color: #1f1f1f;
+    transition: background-color .3s;
+}
+
+.top-menu form:hover {
+    border: 1px #363636 solid;
+    background-color: #252424;
+}
+
+.top-menu form label:hover {
+    cursor: pointer;
+}
+
+.top-menu form label img {
+    width: 25px;
+}
+
+.top-menu form input[type="text"] {
+    width: 250px;
+    height: 100%;
+    border: none;
+    color: #fff;
+    font-size: .9em;
+    background-color: transparent;
+}
+
+.top-menu form input[type="text"]:focus-visible {
+    outline: none;
+}
+
+.top-menu button:hover {
+    opacity: 1;
+    cursor: pointer;
+}
+
+.top-menu svg {
+    width: 16px;
+    height: 16px;
+    fill: #fff;
+}
+
+.top-menu button#home svg {
+    width: 24px;
+    height: 24px;
+}
+
+.top-menu button#home,
+.top-menu button#perfil {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #1f1f1f;
+}
+
+.top-menu button#planos {
+    background-color: #fff;
+}
+
+.top-menu button#instalar {
+    gap: 5px;
+    color: #fff;
+}
+
+.top-menu button#comunidade {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+}
+
+.top-menu button#comunidade img {
+    width: 20px;
+}

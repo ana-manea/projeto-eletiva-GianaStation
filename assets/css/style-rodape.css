@@ -1,0 +1,86 @@
+.rodape {
+    padding: 20px;
+    background-color: #121212;
+}
+
+.rodape .top,
+.rodape .bottom {
+    display: flex;
+    flex-wrap: wrap;
+    border-top: 1px #333131 solid;
+    padding: 50px 10px;
+    color: #b3aeae;
+    font-weight: 600;
+}
+
+.rodape .top {
+    justify-content: space-between;
+    font-size: .95em;
+
+    /* Variáveis */
+    --btn-quadrado: 35px;
+}
+
+.rodape .top section {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.rodape .top section.redes {
+    flex-direction: row;
+    gap: 15px;
+}
+
+.rodape .top a {
+    text-decoration: none;
+    color: #b3aeae;
+    transition: color .2s;
+}
+
+.rodape .top p:hover {
+    color: #fff;
+}
+
+.rodape .top a:hover {
+    color: #fff;
+    text-decoration: underline;
+}
+
+.rodape .top h4 {
+    color: #fff;
+}
+
+.rodape .top button {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    width: var(--btn-quadrado);
+    height: var(--btn-quadrado);
+    border: none;
+    border-radius: 50%;
+    background-color: #292929;
+}
+
+.rodape .top button svg {
+    width: calc(var(--btn-quadrado) - 50%);
+    height: calc(var(--btn-quadrado) - 50%);
+    fill: #fff;
+}
+
+.rodape .top button:hover {
+    background-color: #686767;
+    cursor: pointer;
+}
+
+.rodape .bottom {
+    justify-content: space-between;
+    font-size: .8em;
+}
+
+.rodape .bottom article {
+    display: flex;
+    flex-direction: row;
+    gap: 15px;
+}

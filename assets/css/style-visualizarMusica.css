@@ -1,0 +1,278 @@
+.conteudo {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+
+    width: 100%;
+    padding: var(--valor-pad);
+    background-color: #000;
+
+    /* Variáveis */
+    --raio-borda: 8px;
+}
+
+.conteudo button,
+.espacoFoto .foto-botoes label[for="definir-foto-btn"] {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+
+    height: 25px;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 12px;
+    font-size: .8em;
+    background-color: transparent;
+    opacity: .8;
+}
+
+.conteudo button:hover {
+    cursor: pointer;
+}
+
+.principal {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    border-radius: var(--raio-borda);
+    background-color: #121212;
+}
+
+.principal {
+    width: 75vw;
+}
+
+.principal .infos {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+    gap: 15px;
+
+    width: 100%;
+    border-radius: var(--raio-borda) var(--raio-borda) 0px 0px;
+    padding: 25px;
+    font-size: .8em;
+    background-image: linear-gradient(180deg, #424242, #232323);
+}
+
+.principal .infos .espacoFoto {
+    --tamanhoFoto: 16vw;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    
+    width: var(--tamanhoFoto);
+    height: var(--tamanhoFoto);
+}
+
+.infos .espacoFoto img {
+    width: var(--tamanhoFoto);
+    height: var(--tamanhoFoto);
+    border-radius: var(--raio-borda);
+}
+
+.infos .dados {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.infos .dados h1 {
+    font-size: 6rem;
+}
+
+
+.infos .dados .alinhados {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 5px;
+}
+
+.infos .dados .alinhados div {
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background-color: #ffffffb3;
+}
+
+.infos .dados .alinhados p {
+    color: #ffffffb3;
+}
+
+.infos .dados .alinhados a {
+    color: #fff;
+    text-decoration: none;
+}
+
+.infos .dados .alinhados a:hover {
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.dados .alinhados .artista {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 5px;
+}
+
+.dados .alinhados .artista img {
+    width: 30px;
+    border-radius: 50%;
+}
+
+.dados .alinhados .artista p {
+    color: #fff;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+/* LISTA MÚSICAS */
+
+.tabela-secao {
+    padding: 25px;
+}
+
+table.lista-musicas {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.lista-musicas thead {
+    border-bottom: 1px #232323 solid;
+    color: #b3b3b3;
+    font-size: .8rem;
+    font-weight: 400;
+}
+
+.lista-musicas tbody tr:hover {
+    color: #fff;
+    background-color: #424242;
+}
+
+.lista-musicas tr {
+    height: 54px;
+    vertical-align: middle;
+}
+
+.lista-musicas .num-lista {
+    width: 4%;
+    border-top-left-radius: 4px;
+    border-bottom-left-radius: 4px;
+    text-align: center;
+}
+
+.lista-musicas .musica-lista {
+    width: 46%;
+    text-align: start;
+}
+
+.lista-musicas .album-lista {
+    width: 20%;
+    text-align: start;
+}
+
+.lista-musicas .artista-lista {
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+    text-align: start;
+}
+
+.lista-musicas .artista-lista::content {
+    text-decoration: underline;
+}
+
+/* LISTA MÚSICAS FIM */
+
+
+.principal .cards {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding: 10px 25px;
+}
+
+.principal .albuns-titulo {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+.principal .albuns-titulo h1 {
+    font-size: 1.25em;
+}
+
+.principal .albuns-titulo button,
+.principal .albuns-titulo p,
+.principal .albuns .card .nome-categoria .categoria {
+    padding: 5px 0px;
+    color: #b3aeae;
+    font-size: .8em;
+}
+
+.principal .albuns-titulo button:hover {
+    text-decoration: underline;
+}
+
+.principal .albuns {
+    display: flex;
+    flex-direction: row;
+    gap: 15px;
+}
+
+.principal .albuns .card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+
+    border-radius: var(--raio-borda);
+    padding: 10px;  
+    background-color: #121212;
+
+    --tamanho-img: 160px;
+}
+
+.principal .albuns .card:hover {
+    background-color: #212121;
+    cursor: pointer;
+}
+
+.albuns .card .card-img {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    width: var(--tamanho-img);
+    height: var(--tamanho-img);
+    border-radius: 50%;
+    background-color: #0f0f0f;
+}
+
+.albuns .card .card-img img {
+    width: calc(var(--tamanho-img) - 10px);
+    height: calc(var(--tamanho-img) - 10px);
+    border-radius: 50%;
+    background-color: #fff;
+}
+
+.albuns .card .nome-categoria {
+    align-self: flex-start;
+}
+
+.albuns .card .nome-categoria .nome {
+    font-size: 1em;
+    text-decoration: none;
+    color: currentColor;
+}
+
+.albuns .card .nome-categoria .nome:hover {
+    text-decoration: underline;
+}

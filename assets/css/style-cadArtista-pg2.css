@@ -1,0 +1,133 @@
+/* CSS Compartilhado */
+@import 'style-cadArtistaPadrao.css';
+
+.container {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Main */
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 1.5rem 5rem;
+}
+
+.main-title {
+    font-size: clamp(2.5rem, 6vw, 3.75rem);
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 1rem;
+    max-width: 900px;
+}
+
+.main-subtitle {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 1.125rem;
+    margin-bottom: 4rem;
+    text-align: center;
+}
+
+/* Opções do grid */
+.options-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    width: 100%;
+    max-width: 1024px;
+    margin-bottom: 4rem;
+}
+
+.option-card {
+    position: relative;
+    overflow: hidden;
+    border-radius: 1rem;
+    border: 1px solid rgba(213, 24, 238, 0.2);
+    background: linear-gradient(to bottom, rgba(30, 30, 30, 0.5), #000000);
+    padding: 2rem;
+    text-decoration: none;
+    color: white;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.option-card:hover {
+    border-color: var(--primary);
+    transform: scale(1.02);
+    background: linear-gradient(to bottom, rgba(40, 40, 40, 0.5), #000000);
+    box-shadow: 0 8px 24px rgba(213, 24, 238, 0.3);
+}
+
+.option-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.option-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+}
+
+.option-icon-wrapper {
+    width: 10rem;
+    height: 10rem;
+    border-radius: 50%;
+    background: linear-gradient(to bottom right, rgba(213, 24, 238, 0.1), rgba(232, 139, 245, 0.05));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+    transition: all 0.3s ease;
+}
+
+.option-card:hover .option-icon-wrapper {
+    background: linear-gradient(to bottom right, rgba(213, 24, 238, 0.2), rgba(232, 139, 245, 0.1));
+    box-shadow: 0 4px 15px rgba(213, 24, 238, 0.4);
+}
+
+.option-icon {
+    width: 4rem;
+    height: 4rem;
+    color: rgba(255, 255, 255, 0.6);
+    transition: color 0.3s ease;
+}
+
+.option-card:hover .option-icon {
+    color: var(--primary-light);
+}
+
+.option-description {
+    font-size: 0.875rem;
+    color: rgba(255, 255, 255, 0.6);
+    margin-top: 0.5rem;
+    line-height: 1.5;
+}
+
+/* Rodapé */
+.footer-links {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.footer-link-item {
+    font-size: 0.875rem;
+}
+
+.footer-link-item .link-underline {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+@media (min-width: 768px) {
+    .options-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
