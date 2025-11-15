@@ -1,5 +1,6 @@
 <?php
 
-header('Location:view/login.php');
+header('Location: assets/view/login.php');
+exit();
 
 ?>
