@@ -1,3 +1,9 @@
+/* CSS Comuns */
+@import 'css/style-cabecalho.css'; 
+@import 'css/style-menusSuspenso-Lateral.css';
+@import 'css/style-cardsMusica.css';
+@import 'css/style-rodape.css';
+
 .conteudo {
     display: flex;
     flex-direction: row;
