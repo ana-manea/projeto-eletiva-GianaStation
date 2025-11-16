@@ -207,7 +207,7 @@ $pageTitle = $artista['nome'];
                 </div>
                 <div class="albums-grid">
                     <?php foreach ($artista['discografia'] as $album): ?>
-                        <article class="album-card" onclick="window.location.href='detalhesLancamento.php?id=<?php echo $album['id']; ?>&type=album&lang=<?php echo $currentLang; ?>'">
+                        <article class="album-card" onclick="window.location.href='visualizarAlbum.php?id=<?php echo $album['id']; ?>&type=album&lang=<?php echo $currentLang; ?>'">
                             <div class="album-cover">
                                 <img src="<?php echo htmlspecialchars($album['capa']); ?>" alt="<?php echo htmlspecialchars($album['titulo']); ?>">
                                 <button class="album-play-btn" onclick="event.stopPropagation();" title="<?php echo translateText('Reproduzir'); ?>">
@@ -338,7 +338,7 @@ $pageTitle = $artista['nome'];
 
                 <button>
                     <svg xmlns="http://www.w3.org/2000/svg" class="bi bi-twitter" viewBox="0 0 16 16">
-                        <path d="M5.026 15c6.038 0 9.341-5.003 9.341-9.334q.002-.211-.006-.422A6.7 6.7 0 0 0 16 3.542a6.7 6.7 0 0 1-1.889.518 3.3 3.3 0 0 0 1.447-1.817 6.5 6.5 0 0 1-2.087.793A3.286 3.286 0 0 0 7.875 6.03a9.32 9.32 0 0 1-6.767-3.429 3.29 3.29 0 0 0 1.018 4.382A3.3 3.3 0 0 1 .64 6.575v.045a3.29 3.29 0 0 0 2.632 3.218 3.2 3.2 0 0 1-.865.115 3 3 0 0 1-.614-.057 3.28 3.28 0 0 0 3.067 2.277A6.6 6.6 0 0 1 .78 13.58a6 6 0 0 1-.78-.045A9.34 9.34 0 0 0 5.026 15"></path>
+                        <path d="M5.026 15c6.038 0 9.341-5.003 9.341-9.334q.002-.211-.006-.422A6.7 6.7 0 0 0 16 3.542a6.7 6.7 0 0 1-1.889.518 3.3 3.3 0 0 0 1.447-1.817 6.5 6.5 0 0 1-2.087.793A3.286 3.286 0 0 0 7.875 6.03a9.32 9.32 0 0 1-6.767-3.429 3.29 3.29 0 0 0 1.018 4.382A3.3 3.3 0 0 1 .64 6.575v.045a3.29 3.29 0 0 0 2.632 3.218 3.2 3.2 0 0 1-.865.115 3 3 0 0 1-.614-.057a3.28 3.28 0 0 0 3.067 2.277A6.6 6.6 0 0 1 .78 13.58a6 6 0 0 1-.78-.045A9.34 9.34 0 0 0 5.026 15"></path>
                     </svg>
                 </button>
                 
@@ -421,7 +421,6 @@ $pageTitle = $artista['nome'];
                 e.stopPropagation();
                 const trackId = row.dataset.trackId;
                 console.log('Reproduzindo música ID:', trackId);
-                // Aqui você implementaria a lógica real de reprodução
                 alert('Reproduzindo música...');
             };
             
@@ -442,12 +441,10 @@ $pageTitle = $artista['nome'];
                     svg.setAttribute('fill', '#d518ee');
                     svg.setAttribute('stroke', 'none');
                     console.log('Música curtida ID:', trackId);
-                    // Aqui você salvaria no banco de dados
                 } else {
                     svg.setAttribute('fill', 'none');
                     svg.setAttribute('stroke', 'currentColor');
                     console.log('Música descurtida ID:', trackId);
-                    // Aqui você removeria do banco de dados
                 }
             });
         });
