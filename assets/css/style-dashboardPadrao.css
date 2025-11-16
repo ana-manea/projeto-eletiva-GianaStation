@@ -179,6 +179,11 @@ body.menu-open {
     border-color: rgba(255, 255, 255, 0.2);
 }
 
+.btn-outline .icon {
+    width: 16px;
+    height: 16px;
+}
+
 /* Menu Mobile */
 .mobile-menu-toggle {
     display: none;
@@ -239,6 +244,11 @@ body.menu-open {
 
 .mobile-actions .language-text {
     display: inline;
+}
+
+.mobile-actions .btn-outline {
+    width: 100%;
+    justify-content: center;
 }
 
 .mobile-menu-overlay {

@@ -1,5 +1,5 @@
 /* CSS Compartilhado */
-@import '../styles/style-dashboardPadrao.css';
+@import 'style-dashboardPadrao.css';
 
 /* Seção Hero*/
 .hero-section {
