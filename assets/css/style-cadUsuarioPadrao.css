@@ -1,34 +1,27 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: Arial, Helvetica, sans-serif;
-}
+@import 'style-padrao.css';
 
 body {
-    background-image: linear-gradient(180deg, rgb(41, 41, 41), rgb(0, 0, 0));
-    color: rgb(255, 255, 255);
+    background: var(--gradient-background);
     display: flex;
     align-items: center;
     justify-content: space-between;
     flex-direction: column;
     min-height: 100vh;
+    padding-top: 0;
 }
 
 .conteudo {
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    flex-direction: column;
     gap: 40px;
     margin: 20px auto;
     border-radius: 10px;
     padding: 40px;
-    background-color: rgb(18, 18, 18);
-    max-width: 600px;
+    background-color: var(--background-card);
+    max-width: 500px;
     width: 100%;
-    /* Variável CSS */
-    --tamanhoInput: 110%;  
 }
     
 .cabecalho {
@@ -45,73 +38,87 @@ body {
 }
 
 .cabecalho img {
-    width: 25%;
+    width: 15%;
+    margin-bottom: 1rem;
 }
 
 .conteudo form {
-        width: 60%;
+    width: 60%;
 }
 
 .linha2 {
     width: 90%;
     margin: 15px auto;
-    border-top: 1px solid rgb(123, 123, 123);
+    border-top: 1px solid var(--border-medium);
 }
 
-label {
+form , #formSenha {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 10px;
+    width: 80%;
+}
+
+label{
     display: block;
     font-size: 0.875rem;
     font-weight: 600;
     margin-bottom: 0.5rem;
+    color: var(--foreground);
+}
+
+.form-grupo {
+    margin-bottom: 1.5rem;
 }
 
 input[type="email"] {
     width: 100%;
     height: 48px;
     padding: 0 1rem;
-    background-color: rgb(18, 18, 18);
-    border: 1px solid rgb(114, 114, 114);
-    border-radius: 6px;
-    color: white;
+    background-color: var(--background-card);
+    border: 1px solid var(--border-input);
+    border-radius: var(--border-radius-sm);
+    color: var(--foreground);
     font-size: 1rem;
     outline: none;
-    transition: all 0.2s;
+    transition: var(--transition-all);
 }
 
 input[type="email"]::placeholder {
-    color: rgb(106, 106, 106);
+    color: var(--text-faint);
 }
 
 input[type="email"]:focus {
-    border-color: white;
-    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
+    border-color: var(--foreground);
+    box-shadow: 0 0 0 3px var(--overlay-strong);
 }
 
 .telefone {
     display: block;
-    color: #d518ee;
+    color: var(--primary);
     font-size: 0.875rem;
     font-weight: 600;
     text-decoration: underline;
     margin-top: 0.5rem;
     margin-bottom: 1rem;
-    transition: color 0.2s;
+    transition: color var(--transition-normal);
 }
 
 .telefone:hover {
-    color: #e88bf5;
+    color: var(--primary-light);
 }
 
 button {
     width: 100%;
-    /*height: 48px;*/
     border: none;
-    border-radius: 50px;
+    border-radius: var(--border-radius-full);
     padding: 16px 32px;
     font-size: 1rem;
     font-weight: bold;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: var(--transition-all);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -119,14 +126,16 @@ button {
 }
 
 .btn-avancar {
-    background-color: #d518ee;
-    color: black;
+    background: var(--gradient-primary);
+    color: var(--background-card);
     margin-bottom: 1rem;
+    box-shadow: var(--shadow-sm);
 }
 
 .btn-avancar:hover {
-    background-color: #e88bf5;
+    background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 100%);
     transform: scale(1.02);
+    box-shadow: var(--shadow-md);
 }
 
 .btn-conectar-space {
@@ -143,38 +152,45 @@ button {
     display: flex;
     flex-direction: row;
     align-items: center;
-    justify-content: space-around;
-    gap: 5px;
+    justify-content: center;
+    gap: 12px;
     background-color: transparent;
-    border: 1px solid rgb(114, 114, 114);
-    color: white;
+    border: 1px solid var(--border-medium);
+    color: var(--foreground);
 }
 
 .btn-conectar-space .btn-conectar img {
-    width: 10%;
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
 }
 
 .btn-conectar-space .btn-conectar:hover {
-    background-color: rgb(26, 26, 26);
-    border-color: white;
+    background-color: var(--background-hover);
+    border-color: var(--foreground);
 }
 
-p.signin-link {
-    text-align: center; 
+.singin-link {
+    text-align: center;
+    margin-top: 1rem;
+}
+
+.singin-link p {
     font-size: 0.875rem;
-    color: rgb(167, 167, 167);
+    color: var(--text-gray);
+    margin-bottom: 0.5rem;
 }
 
 .singin-link a {
-    color: #d518ee;
+    color: var(--primary);
     font-size: 0.875rem;
     font-weight: 600;
     text-decoration: none;
-    transition: color 0.2s;
+    transition: color var(--transition-normal);
 }
 
 .singin-link a:hover {
-    color: #e88bf5;
+    color: var(--primary-light);
     text-decoration: underline;
 }
 
@@ -183,6 +199,7 @@ p.signin-link {
     display: flex;
     align-items: center;
     justify-content: center;
+    text-align: center;
 }
 
 footer {
@@ -190,13 +207,39 @@ footer {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 15vh;
+    min-height: 15vh;
     font-size: 0.75rem;
-    color: rgb(255, 255, 255);
-    background-color: rgb(18, 18, 18);
+    color: var(--foreground);
+    background-color: var(--background-card);
     line-height: 1.5;
     width: 100%;    
     margin-top: auto;
-    margin-bottom: 0;        
     padding: 20px; 
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .cabecalho h1 {
+        font-size: 2rem;
+    }
+    
+    .conteudo {
+        padding: 30px 20px;
+    }
+    
+    .conteudo form,
+    .cabecalho {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .cabecalho h1 {
+        font-size: 1.75rem;
+    }
+    
+    .btn-conectar-space .btn-conectar {
+        font-size: 0.875rem;
+        padding: 14px 24px;
+    }
 }

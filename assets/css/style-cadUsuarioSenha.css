@@ -1,0 +1,233 @@
+@import 'style-cadUsuarioPadrao.css';
+
+/* Ajustes do cabeçalho */
+.cabecalho {
+    margin-bottom: 1rem;
+    width: 100%;
+}
+
+.cabecalho img {
+    width: 20%;
+    min-width: 50px;
+    max-width: 80px;
+}
+
+/* Barra de progresso */
+.barra-progresso {
+    width: 100%;
+    height: 8px;
+    background-color: var(--background-hover);
+    border-radius: var(--border-radius-full);
+    overflow: hidden;
+    margin-bottom: 2rem;
+}
+
+.porcentagem {
+    width: 33.33%;
+    height: 100%;
+    background: var(--gradient-primary);
+    transition: width 0.3s ease;
+}
+
+/* Seção de etapas */
+.etapa {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    width: 100%;
+}
+
+.btn-voltar {
+    background: transparent;
+    border: 1px solid var(--border-medium);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: var(--transition-all);
+}
+
+.btn-voltar:hover {
+    background-color: var(--background-hover);
+    border-color: var(--foreground);
+    transform: scale(1.05);
+}
+
+.btn-voltar img {
+    width: 20px;
+    height: 20px;
+    filter: brightness(0) invert(1);
+}
+
+.etapa-conteudo {
+    flex: 1;
+}
+
+.info-etapa {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.5rem;
+}
+
+.etapa-conteudo h1 {
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--foreground);
+    margin: 0;
+}
+
+/* Campo de senha com botão de visualização */
+.form-grupo {
+    margin-bottom: 1.5rem;
+    width: 100%;
+}
+
+.botao-senha {
+    position: relative;
+    width: 100%;
+}
+
+.botao-senha input[type="password"],
+.botao-senha input[type="text"] {
+    width: 100%;
+    height: 48px;
+    padding: 0 3rem 0 1rem;
+    background-color: var(--background-card);
+    border: 1px solid var(--border-input);
+    border-radius: var(--border-radius-sm);
+    color: var(--foreground);
+    font-size: 1rem;
+    outline: none;
+    transition: var(--transition-all);
+}
+
+.botao-senha input:focus {
+    border-color: var(--foreground);
+    box-shadow: 0 0 0 3px var(--overlay-strong);
+}
+
+.visualizacao-senha {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    padding: 0;
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition-all);
+}
+
+.visualizacao-senha:hover {
+    opacity: 0.7;
+}
+
+.visualizacao-senha img {
+    width: 20px;
+    height: 20px;
+    filter: brightness(0) invert(0.6);
+}
+
+/* Requisitos de senha */
+.requerimentos { 
+    margin-bottom: 2rem;
+    width: 100%;
+}
+
+.requerimentos > p {
+    font-size: 0.875rem;
+    margin-bottom: 1rem;
+    color: var(--foreground);
+    font-weight: 600;
+}
+
+.item-requerimento {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+}
+
+.requiremento-check {
+    min-width: 16px;
+    width: 16px;
+    height: 16px;
+    border: 2px solid var(--border-input);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition-all);
+    font-size: 10px;
+    color: transparent;
+    flex-shrink: 0;
+    font-weight: bold;
+}
+
+.requiremento-check.valid {
+    background-color: var(--primary);
+    border-color: var(--primary);
+    color: var(--background-card);
+}
+
+.item-requerimento span {
+    font-size: 0.875rem;
+    line-height: 1.4;
+    color: var(--text-secondary);
+}
+
+/* Botão de avançar desabilitado */
+.btn-avancar:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: var(--border-medium);
+}
+
+.btn-avancar:disabled:hover {
+    transform: none;
+    box-shadow: none;
+}
+
+/* Ajustes do formulário */
+.conteudo form {
+    width: 100%;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .etapa-conteudo h1 {
+        font-size: 1.5rem;
+    }
+    
+    .conteudo {
+        padding: 30px 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .etapa-conteudo h1 {
+        font-size: 1.25rem;
+    }
+    
+    .btn-voltar {
+        width: 36px;
+        height: 36px;
+        min-width: 36px;
+    }
+    
+    .btn-voltar img {
+        width: 16px;
+        height: 16px;
+    }
+}

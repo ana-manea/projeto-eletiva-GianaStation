@@ -1,0 +1,491 @@
+/* CSS Compartilhado */
+@import 'style-dashboardPadrao.css';
+
+/* Cabeçalho */
+.page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 32px;
+}
+
+.page-header > div h1 {
+    font-size: 36px;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+.page-header > div p {
+    font-size: 16px;
+    color: var(--muted);
+}
+
+/* Estatísticas Overview */
+.stats-overview {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-bottom: 32px;
+}
+
+.stats-overview .stat-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.stat-icon-wrapper {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.stat-icon-wrapper.stat-primary {
+    background: rgba(213, 24, 238, 0.2);
+    color: var(--primary);
+}
+
+.stat-icon-wrapper.stat-blue {
+    background: rgba(96, 165, 250, 0.2);
+    color: var(--blue);
+}
+
+.stat-icon-wrapper.stat-purple {
+    background: rgba(168, 85, 247, 0.2);
+    color: var(--purple);
+}
+
+.stat-icon-wrapper svg {
+    width: 28px;
+    height: 28px;
+}
+
+/* Filtros */
+.filter-tabs {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 32px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+    overflow-x: auto;
+}
+
+.filter-tab {
+    padding: 8px 20px;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    color: var(--muted);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s;
+    white-space: nowrap;
+}
+
+.filter-tab:hover {
+    background: var(--overlay-medium);
+    border-color: var(--primary);
+    color: white;
+}
+
+.filter-tab.active {
+    background: var(--gradient-primary);
+    border-color: var(--primary);
+    color: white;
+}
+
+/* Seções de Lançamentos */
+.release-section {
+    margin-bottom: 48px;
+}
+
+.section-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, var(--border), transparent);
+}
+
+/* Grid de Lançamentos */
+.releases-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 24px;
+}
+
+.release-card {
+    position: relative;
+    background: rgba(18, 18, 18, 0.3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    transition: all 0.3s;
+    cursor: pointer;
+}
+
+.release-card:hover {
+    background: rgba(18, 18, 18, 0.6);
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(213, 24, 238, 0.2);
+}
+
+/* Ações do Card */
+.release-actions {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    display: flex;
+    gap: 6px;
+    opacity: 0;
+    transition: opacity 0.3s;
+    z-index: 10;
+}
+
+.release-card:hover .release-actions {
+    opacity: 1;
+}
+
+.btn-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.9);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.btn-icon:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: scale(1.1);
+    border-color: var(--primary);
+}
+
+.btn-icon svg {
+    width: 18px;
+    height: 18px;
+}
+
+.btn-danger:hover {
+    background: rgba(239, 68, 68, 0.3);
+    border-color: var(--error);
+}
+
+/* Capa */
+.release-cover {
+    aspect-ratio: 1;
+    background: #2a2a2a;
+    overflow: hidden;
+    position: relative;
+}
+
+.release-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s;
+}
+
+.release-card:hover .release-cover img {
+    transform: scale(1.05);
+}
+
+.release-cover::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, transparent 60%, rgba(0, 0, 0, 0.8));
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.release-card:hover .release-cover::after {
+    opacity: 1;
+}
+
+/* Info do Lançamento */
+.release-info {
+    padding: 16px;
+}
+
+.release-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    background: rgba(213, 24, 238, 0.2);
+    border: 1px solid rgba(213, 24, 238, 0.4);
+    color: var(--primary);
+    font-size: 11px;
+    font-weight: 600;
+    border-radius: 4px;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.release-badge.badge-blue {
+    background: rgba(96, 165, 250, 0.2);
+    border-color: rgba(96, 165, 250, 0.4);
+    color: var(--blue);
+}
+
+.release-badge.badge-purple {
+    background: rgba(168, 85, 247, 0.2);
+    border-color: rgba(168, 85, 247, 0.4);
+    color: var(--purple);
+}
+
+.release-info h3 {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: white;
+}
+
+.release-year {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 8px;
+}
+
+.release-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: var(--text-subtle);
+}
+
+.release-meta span:nth-child(2) {
+    color: var(--border);
+}
+
+/* Modais */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(8px);
+    z-index: 10000;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-overlay.active {
+    display: flex;
+}
+
+.modal-content {
+    background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);
+    border: 1px solid rgba(213, 24, 238, 0.3);
+    border-radius: 16px;
+    padding: 2rem;
+    width: 90%;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 8px 32px rgba(213, 24, 238, 0.3);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.modal-header h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.modal-close {
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.6);
+    cursor: pointer;
+    font-size: 1.5rem;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.3s;
+}
+
+.modal-close:hover {
+    color: white;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-group label {
+    display: block;
+    font-size: 0.875rem;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 0.75rem;
+    background: rgba(30, 30, 30, 0.8);
+    border: 1px solid rgba(213, 24, 238, 0.4);
+    border-radius: 6px;
+    color: white;
+    font-size: 1rem;
+    font-family: inherit;
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(213, 24, 238, 0.1);
+}
+
+.checkbox-group {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.checkbox-group input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+.checkbox-group label {
+    cursor: pointer;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.btn-modal-cancel,
+.btn-modal-save {
+    flex: 1;
+    padding: 0.75rem;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-modal-cancel {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+}
+
+.btn-modal-cancel:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.btn-modal-save {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+    border: none;
+    color: white;
+}
+
+.btn-modal-save:hover {
+    transform: scale(1.02);
+    box-shadow: 0 6px 20px rgba(213, 24, 238, 0.5);
+}
+
+.preview-image {
+    width: 100px;
+    height: 100px;
+    margin-top: 0.5rem;
+    border-radius: 4px;
+    object-fit: cover;
+}
+
+/* Responsividade */
+@media (max-width: 1024px) {
+    .releases-grid {
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+    }
+
+    .stats-overview {
+        grid-template-columns: 1fr;
+    }
+
+    .releases-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+    }
+
+    .filter-tabs {
+        gap: 8px;
+    }
+
+    .filter-tab {
+        padding: 6px 16px;
+        font-size: 13px;
+    }
+}
+
+@media (max-width: 480px) {
+    .releases-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .page-header > div h1 {
+        font-size: 28px;
+    }
+
+    .section-title {
+        font-size: 20px;
+    }
+    
+    .modal-content {
+        padding: 1.5rem;
+    }
+}

@@ -1,0 +1,9 @@
+@import 'style-cadUsuarioPadrao.css';
+
+input[type="email"] {
+    padding: 0 1rem;
+}
+
+body {
+    justify-content: space-between;
+}

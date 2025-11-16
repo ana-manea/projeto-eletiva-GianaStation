@@ -1,5 +1,5 @@
 /* CSS Compartilhado */
-@import '../styles/style-dashboardPadrao.css';
+@import 'style-dashboardPadrao.css';
 
 /*Cabeçalho*/
 .profile-header {
@@ -30,7 +30,7 @@
     left: 0;
     right: 0;
     padding: 32px;
-    max-width: 1200px;
+    max-width: 1400px;
     margin: 0 auto;
 }
 
@@ -75,6 +75,11 @@
     right: 16px;
 }
 
+.upload-header-btn svg {
+    width: 16px;
+    height: 16px;
+}
+
 .upload-avatar-btn {
     bottom: 8px;
     right: 8px;
@@ -106,6 +111,31 @@
     gap: 12px;
 }
 
+/* Alerta */
+.alert {
+    padding: 16px;
+    border-radius: var(--radius);
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.alert-success {
+    background: rgba(16, 185, 129, 0.1);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    color: var(--green);
+}
+
+.alert-icon {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.alert-title {
+    font-weight: 600;
+}
+
 /*Formulário*/
 .form-section {
     margin-bottom: 32px;
@@ -132,14 +162,17 @@
 .form-grid2 {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    column-gap: 70px;
-    row-gap: 16px;
+    gap: 16px;
 }
 
 .form-group {
     display: flex;
     flex-direction: column;
     gap: 8px;
+}
+
+.form-group.full-width {
+    grid-column: 1 / -1;
 }
 
 .form-group label {
@@ -172,9 +205,19 @@
     cursor: not-allowed;
 }
 
+.form-input.near-limit {
+    border-color: #f59e0b;
+}
+
+.form-input.at-limit,
+.form-textarea.at-limit {
+    border-color: #ef4444;
+}
+
 .form-textarea {
-    resize: none;
+    resize: vertical;
     font-family: inherit;
+    min-height: 100px;
 }
 
 .char-count {
@@ -211,20 +254,21 @@
 }
 
 @media (max-width: 768px) {
-    .form-grid {
+    .form-grid,
+    .form-grid2 {
         grid-template-columns: 1fr;
     }
 
-    .page-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 16px;
-    }
+    
 
     .header-actions,
     .header-actions-editing {
-        width: 100%;
         flex-direction: column;
+    }
+
+    .header-actions button,
+    .header-actions-editing button {
+        width: 100%;
     }
 
     .profile-header {
@@ -238,9 +282,5 @@
     .profile-avatar-wrapper {
         width: 120px;
         height: 120px;
-    }
-
-    .form-grid2 {
-        grid-template-columns: 1fr;
     }
 }

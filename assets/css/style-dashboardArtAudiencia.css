@@ -1,5 +1,5 @@
 /* CSS Compartilhado */
-@import '../styles/style-dashboardPadrao.css';
+@import 'style-dashboardPadrao.css';
 
 /* Container */
 .content-grid {
@@ -19,7 +19,7 @@
     gap: 32px;
 }
 
-/* Musica */
+/* Música */
 .song-item {
     padding: 16px;
     background: rgba(0, 0, 0, 0.3);
