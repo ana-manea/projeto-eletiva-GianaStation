@@ -91,7 +91,7 @@ $pageTitle = $usuario['nome'];
         <aside class="lateral-menu">
             <section class="lateral-menu-top">
                 <h3><?php echo translateText('Sua Biblioteca'); ?></h3>
-                <a href="cadastrarPlaylist.php?lang=<?php echo $currentLang; ?>">
+                <a href="cadPlaylist.php?lang=<?php echo $currentLang; ?>">
                     <button id="criar-playlist">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" width="16" height="16">
                             <path d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2"/>
