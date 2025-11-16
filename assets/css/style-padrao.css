@@ -261,15 +261,22 @@ body.menu-open {
     text-decoration: underline;
 }
 
-.badge-verified {
-    display: inline-block;
-    padding: 4px 12px;
-    background: rgba(213, 24, 238, 0.2);
-    border: 1px solid rgba(213, 24, 238, 0.4);
-    color: var(--primary);
-    font-size: 12px;
-    font-weight: 600;
-    border-radius: 12px;
+.badge-verified  {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 0;
+    color: #4cb3ff;
+    background-color: none;
+    border: none;
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 16px;
+} 
+
+.badge-verified svg {
+    width: 24px;
+    height: 24px;
 }
 
 .badge-active {
