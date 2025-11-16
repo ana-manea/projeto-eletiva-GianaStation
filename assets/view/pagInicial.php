@@ -14,12 +14,20 @@
     <!-- CSS da Página -->
     <link rel="stylesheet" href="../css/style-pagInicial.css">
 
-    <!--
-    <script src="../scripts/script-menuSuspenso.js"></script>
-    <script src="../scripts/script-redirecionar.js"></script>
--->
 
+    <script>
+        let abertoPerfil = false;
 
+        function interagirMenuPerfil()
+        {
+            abertoPerfil = !abertoPerfil;
+            if (abertoPerfil)
+                document.getElementById('perfil-menu-suspenso').classList.add('aberto');
+
+            else
+                document.getElementById('perfil-menu-suspenso').classList.remove('aberto');
+        }
+    </script>
 </head>
 <body>
     <header>
@@ -59,9 +67,9 @@
                         <img>
                     </button> <!--Perfil/Conta -->
                     <ul id="perfil-menu-suspenso">
-                        <a href="perfilUsuario.html"><li>Perfil</li></a>
+                        <a href="perfilUsuario.php"><li>Perfil</li></a>
                         <div></div>
-                        <a href="../../index.html"><li id="sair">Sair</li></a>
+                        <a href="login.php"><li id="sair">Sair</li></a>
                     </ul>
                 </section>
             </section>
@@ -125,16 +133,18 @@
 
                 <section class="albuns" >
                     <!--Álbuns-->
-                    <section class="card">
-                        <article class="card-img">
-                            <img src="../img/capas-albums/capa-berlinist-neva.jpg">
-                        </article>
+                    <a href="verMusica.php">
+                        <section class="card">
+                            <article class="card-img">
+                                <img src="../img/capas-albums/capa-berlinist-neva.jpg">
+                            </article>
 
-                        <article class="nome-categoria">
-                            <p class="nome">In courage abide</p>
-                            <p class="categoria">Berlinist</p>
-                        </article>
-                    </section>
+                            <article class="nome-categoria">
+                                <p class="nome">In courage abide</p>
+                                <p class="categoria">Berlinist</p>
+                            </article>
+                        </section>
+                    </a>
                 </section>
             </section>
         </section>

@@ -14,11 +14,20 @@
     <!-- CSS da Página -->
     <link rel="stylesheet" href="../css/style-visualizarMusica.css">
 
-    <!--
-    <script src="../scripts/script-menuSuspenso.js"></script>
-    <script src="../scripts/script-redirecionar.js"></script>
--->
+    
+    <script>
+        let abertoPerfil = false;
 
+        function interagirMenuPerfil()
+        {
+            abertoPerfil = !abertoPerfil;
+            if (abertoPerfil)
+                document.getElementById('perfil-menu-suspenso').classList.add('aberto');
+
+            else
+                document.getElementById('perfil-menu-suspenso').classList.remove('aberto');
+        }
+    </script>
 </head>
 <body>
     <header>
@@ -57,9 +66,9 @@
                         <img>
                     </button> <!--Perfil/Conta -->
                     <ul id="perfil-menu-suspenso">
-                        <a href="perfilUsuario.html"><li>Perfil</li></a>
+                        <a href="perfilUsuario.php"><li>Perfil</li></a>
                         <div></div>
-                        <a href="../../index.html"><li id="sair">Sair</li></a>
+                        <a href="login.php"><li id="sair">Sair</li></a>
                     </ul>
                 </section>
             </section>

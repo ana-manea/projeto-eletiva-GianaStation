@@ -21,10 +21,19 @@
     <link rel="stylesheet" href="../css/style-formMusica.css">
 
 
-    <script src="../scripts/script-menuSuspenso.js"></script>
-    <script src="../scripts/script-redirecionar.js"></script>
+    <script>
+        let abertoPerfil = false;
 
+        function interagirMenuPerfil()
+        {
+            abertoPerfil = !abertoPerfil;
+            if (abertoPerfil)
+                document.getElementById('perfil-menu-suspenso').classList.add('aberto');
 
+            else
+                document.getElementById('perfil-menu-suspenso').classList.remove('aberto');
+        }
+    </script>
 </head>
 <body>
     <header>
@@ -39,7 +48,7 @@
                         </svg>
                     </button> 
                 </a>
-                
+
                 <form>
                     <label for="pesquisa-inicio">
                         <svg xmlns="http://www.w3.org/2000/svg" class="bi bi-search" viewBox="0 0 16 16">
@@ -65,7 +74,7 @@
                     <ul id="perfil-menu-suspenso">
                         <a href="perfilUsuario.php"><li>Perfil</li></a>
                         <div></div>
-                        <a href="../../index.php"><li id="sair">Sair</li></a>
+                        <a href="login.php"><li id="sair">Sair</li></a>
                     </ul>
                 </section>
             </section>
