@@ -46,7 +46,7 @@ $modalConfig = [
             <div class="porcentagem"></div>
         </section>
 
-        <form method="POST" action="../processamento/processamento.php" id="formTermos"> 
+        <form method="POST" action="../processamento/processamentoCadUsuario.php" id="formTermos"> 
             <section class="etapa">
                 <button type="button" class="btn-voltar" id="returnInfo">
                     <img src="../img/return.png" alt="<?php echo translate('back'); ?>">
