@@ -16,7 +16,7 @@ body {
 .cabecalho {
     text-align: center;
     margin-bottom: 2rem;
-    max-width: 600px;
+    max-width: 500px;
     width: 60%;
 }
 
@@ -36,11 +36,11 @@ body {
     align-items: center;
     justify-content: center;
     gap: 40px;
-    margin: 20px auto;
+    margin: 20px;
     border-radius: 10px;
     padding: 40px;
     background-color: var(--background-card);
-    max-width: 750px;
+    max-width: 50px;
     width: 100%;
     --tamanhoInput: 90%;
 }

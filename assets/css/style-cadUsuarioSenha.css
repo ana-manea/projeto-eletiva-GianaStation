@@ -1,0 +1,58 @@
+@import 'style-cadUsuarioPadrao.css';
+
+.cabecalho img {
+    width: 20%;
+    min-width: 50px;
+}
+
+.cabecalho {
+    margin-bottom: 1rem;
+}
+
+.porcentagem {
+    width: 33.33%;
+}
+
+.requerimentos { 
+    margin-bottom: 2rem;
+}
+
+.requerimentos > p {
+    font-size: 0.875rem;
+    margin-bottom: 1rem;
+    color: var(--foreground);
+}
+
+.item-requerimento {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+}
+
+.requiremento-check {
+    min-width: 16px;
+    width: 16px;
+    height: 16px;
+    border: 2px solid var(--border-input);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition-all);
+    font-size: 10px;
+    color: transparent;
+    flex-shrink: 0;
+}
+
+.requiremento-check.valid {
+    background-color: var(--primary);
+    border-color: var(--primary);
+    color: var(--background-card);
+}
+
+.item-requerimento span {
+    font-size: 0.875rem;
+    line-height: 1.4;
+    color: var(--text-secondary);
+}

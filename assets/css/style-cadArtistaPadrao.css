@@ -1,4 +1,4 @@
-@import '../css/cores-fontes.css';
+@import 'style-padrao';
 
 :root {
     --header-height: 73px;

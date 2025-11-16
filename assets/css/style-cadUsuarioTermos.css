@@ -1,0 +1,76 @@
+@import 'style-cadUsuarioPadrao.css';
+
+.cabecalho img {
+    width: 20%;
+    min-width: 50px;
+}
+
+.cabecalho {
+    margin-bottom: 1rem;
+}
+
+.porcentagem {
+    width: 100%;
+}
+
+.checkbox-grupo {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 1.5rem;
+}
+
+.opcao-checkbox {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 20px;
+    background-color: var(--background-light);
+    border-radius: var(--border-radius-lg);
+    cursor: pointer;
+    transition: background-color var(--transition-normal);
+}
+
+.opcao-checkbox:hover {
+    background-color: var(--background-hover);
+}
+
+.opcao-checkbox input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    margin: 0;
+    margin-top: 2px;
+    cursor: pointer;
+    accent-color: var(--primary);
+    flex-shrink: 0;
+}
+
+.opcao-checkbox span {
+    font-size: 1rem;
+    line-height: 1.5;
+    font-weight: 500;
+    user-select: none;
+    color: var(--text-secondary);
+}
+
+.aviso-privacidade {
+    margin-bottom: 2rem;
+}
+
+.aviso-privacidade p {
+    font-size: 0.875rem;
+    color: var(--foreground);
+    line-height: 1.6;
+    font-weight: 400;
+}
+
+
+@media (max-width: 640px) {
+    .opcao-checkbox {
+        padding: 16px;
+    }
+    
+    .opcao-checkbox span {
+        font-size: 0.9375rem;
+    }
+}
