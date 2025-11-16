@@ -151,17 +151,6 @@ $pageTitle = 'Dashboard';
     </section>
 
     <main class="main-content">
-        <!-- Ação Rápida -->
-        <section class="quick-action">
-            <button class="btn-add-release" onclick="window.location.href='formCadMusica.php?lang=<?php echo $currentLang; ?>'">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <line x1="12" y1="5" x2="12" y2="19"/>
-                    <line x1="5" y1="12" x2="19" y2="12"/>
-                </svg>
-                <span><?php echo translateText('Adicionar Novo Lançamento'); ?></span>
-            </button>
-        </section>
-
         <section class="stats-grid">
             <section class="stat-card stat-primary">
                 <section class="stat-header">

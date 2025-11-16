@@ -1,30 +1,64 @@
 <?php
 require_once 'config.php';
 
-// Dados do lançamento (exemplo)
-$lancamento = [
-    'id' => 3,
-    'titulo' => 'Esquinas',
-    'ano' => 2024,
-    'capa' => 'https://i.scdn.co/image/ab67616d0000b273190aaad879fd91cebab37efd',
-    'tipo' => 'Álbum',
-    'gravadora' => 'Universal Music',
-    'descricao' => 'O terceiro álbum de estúdio da dupla traz 12 faixas inéditas que exploram novas sonoridades mantendo a essência da MPB.',
-    'musicas' => [
-        ['id' => 1, 'numero' => 1, 'titulo' => 'Esquinas', 'duracao' => '3:45', 'streams' => '450K', 'destaque' => true],
-        ['id' => 2, 'numero' => 2, 'titulo' => 'Singular', 'duracao' => '4:02', 'streams' => '320K', 'destaque' => false],
-        ['id' => 3, 'numero' => 3, 'titulo' => 'Seu Olhar', 'duracao' => '3:28', 'streams' => '280K', 'destaque' => false],
-        ['id' => 4, 'numero' => 4, 'titulo' => 'Deixa Estar', 'duracao' => '3:55', 'streams' => '245K', 'destaque' => false],
-        ['id' => 5, 'numero' => 5, 'titulo' => 'Versos', 'duracao' => '4:12', 'streams' => '198K', 'destaque' => false],
-        ['id' => 6, 'numero' => 6, 'titulo' => 'Na Palma da Mão', 'duracao' => '3:38', 'streams' => '175K', 'destaque' => false],
-        ['id' => 7, 'numero' => 7, 'titulo' => 'Refúgio', 'duracao' => '4:25', 'streams' => '162K', 'destaque' => false],
-        ['id' => 8, 'numero' => 8, 'titulo' => 'Acalanto', 'duracao' => '3:15', 'streams' => '148K', 'destaque' => false],
-        ['id' => 9, 'numero' => 9, 'titulo' => 'Alvorada', 'duracao' => '3:52', 'streams' => '135K', 'destaque' => false],
-        ['id' => 10, 'numero' => 10, 'titulo' => 'Encontros', 'duracao' => '4:08', 'streams' => '122K', 'destaque' => false],
-        ['id' => 11, 'numero' => 11, 'titulo' => 'Caminho', 'duracao' => '3:42', 'streams' => '110K', 'destaque' => false],
-        ['id' => 12, 'numero' => 12, 'titulo' => 'Recomeço', 'duracao' => '4:30', 'streams' => '98K', 'destaque' => false]
+// Receber ID do álbum
+$albumId = isset($_GET['id']) ? intval($_GET['id']) : 0;
+
+// Dados de exemplo - em produção, buscar do banco de dados
+$discografia = [
+    1 => [
+        'id' => 1,
+        'titulo' => 'Trevo',
+        'ano' => 2017,
+        'capa' => 'https://i.scdn.co/image/ab67616d0000b2732d9442517e36cd23c60efe50',
+        'tipo' => 'Álbum',
+        'gravadora' => 'Universal Music',
+        'descricao' => 'Álbum de estreia da dupla com grandes sucessos.',
+        'musicas' => [
+            ['id' => 1, 'numero' => 1, 'titulo' => 'Trevo (Tu)', 'duracao' => '3:45', 'streams' => '450K', 'destaque' => true],
+            ['id' => 2, 'numero' => 2, 'titulo' => 'Não Sinto Nada', 'duracao' => '3:28', 'streams' => '320K', 'destaque' => false],
+            ['id' => 3, 'numero' => 3, 'titulo' => 'Fico', 'duracao' => '3:15', 'streams' => '280K', 'destaque' => false],
+            ['id' => 4, 'numero' => 4, 'titulo' => 'Lisboa-Madrid', 'duracao' => '3:52', 'streams' => '245K', 'destaque' => false],
+        ]
+    ],
+    2 => [
+        'id' => 2,
+        'titulo' => 'O Tempo É Agora',
+        'ano' => 2018,
+        'capa' => 'https://i.scdn.co/image/ab67616d0000b2735d7cf1a8508aa994d4bde5c8',
+        'tipo' => 'Álbum',
+        'gravadora' => 'Universal Music',
+        'descricao' => 'Segundo álbum de estúdio com 12 faixas inéditas.',
+        'musicas' => [
+            ['id' => 5, 'numero' => 1, 'titulo' => 'Tempo', 'duracao' => '3:52', 'streams' => '280K', 'destaque' => true],
+            ['id' => 6, 'numero' => 2, 'titulo' => 'Agora', 'duracao' => '4:02', 'streams' => '245K', 'destaque' => false],
+            ['id' => 7, 'numero' => 3, 'titulo' => 'Mesma Direção', 'duracao' => '3:38', 'streams' => '198K', 'destaque' => false],
+        ]
+    ],
+    3 => [
+        'id' => 3,
+        'titulo' => 'Esquinas',
+        'ano' => 2024,
+        'capa' => 'https://i.scdn.co/image/ab67616d0000b273190aaad879fd91cebab37efd',
+        'tipo' => 'Álbum',
+        'gravadora' => 'Universal Music',
+        'descricao' => 'O terceiro álbum de estúdio da dupla traz 12 faixas inéditas que exploram novas sonoridades mantendo a essência da MPB.',
+        'musicas' => [
+            ['id' => 8, 'numero' => 1, 'titulo' => 'Esquinas', 'duracao' => '3:45', 'streams' => '450K', 'destaque' => true],
+            ['id' => 9, 'numero' => 2, 'titulo' => 'Singular', 'duracao' => '4:02', 'streams' => '320K', 'destaque' => false],
+            ['id' => 10, 'numero' => 3, 'titulo' => 'Seu Olhar', 'duracao' => '3:28', 'streams' => '280K', 'destaque' => false],
+            ['id' => 11, 'numero' => 4, 'titulo' => 'Deixa Estar', 'duracao' => '3:55', 'streams' => '245K', 'destaque' => false],
+        ]
     ]
 ];
+
+// Verificar se o álbum existe
+if (!isset($discografia[$albumId])) {
+    header("Location: dashboardArtDiscografia.php?lang=" . $currentLang);
+    exit;
+}
+
+$lancamento = $discografia[$albumId];
 
 $totalDuracao = 0;
 foreach ($lancamento['musicas'] as $musica) {
@@ -34,6 +68,7 @@ foreach ($lancamento['musicas'] as $musica) {
 $totalMin = floor($totalDuracao / 60);
 
 $pageTitle = $lancamento['titulo'];
+$lancamentoJson = json_encode($lancamento);
 ?>
 
 <link rel="stylesheet" href="../css/style-detalhesLancamento.css">
@@ -137,7 +172,7 @@ $pageTitle = $lancamento['titulo'];
         
         <div class="album-content">
             <a href="dashboardArtDiscografia.php?lang=<?php echo $currentLang; ?>" class="back-link">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <line x1="19" y1="12" x2="5" y2="12"/>
                     <polyline points="12 19 5 12 12 5"/>
                 </svg>
@@ -162,15 +197,15 @@ $pageTitle = $lancamento['titulo'];
                     <p class="album-description"><?php echo htmlspecialchars($lancamento['descricao']); ?></p>
                     
                     <div class="album-actions">
-                        <button class="btn-primary" onclick="editAlbum(<?php echo $lancamento['id']; ?>)">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <button class="btn-primary" onclick="editAlbum()">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
                                 <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
                             </svg>
                             <span><?php echo translateText('Editar Álbum'); ?></span>
                         </button>
-                        <button class="btn-secondary" id="btnAddTrack">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <button class="btn-secondary" onclick="openAddMusicModal()">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <line x1="12" y1="5" x2="12" y2="19"/>
                                 <line x1="5" y1="12" x2="19" y2="12"/>
                             </svg>
@@ -193,25 +228,18 @@ $pageTitle = $lancamento['titulo'];
                 <div class="track-col-actions"></div>
             </div>
             
-            <div class="tracks-list">
+            <div class="tracks-list" id="tracksList">
                 <?php foreach ($lancamento['musicas'] as $musica): ?>
-                    <div class="track-item <?php echo $musica['destaque'] ? 'track-highlight' : ''; ?>" data-id="<?php echo $musica['id']; ?>">
+                    <div class="track-item" data-id="<?php echo $musica['id']; ?>">
                         <div class="track-col-number">
-                            <span class="track-number"><?php echo $musica['numero']; ?></span>
-                            <button class="track-play">
-                                <svg viewBox="0 0 24 24" fill="currentColor">
-                                    <polygon points="5 3 19 12 5 21 5 3"/>
-                                </svg>
-                            </button>
+                            <span><?php echo $musica['numero']; ?></span>
                         </div>
                         
                         <div class="track-col-title">
-                            <div class="track-info">
-                                <span class="track-title"><?php echo htmlspecialchars($musica['titulo']); ?></span>
-                                <?php if ($musica['destaque']): ?>
-                                    <span class="track-badge"><?php echo translateText('Destaque'); ?></span>
-                                <?php endif; ?>
-                            </div>
+                            <span class="track-title"><?php echo htmlspecialchars($musica['titulo']); ?></span>
+                            <?php if ($musica['destaque']): ?>
+                                <span class="track-badge"><?php echo translateText('Destaque'); ?></span>
+                            <?php endif; ?>
                         </div>
                         
                         <div class="track-col-duration">
@@ -224,13 +252,13 @@ $pageTitle = $lancamento['titulo'];
                         
                         <div class="track-col-actions">
                             <button class="track-action-btn" onclick="editTrack(<?php echo $musica['id']; ?>)" title="Editar">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
                                     <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
                                 </svg>
                             </button>
                             <button class="track-action-btn track-delete" onclick="deleteTrack(<?php echo $musica['id']; ?>)" title="Excluir">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <polyline points="3 6 5 6 21 6"/>
                                     <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
                                 </svg>
@@ -242,16 +270,471 @@ $pageTitle = $lancamento['titulo'];
         </section>
     </main>
 
+    <!-- Modals (reuso dos modais da página de discografia) -->
+    <style>
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(8px);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-overlay.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);
+            border: 1px solid rgba(213, 24, 238, 0.3);
+            border-radius: 16px;
+            padding: 2rem;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 8px 32px rgba(213, 24, 238, 0.3);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .modal-header h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin: 0;
+        }
+        
+        .modal-close {
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.6);
+            cursor: pointer;
+            font-size: 1.5rem;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: color 0.3s;
+        }
+        
+        .modal-close:hover {
+            color: white;
+        }
+        
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        
+        .form-group label {
+            display: block;
+            font-size: 0.875rem;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            background: rgba(30, 30, 30, 0.8);
+            border: 1px solid rgba(213, 24, 238, 0.4);
+            border-radius: 6px;
+            color: white;
+            font-size: 1rem;
+            font-family: inherit;
+        }
+        
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .checkbox-group input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+        
+        .modal-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        
+        .btn-modal-cancel,
+        .btn-modal-save {
+            flex: 1;
+            padding: 0.75rem;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-modal-cancel {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+        
+        .btn-modal-cancel:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        .btn-modal-save {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            border: none;
+            color: white;
+        }
+        
+        .btn-modal-save:hover {
+            transform: scale(1.02);
+            box-shadow: 0 6px 20px rgba(213, 24, 238, 0.5);
+        }
+        
+        .preview-image {
+            width: 100px;
+            height: 100px;
+            margin-top: 0.5rem;
+            border-radius: 4px;
+            object-fit: cover;
+        }
+    </style>
+
+    <!-- Modal: Editar Álbum -->
+    <div class="modal-overlay" id="albumModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><?php echo translateText('Editar Álbum'); ?></h2>
+                <button class="modal-close" onclick="closeAlbumModal()">✕</button>
+            </div>
+            <form id="albumForm" onsubmit="handleAlbumSubmit(event)">
+                <div class="form-group">
+                    <label for="albumTitulo"><?php echo translateText('Título'); ?> *</label>
+                    <input type="text" id="albumTitulo" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="albumAno"><?php echo translateText('Ano'); ?> *</label>
+                    <input type="number" id="albumAno" min="1900" max="2100" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="albumTipo"><?php echo translateText('Tipo'); ?> *</label>
+                    <select id="albumTipo" required>
+                        <option value="Álbum">Álbum</option>
+                        <option value="EP">EP</option>
+                        <option value="Single">Single</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="albumGravadora"><?php echo translateText('Gravadora'); ?></label>
+                    <input type="text" id="albumGravadora">
+                </div>
+                
+                <div class="form-group">
+                    <label for="albumDescricao"><?php echo translateText('Descrição'); ?></label>
+                    <textarea id="albumDescricao" rows="4"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="albumCapa"><?php echo translateText('URL da Capa'); ?></label>
+                    <input type="url" id="albumCapa" placeholder="https://...">
+                    <img id="capaPreview" class="preview-image" style="display: none;">
+                </div>
+                
+                <div class="modal-actions">
+                    <button type="button" class="btn-modal-cancel" onclick="closeAlbumModal()">
+                        <?php echo translateText('Cancelar'); ?>
+                    </button>
+                    <button type="submit" class="btn-modal-save">
+                        <?php echo translateText('Salvar Alterações'); ?>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Adicionar/Editar Música -->
+    <div class="modal-overlay" id="musicModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="musicModalTitle"><?php echo translateText('Adicionar Música'); ?></h2>
+                <button class="modal-close" onclick="closeMusicModal()">✕</button>
+            </div>
+            <form id="musicForm" onsubmit="handleMusicSubmit(event)">
+                <input type="hidden" id="musicId">
+                
+                <div class="form-group">
+                    <label for="musicTitulo"><?php echo translateText('Título da Música'); ?> *</label>
+                    <input type="text" id="musicTitulo" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="musicDuracao"><?php echo translateText('Duração (MM:SS)'); ?> *</label>
+                    <input type="text" id="musicDuracao" placeholder="3:45" pattern="\d{1,2}:\d{2}" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="musicStreams"><?php echo translateText('Streams'); ?></label>
+                    <input type="text" id="musicStreams" placeholder="0">
+                </div>
+                
+                <div class="form-group checkbox-group">
+                    <input type="checkbox" id="musicDestaque">
+                    <label for="musicDestaque"><?php echo translateText('Marcar como destaque'); ?></label>
+                </div>
+                
+                <div class="modal-actions">
+                    <button type="button" class="btn-modal-cancel" onclick="closeMusicModal()">
+                        <?php echo translateText('Cancelar'); ?>
+                    </button>
+                    <button type="submit" class="btn-modal-save">
+                        <?php echo translateText('Salvar'); ?>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <?php
     $modalConfig = [
         'returnUrl' => 'detalhesLancamento.php',
-        'preserveParams' => ['id', 'type']
+        'preserveParams' => ['id']
     ];
     require_once 'languageModal.php';
     require_once 'footerCadArtista.php';
     ?>
 
     <script>
+        // Dados do álbum
+        let album = <?php echo $lancamentoJson; ?>;
+        
+        // Inicializar
+        document.addEventListener('DOMContentLoaded', function() {
+            setupMobileMenu();
+            
+            // Preview de imagem
+            const capaInput = document.getElementById('albumCapa');
+            if (capaInput) {
+                capaInput.addEventListener('input', function() {
+                    const preview = document.getElementById('capaPreview');
+                    if (this.value) {
+                        preview.src = this.value;
+                        preview.style.display = 'block';
+                    } else {
+                        preview.style.display = 'none';
+                    }
+                });
+            }
+        });
+        
+        // Renderizar lista de músicas
+        function renderTracksList() {
+            const container = document.getElementById('tracksList');
+            if (!album.musicas || album.musicas.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: rgba(255,255,255,0.6); padding: 2rem;">Nenhuma música adicionada ainda.</p>';
+                return;
+            }
+            
+            container.innerHTML = album.musicas.map(musica => `
+                <div class="track-item" data-id="${musica.id}">
+                    <div class="track-col-number">
+                        <span>${musica.numero}</span>
+                    </div>
+                    
+                    <div class="track-col-title">
+                        <span class="track-title">${musica.titulo}</span>
+                        ${musica.destaque ? '<span class="track-badge"><?php echo translateText('Destaque'); ?></span>' : ''}
+                    </div>
+                    
+                    <div class="track-col-duration">
+                        <span>${musica.duracao}</span>
+                    </div>
+                    
+                    <div class="track-col-streams">
+                        <span>${musica.streams}</span>
+                    </div>
+                    
+                    <div class="track-col-actions">
+                        <button class="track-action-btn" onclick="editTrack(${musica.id})" title="Editar">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                            </svg>
+                        </button>
+                        <button class="track-action-btn track-delete" onclick="deleteTrack(${musica.id})" title="Excluir">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="3 6 5 6 21 6"/>
+                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        // Editar álbum
+        function editAlbum() {
+            document.getElementById('albumTitulo').value = album.titulo;
+            document.getElementById('albumAno').value = album.ano;
+            document.getElementById('albumTipo').value = album.tipo;
+            document.getElementById('albumGravadora').value = album.gravadora || '';
+            document.getElementById('albumDescricao').value = album.descricao || '';
+            document.getElementById('albumCapa').value = album.capa || '';
+            
+            if (album.capa) {
+                document.getElementById('capaPreview').src = album.capa;
+                document.getElementById('capaPreview').style.display = 'block';
+            }
+            
+            document.getElementById('albumModal').classList.add('active');
+        }
+        
+        function closeAlbumModal() {
+            document.getElementById('albumModal').classList.remove('active');
+        }
+        
+        function handleAlbumSubmit(event) {
+            event.preventDefault();
+            
+            album.titulo = document.getElementById('albumTitulo').value;
+            album.ano = parseInt(document.getElementById('albumAno').value);
+            album.tipo = document.getElementById('albumTipo').value;
+            album.gravadora = document.getElementById('albumGravadora').value;
+            album.descricao = document.getElementById('albumDescricao').value;
+            album.capa = document.getElementById('albumCapa').value;
+            
+            // Atualizar interface
+            document.querySelector('.album-title').textContent = album.titulo;
+            document.querySelector('.album-type').textContent = album.tipo;
+            document.querySelector('.album-description').textContent = album.descricao;
+            document.querySelectorAll('.album-cover img').forEach(img => img.src = album.capa);
+            document.querySelector('.album-background').style.backgroundImage = `url('${album.capa}')`;
+            
+            const metaYear = document.querySelector('.album-meta span:first-child');
+            if (metaYear) metaYear.textContent = album.ano;
+            
+            closeAlbumModal();
+            alert('<?php echo translateText('Álbum atualizado com sucesso!'); ?>');
+        }
+        
+        // Adicionar música
+        function openAddMusicModal() {
+            document.getElementById('musicModalTitle').textContent = '<?php echo translateText('Adicionar Música'); ?>';
+            document.getElementById('musicForm').reset();
+            document.getElementById('musicId').value = '';
+            document.getElementById('musicModal').classList.add('active');
+        }
+        
+        // Editar música
+        function editTrack(id) {
+            const music = album.musicas.find(m => m.id === id);
+            if (!music) return;
+            
+            document.getElementById('musicModalTitle').textContent = '<?php echo translateText('Editar Música'); ?>';
+            document.getElementById('musicId').value = music.id;
+            document.getElementById('musicTitulo').value = music.titulo;
+            document.getElementById('musicDuracao').value = music.duracao;
+            document.getElementById('musicStreams').value = music.streams || '0';
+            document.getElementById('musicDestaque').checked = music.destaque || false;
+            
+            document.getElementById('musicModal').classList.add('active');
+        }
+        
+        function closeMusicModal() {
+            document.getElementById('musicModal').classList.remove('active');
+        }
+        
+        function handleMusicSubmit(event) {
+            event.preventDefault();
+            
+            const musicId = document.getElementById('musicId').value;
+            
+            if (!album.musicas) album.musicas = [];
+            
+            const musicData = {
+                id: musicId ? parseInt(musicId) : Date.now(),
+                numero: album.musicas.length + 1,
+                titulo: document.getElementById('musicTitulo').value,
+                duracao: document.getElementById('musicDuracao').value,
+                streams: document.getElementById('musicStreams').value || '0',
+                destaque: document.getElementById('musicDestaque').checked
+            };
+            
+            if (musicId) {
+                // Editar
+                const index = album.musicas.findIndex(m => m.id === parseInt(musicId));
+                if (index !== -1) {
+                    musicData.numero = album.musicas[index].numero;
+                    album.musicas[index] = musicData;
+                }
+                alert('<?php echo translateText('Música atualizada com sucesso!'); ?>');
+            } else {
+                // Adicionar
+                album.musicas.push(musicData);
+                alert('<?php echo translateText('Música adicionada com sucesso!'); ?>');
+            }
+            
+            // Atualizar contagem
+            const trackCount = document.querySelector('.album-meta span:nth-child(3)');
+            if (trackCount) {
+                trackCount.textContent = `${album.musicas.length} <?php echo translateText('faixas'); ?>`;
+            }
+            
+            closeMusicModal();
+            renderTracksList();
+        }
+        
+        // Excluir música
+        function deleteTrack(id) {
+            if (!confirm('<?php echo translateText('Tem certeza que deseja excluir esta música?'); ?>')) {
+                return;
+            }
+            
+            album.musicas = album.musicas.filter(m => m.id !== id);
+            
+            // Renumerar músicas
+            album.musicas.forEach((music, index) => {
+                music.numero = index + 1;
+            });
+            
+            // Atualizar contagem
+            const trackCount = document.querySelector('.album-meta span:nth-child(3)');
+            if (trackCount) {
+                trackCount.textContent = `${album.musicas.length} <?php echo translateText('faixas'); ?>`;
+            }
+            
+            renderTracksList();
+            alert('<?php echo translateText('Música excluída com sucesso!'); ?>');
+        }
+        
+        // Language Modal
         function toggleLanguageModal() {
             const modal = document.getElementById('languageModal');
             if (modal) {
@@ -266,15 +749,26 @@ $pageTitle = $lancamento['titulo'];
             if (event.target === modal) {
                 toggleLanguageModal();
             }
+            
+            // Fechar modais ao clicar fora
+            if (event.target.classList.contains('modal-overlay')) {
+                closeAlbumModal();
+                closeMusicModal();
+            }
         }
 
         document.addEventListener('keydown', (e) => {
-            const modal = document.getElementById('languageModal');
-            if (e.key === 'Escape' && modal && modal.style.display === 'block') {
-                toggleLanguageModal();
+            if (e.key === 'Escape') {
+                const langModal = document.getElementById('languageModal');
+                if (langModal && langModal.style.display === 'block') {
+                    toggleLanguageModal();
+                }
+                closeAlbumModal();
+                closeMusicModal();
             }
         });
 
+        // Mobile Menu
         function toggleMobileMenu() {
             const navMobile = document.getElementById('navMobile');
             const overlay = document.getElementById('mobileMenuOverlay');
@@ -294,7 +788,7 @@ $pageTitle = $lancamento['titulo'];
             if (closeIcon) closeIcon.style.display = isActive ? 'none' : 'block';
         }
 
-        document.addEventListener('DOMContentLoaded', function() {
+        function setupMobileMenu() {
             const mobileMenuToggle = document.getElementById('mobileMenuToggle');
             const mobileMenuOverlay = document.getElementById('mobileMenuOverlay');
             
@@ -321,25 +815,7 @@ $pageTitle = $lancamento['titulo'];
                     }
                 }, 250);
             });
-        });
-
-        function editAlbum(id) {
-            window.location.href = `editarLancamento.php?id=${id}&lang=<?php echo $currentLang; ?>`;
         }
-
-        function editTrack(id) {
-            window.location.href = `editarMusica.php?id=${id}&lang=<?php echo $currentLang; ?>`;
-        }
-
-        function deleteTrack(id) {
-            if (confirm('<?php echo translateText('Tem certeza que deseja excluir esta música?'); ?>')) {
-                console.log('Excluir música:', id);
-            }
-        }
-
-        document.getElementById('btnAddTrack').addEventListener('click', () => {
-            window.location.href = 'formCadMusica.php?album=<?php echo $lancamento['id']; ?>&lang=<?php echo $currentLang; ?>';
-        });
     </script>
 </body>
 </html>
