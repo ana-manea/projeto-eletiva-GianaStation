@@ -1,18 +1,24 @@
+<?php
+    // Guardar a URL anterior
+    $paginaAnterior = $_SERVER['HTTP_REFERER'] ?? 'pagInicial.php';
+?>
+
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Giana Station</title>
+
     
     <!-- CSS Comuns -->
     <link rel="stylesheet" href="../css/style-cabecalho.css">
-    <link rel="stylesheet" href="../css/style-menusSuspenso-Lateral.css">
     <link rel="stylesheet" href="../css/style-cardsMusica.css">
+    <link rel="stylesheet" href="../css/style-menusSuspenso-Lateral.css">
     <link rel="stylesheet" href="../css/style-rodape.css">
     
     <!-- CSS da Página -->
-    <link rel="stylesheet" href="../css/style-pagInicial.css">
+    <link rel="stylesheet" href="../css/style-formMusica.css">
 
 
     <script>
@@ -34,14 +40,13 @@
         <nav class="top-menu">
             <img src="../img/GA-Station.png"> <!--Ícone GianaStation-->
             <section>
-                
+
                 <!-- Home ícone sem preencher -->
                 <a href="pagInicial.php">
                     <button id="home">
-                        <svg data-encore-id="icon" role="img" aria-hidden="true" viewBox="0 0 24 24">
-                            <path d="M13.5 1.515a3 3 0 0 0-3 0L3 5.845a2 2 0 0 0-1 1.732V21a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-6h4v6a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V7.577a2 2 0 0 0-1-1.732z"></path>
+                        <svg viewBox="0 0 24 24"><path d="M12.5 3.247a1 1 0 0 0-1 0L4 7.577V20h4.5v-6a1 1 0 0 1 1-1h5a1 1 0 0 1 1 1v6H20V7.577zm-2-1.732a3 3 0 0 1 3 0l7.5 4.33a2 2 0 0 1 1 1.732V21a1 1 0 0 1-1 1h-6.5a1 1 0 0 1-1-1v-6h-3v6a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V7.577a2 2 0 0 1 1-1.732z"></path>
                         </svg>
-                    </button>
+                    </button> 
                 </a>
 
                 <form>
@@ -76,79 +81,52 @@
         </nav>
     </header>
 
-    <section class="conteudo">
-        <aside class="lateral-menu"> <!-- Menu lateral-->
-            <section class="lateral-menu-top">
-                <h3>Sua Biblioteca</h3>
-                <a href="cadPlaylist.php">
-                    <button id="criar-playlist">
-                        Criar
-                    </button>
-                </a>
-            </section>
+    <section class="conteudo playlist">
+        <section class="container playlist">
+        <div class="form-wrapper">
+            <a role="button" href="<?= $paginaAnterior ?>" class="back-link">
+                <svg class="icon-small" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="19" y1="12" x2="5" y2="12"/>
+                    <polyline points="12 19 5 12 12 5"/>
+                </svg>
+                <span data-translate>Voltar</span>
+            </a>
 
-            <section class="lateral-menu-content">
-                <img>
-                <h3>Playlist #1</h3>
-            </section>
-        </aside>
+            <h1 class="form-title" data-translate>Criar Playlist</h1>
+            <p class="form-subtitle" data-translate>Crie uma playlist que combine com seu humor</p>
 
-        <section class="principal"> <!-- Principal -->
-        <!--    <section class="filter"> Filtro
-                <button>Tudo</button>
-                <button>Minhas Músicas</button>
-                <button>Recomendadas</button>
-            </section>-->
+            <form class="form" id="formMusica">
+                <div class="form-group">
+                    <label for="Nome_playlist" class="form-label" data-translate>Título da Playlist *</label>
+                    <input
+                        type="text"
+                        id="Nome_playlist"
+                        name="Nome_playlist"
+                        placeholder="Ex: Aqui na ZL só toca isso"
+                        required
+                        class="form-input"
+                        data-translate
+                    />
+                </div>
 
-            <section class="cards">
-                <article class="albuns-titulo">
-                    <!--Título-->
-                    <h1>Músicas mais ouvidas</h1>
-                    <button>Mostrar tudo</button>
-                </article>
+                <div class="form-group">
+                    <label for="Capa_play_path" class="form-label" data-translate>Foto da playlist</label>
+                    <input
+                        type="file"
+                        id="Capa_play_path"
+                        name="Capa_play_path"
+                        accept="image/*"
+                        class="form-file"
+                    />
+                    <p class="form-help" data-translate>Formato JPG ou PNG, mínimo 3000x3000px</p>
+                </div>
 
-                <section class="albuns">
-                    <!--Álbuns-->
-                    <a href="verMusica.php">
-                        <section class="card">
-                            <article class="card-img">
-                                <img src="../img/capas-albums/capa-alina-pluto.jpg">
-                            </article>
-
-                            <article class="nome-categoria">
-                                <p class="nome">Pluto</p>
-                                <a href="visualizarArtista.php"><p class="categoria">Alina Simpson</p></a>
-                            </article>
-                        </section>
-                    </a>
-                </section>
-            </section>
-
-            <section class="cards" >
-                <article class="albuns-titulo">
-                    <!--Título-->
-                    <h1>Recomendado</h1>
-                    <button>Mostrar tudo</button>
-                </article>
-
-                <section class="albuns" >
-                    <!--Álbuns-->
-                    <a href="verMusica.php">
-                        <section class="card">
-                            <article class="card-img">
-                                <img src="../img/capas-albums/capa-berlinist-neva.jpg">
-                            </article>
-
-                            <article class="nome-categoria">
-                                <p class="nome">In courage abide</p>
-                                <p class="categoria">Berlinist</p>
-                            </article>
-                        </section>
-                    </a>
-                </section>
-            </section>
-        </section>
-
+                <button type="submit" class="btn-submit" data-translate>
+                    Criar Playlist
+                </button>
+            </form>
+        </div>
+    </section>
     </section>
 
     <footer class="rodape">
@@ -223,6 +201,5 @@
             </article>
         </section>
     </footer>
-
 </body>
 </html>

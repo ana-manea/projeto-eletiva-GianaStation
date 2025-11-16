@@ -67,33 +67,57 @@
     align-items: center;
 }
 
+.lateral-menu .lateral-menu-top button {
+    color: #fff;
+    background-color: #292929;
+}
+
+.lateral-menu .lateral-menu-top button:hover {
+    background-color: #494949;
+    transition: background-color .2s;
+}
+
 .lateral-menu section h3 {
     font-size: 1em;
 }
 
 .lateral-menu section.lateral-menu-content {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    align-items: center;
     gap: 15px;
 
     border-radius: var(--raio-borda);
     padding: 15px;
+    background-color: #121212;
+    transition: background-color .2s;
+}
+
+.lateral-menu section.lateral-menu-content img {
+    width: 30px;
+    height: 30px;
+    border-radius: 4px;
+}
+
+.lateral-menu section.lateral-menu-content:hover {
+    background-color: #1f1f1f;
+    cursor: pointer;
+}
+
+.lateral-menu section.lateral-menu-content.sem-playlist {
+    flex-direction: column;
+    align-items: flex-start;
     background-color: #1f1f1f;
 }
 
-.lateral-menu section.lateral-menu-content p {
+.lateral-menu section.lateral-menu-content.sem-playlist p {
     font-size: .8em;
 }
 
-.lateral-menu .lateral-menu-top button {
-    width: 20%;
-    color: #fff;
-    background-color: #292929;
-}
-
-.lateral-menu .lateral-menu-content button {
+.lateral-menu .lateral-menu-content.sem-playlist button {
     width: 10vw;
     color: #000;
     background-color: #fff;
 }
+
 /* MENU LATERAL FIM*/

@@ -12,9 +12,9 @@
     <link rel="stylesheet" href="../css/style-rodape.css">
     
     <!-- CSS da Página -->
-    <link rel="stylesheet" href="../css/style-pagInicial.css">
+    <link rel="stylesheet" href="../css/style-visualizarMusica.css">
 
-
+    
     <script>
         let abertoPerfil = false;
 
@@ -34,14 +34,13 @@
         <nav class="top-menu">
             <img src="../img/GA-Station.png"> <!--Ícone GianaStation-->
             <section>
-                
+
                 <!-- Home ícone sem preencher -->
                 <a href="pagInicial.php">
                     <button id="home">
-                        <svg data-encore-id="icon" role="img" aria-hidden="true" viewBox="0 0 24 24">
-                            <path d="M13.5 1.515a3 3 0 0 0-3 0L3 5.845a2 2 0 0 0-1 1.732V21a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-6h4v6a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V7.577a2 2 0 0 0-1-1.732z"></path>
+                        <svg viewBox="0 0 24 24"><path d="M12.5 3.247a1 1 0 0 0-1 0L4 7.577V20h4.5v-6a1 1 0 0 1 1-1h5a1 1 0 0 1 1 1v6H20V7.577zm-2-1.732a3 3 0 0 1 3 0l7.5 4.33a2 2 0 0 1 1 1.732V21a1 1 0 0 1-1 1h-6.5a1 1 0 0 1-1-1v-6h-3v6a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V7.577a2 2 0 0 1 1-1.732z"></path>
                         </svg>
-                    </button>
+                    </button> 
                 </a>
 
                 <form>
@@ -87,24 +86,88 @@
                 </a>
             </section>
 
-            <section class="lateral-menu-content">
-                <img>
-                <h3>Playlist #1</h3>
+            <section class="lateral-menu-content sem-playlist">
+                <h3>Crie sua primeira playlist</h3>
+                <p>É fácil, vamos te ajudar.</p>
+                <button>Criar Playlist</button>
             </section>
         </aside>
 
         <section class="principal"> <!-- Principal -->
-        <!--    <section class="filter"> Filtro
-                <button>Tudo</button>
-                <button>Minhas Músicas</button>
-                <button>Recomendadas</button>
-            </section>-->
+            <section class="infos"> <!-- Infos -->
+                <section class="espacoFoto">
+                    <article>
+                        <img src="../img/capas-albums/capa-alina-pluto.jpg" id="foto-perfil">
+                    </article>
+                </section>
 
-            <section class="cards">
+
+                <section class="dados">
+                    <p>Single</p>
+                    <h1>Pluto</h1>
+                    <section class="alinhados">
+                        <article class="artista" id="artista">
+                            <img src="../img/foto-perfil/alina-foto.jpg">
+                            <a><p id="nome-artista">Alina Simpson</p></a>
+                        </article>
+                        <div></div>
+                        <p>Piano</p>
+                    </section>
+                </section>
+            </section>
+
+            <section class="tabela-secao">
+                <table class="lista-musicas">
+                    <thead>
+                        <tr>
+                            <th class="num-lista">#</th>
+                            <th class="musica-lista">Título</th>
+                            <th class="album-lista">Álbum</th>
+                            <th class="artista-lista">Artista</th>
+                            <th class="duracao-lista">Duração</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="num-lista">
+                                1
+                                <svg viewBox="0 0 24 24">
+                                    <path d="m7.05 3.606 13.49 7.788a.7.7 0 0 1 0 1.212L7.05 20.394A.7.7 0 0 1 6 19.788V4.212a.7.7 0 0 1 1.05-.606"></path>
+                                </svg>
+                            </td>
+                            <td class="musica-lista">Pluto</td>
+                            <td class="album-lista">Pluto</td>
+                            <td class="artista-lista"><a>Alina Simpson</a></td>
+                            <td class="add-musica-lista" role="button">
+                                <svg viewBox="0 0 16 16">
+                                    <path d="M8 1.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8"></path><path d="M11.75 8a.75.75 0 0 1-.75.75H8.75V11a.75.75 0 0 1-1.5 0V8.75H5a.75.75 0 0 1 0-1.5h2.25V5a.75.75 0 0 1 1.5 0v2.25H11a.75.75 0 0 1 .75.75"></path>
+                                </svg>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="num-lista">
+                                2
+                                <svg viewBox="0 0 24 24">
+                                    <path d="m7.05 3.606 13.49 7.788a.7.7 0 0 1 0 1.212L7.05 20.394A.7.7 0 0 1 6 19.788V4.212a.7.7 0 0 1 1.05-.606"></path>
+                                </svg>
+                            </td>
+                            <td class="musica-lista">Pluto</td>
+                            <td class="album-lista">Pluto</td>
+                            <td class="artista-lista"><a>Alina Simpson</a></td>
+                            <td class="musica-adicionada-lista" role="button">
+                                <svg viewBox="0 0 16 16">
+                                    <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m11.748-1.97a.75.75 0 0 0-1.06-1.06l-4.47 4.47-1.405-1.406a.75.75 0 1 0-1.061 1.06l2.466 2.467 5.53-5.53z"></path>
+                                </svg>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <section class="cards"> <!--2o Carrossel-->
                 <article class="albuns-titulo">
                     <!--Título-->
-                    <h1>Músicas mais ouvidas</h1>
-                    <button>Mostrar tudo</button>
+                    <h1>Recomendado</h1>
                 </article>
 
                 <section class="albuns">
@@ -112,33 +175,9 @@
                     <a href="verMusica.php">
                         <section class="card">
                             <article class="card-img">
-                                <img src="../img/capas-albums/capa-alina-pluto.jpg">
-                            </article>
-
-                            <article class="nome-categoria">
-                                <p class="nome">Pluto</p>
-                                <a href="visualizarArtista.php"><p class="categoria">Alina Simpson</p></a>
-                            </article>
-                        </section>
-                    </a>
-                </section>
-            </section>
-
-            <section class="cards" >
-                <article class="albuns-titulo">
-                    <!--Título-->
-                    <h1>Recomendado</h1>
-                    <button>Mostrar tudo</button>
-                </article>
-
-                <section class="albuns" >
-                    <!--Álbuns-->
-                    <a href="verMusica.php">
-                        <section class="card">
-                            <article class="card-img">
                                 <img src="../img/capas-albums/capa-berlinist-neva.jpg">
                             </article>
-
+    
                             <article class="nome-categoria">
                                 <p class="nome">In courage abide</p>
                                 <p class="categoria">Berlinist</p>
@@ -147,6 +186,7 @@
                     </a>
                 </section>
             </section>
+            
         </section>
 
     </section>

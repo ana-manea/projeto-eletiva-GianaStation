@@ -8,3 +8,16 @@ body {
 .form-textarea {
     min-height: 120px;
 }
+
+/* CADASTRAR PLAYLIST */
+.conteudo.playlist {
+    padding: 25px;
+    background-color: #000;
+} 
+
+.container.playlist {
+    min-height: 85vh;
+    border-radius: 8px;
+    padding: 1rem;
+    background-color: #121212;
+} 
