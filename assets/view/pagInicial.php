@@ -1,17 +1,38 @@
+<?php
+require_once 'config.php';
+
+// Dados do usuário (exemplo - substituir por dados do banco)
+$usuario = [
+    'id' => 1,
+    'nome' => 'Usuário Giana',
+    'foto_perfil' => '../img/sem-foto.png',
+    'playlists_publicas' => 1,
+    'seguidores' => 1,
+    'seguindo' => 56,
+    'artistas_mais_tocados' => [
+        ['id' => 1, 'nome' => 'AnaVitória', 'foto' => 'https://image-cdn-ak.spotifycdn.com/image/ab6761860000101685ec2d2af58d2b838a744ac4', 'tipo' => 'Artista'],
+        ['id' => 2, 'nome' => 'Marília Mendonça', 'foto' => '../img/sem-foto.png', 'tipo' => 'Artista'],
+        ['id' => 3, 'nome' => 'Jorge & Mateus', 'foto' => '../img/sem-foto.png', 'tipo' => 'Artista'],
+        ['id' => 4, 'nome' => 'My Chemical Romance', 'foto' => '../img/sem-foto.png', 'tipo' => 'Artista']
+    ],
+    'musicas' => [
+        ['id' => 5, 'artista' => 'AnaVitória', 'foto_artista' => 'https://image-cdn-ak.spotifycdn.com/image/ab6761860000101685ec2d2af58d2b838a744ac4', 'titulo' => 'nosferatu', 'album' => 'claraboia', 'tipo' => 'single', 'genero' => 'mpb', 'ano' => 2025, 'duracao' => '2:25', 'audio_path' => 'https://open.spotify.com/track/72lqj4bouGaZr3c6tRNp5a?si=gNlC-cYZR1WSBvbtlIrbig&context=spotify%3Apl', 'capa_path' => 'https://i.scdn.co/image/ab67616d00001e02060bf5d261b6f21511b8c789'],
+        ['id' => 4, 'artista' => 'Taylor Swift', 'foto_artista'  => '../img/sem-foto.png' , 'titulo' => 'The Fate of Ophelia', 'album' => 'The Life of a Showgirl', 'tipo' => 'single', 'genero' => 'pop', 'ano' => 2025, 'duracao' => '3:46', 'audio_path' => 'https://open.spotify.com/track/53iuhJlwXhSER5J2IYYv1W?si=cecBdpCiQZWJ2RiWLRdBDQ&context=spotify%3Apl', 'capa_path' => 'https://i.scdn.co/image/ab67616d00001e02d7812467811a7da6e6a44902']
+    ]
+];
+
+$pageTitle = $usuario['nome'];
+?>
+
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Giana Station</title>
-    
-    <!-- CSS Comuns -->
-    <link rel="stylesheet" href="../css/style-cabecalho.css">
-    <link rel="stylesheet" href="../css/style-menusSuspenso-Lateral.css">
-    <link rel="stylesheet" href="../css/style-cardsMusica.css">
-    <link rel="stylesheet" href="../css/style-rodape.css">
-    
+    <link rel="icon" type="image/png" sizes="96x96" href="../img/GA-Station.png">
+    <title><?php echo $pageTitle; ?> | Giana Station</title>
     <!-- CSS da Página -->
+    <link rel="stylesheet" href="../css/style-padrao.css">
     <link rel="stylesheet" href="../css/style-pagInicial.css">
 
 
@@ -30,46 +51,55 @@
     </script>
 </head>
 <body>
-    <header>
+    <!-- Cabeçalho -->
+    <header class="header">
         <nav class="top-menu">
-            <img src="../img/GA-Station.png"> <!--Ícone GianaStation-->
+            <img src="../img/GA-Station.png" alt="Giana Station">
+            
             <section>
-                
-                <!-- Home ícone sem preencher -->
-                <a href="pagInicial.php">
+                <a href="pagInicial.php?lang=<?php echo $currentLang; ?>">
                     <button id="home">
                         <svg data-encore-id="icon" role="img" aria-hidden="true" viewBox="0 0 24 24">
                             <path d="M13.5 1.515a3 3 0 0 0-3 0L3 5.845a2 2 0 0 0-1 1.732V21a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-6h4v6a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V7.577a2 2 0 0 0-1-1.732z"></path>
                         </svg>
                     </button>
                 </a>
-
-                <form>
+                
+                <form action="#" method="GET">
+                    <input type="hidden" name="lang" value="<?php echo $currentLang; ?>">
                     <label for="pesquisa-inicio">
                         <svg xmlns="http://www.w3.org/2000/svg" class="bi bi-search" viewBox="0 0 16 16">
-                            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
-                        </svg> <!--Ícone Pesquisar-->
+                            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"></path>
+                        </svg>
                     </label>
-                    <input type="text" placeholder="O que você deseja ouvir?" name="pesquisa" id="pesquisa-inicio">
-                    <button><img></button> <!--Ícone Navegar-->
+                    <input type="text" placeholder="<?php echo translateText('O que você deseja ouvir?'); ?>" name="q" id="pesquisa-inicio">
                 </form>
             </section>
 
             <section>
-                <button> <!--Notificações-->
+                <button class="btn-notification">
                     <svg xmlns="http://www.w3.org/2000/svg" class="bi bi-bell" viewBox="0 0 16 16">
-                        <path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2M8 1.918l-.797.161A4 4 0 0 0 4 6c0 .628-.134 2.197-.459 3.742-.16.767-.376 1.566-.663 2.258h10.244c-.287-.692-.502-1.49-.663-2.258C12.134 8.197 12 6.628 12 6a4 4 0 0 0-3.203-3.92zM14.22 12c.223.447.481.801.78 1H1c.299-.199.557-.553.78-1C2.68 10.2 3 6.88 3 6c0-2.42 1.72-4.44 4.005-4.901a1 1 0 1 1 1.99 0A5 5 0 0 1 13 6c0 .88.32 4.2 1.22 6"/>
+                        <path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2M8 1.918l-.797.161A4 4 0 0 0 4 6c0 .628-.134 2.197-.459 3.742-.16.767-.376 1.566-.663 2.258h10.244c-.287-.692-.502-1.49-.663-2.258C12.134 8.197 12 6.628 12 6a4 4 0 0 0-3.203-3.92zM14.22 12c.223.447.481.801.78 1H1c.299-.199.557-.553.78-1C2.68 10.2 3 6.88 3 6c0-2.42 1.72-4.44 4.005-4.901a1 1 0 1 1 1.99 0A5 5 0 0 1 13 6c0 .88.32 4.2 1.22 6"></path>
                     </svg>
                 </button>
-    
+                
+                <?php
+                $buttonConfig = [
+                    'position' => 'relative',
+                    'showText' => false,
+                    'style' => ''
+                ];
+                require_once 'languageBtn.php';
+                ?>
+                
                 <section class="perfil-btn">
                     <button id="perfil" onclick="interagirMenuPerfil()">
-                        <img>
-                    </button> <!--Perfil/Conta -->
+                        <img src="<?php echo htmlspecialchars($usuario['foto_perfil']); ?>" alt="Perfil">
+                    </button>
                     <ul id="perfil-menu-suspenso">
-                        <a href="perfilUsuario.php"><li>Perfil</li></a>
+                        <a href="perfilUsuario.php?lang=<?php echo $currentLang; ?>"><li><?php echo translateText('Perfil'); ?></li></a>
                         <div></div>
-                        <a href="login.php"><li id="sair">Sair</li></a>
+                        <a href="index.php?lang=<?php echo $currentLang; ?>"><li id="sair"><?php echo translateText('Sair'); ?></li></a>
                     </ul>
                 </section>
             </section>
@@ -77,19 +107,24 @@
     </header>
 
     <section class="conteudo">
-        <aside class="lateral-menu"> <!-- Menu lateral-->
+        <!-- Menu Lateral -->
+        <aside class="lateral-menu">
             <section class="lateral-menu-top">
-                <h3>Sua Biblioteca</h3>
-                <a href="cadPlaylist.php">
+                <h3><?php echo translateText('Sua Biblioteca'); ?></h3>
+                <a href="cadPlaylist.php?lang=<?php echo $currentLang; ?>">
                     <button id="criar-playlist">
-                        Criar
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" width="16" height="16">
+                            <path d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2"/>
+                        </svg>
+                        <?php echo translateText('Criar'); ?>
                     </button>
                 </a>
             </section>
 
-            <section class="lateral-menu-content">
-                <img>
-                <h3>Playlist #1</h3>
+            <section class="lateral-menu-content sem-playlist">
+                <h3><?php echo translateText('Crie sua primeira playlist'); ?></h3>
+                <p><?php echo translateText('É fácil, vamos te ajudar.'); ?></p>
+                <button><?php echo translateText('Criar Playlist'); ?></button>
             </section>
         </aside>
 
@@ -100,51 +135,61 @@
                 <button>Recomendadas</button>
             </section>-->
 
+            <!-- Artistas Mais Tocados -->
             <section class="cards">
                 <article class="albuns-titulo">
-                    <!--Título-->
-                    <h1>Músicas mais ouvidas</h1>
-                    <button>Mostrar tudo</button>
+                    <article>
+                        <h1><?php echo translateText('Artistas mais tocados este mês'); ?></h1>
+                        <p><?php echo translateText('Visíveis apenas para você'); ?></p>
+                    </article>
+                    <button><?php echo translateText('Mostrar tudo'); ?></button>
                 </article>
 
                 <section class="albuns">
-                    <!--Álbuns-->
-                    <a href="verMusica.php">
-                        <section class="card">
+                    <?php foreach ($usuario['artistas_mais_tocados'] as $artista): ?>
+                        <section class="card" onclick="window.location.href='visualizarArtista.php?id=<?php echo $artista['id']; ?>&lang=<?php echo $currentLang; ?>'">
                             <article class="card-img">
-                                <img src="../img/capas-albums/capa-alina-pluto.jpg">
+                                <img src="<?php echo htmlspecialchars($artista['foto']); ?>" alt="<?php echo htmlspecialchars($artista['nome']); ?>">
+                                <button class="card-play-btn" onclick="event.stopPropagation();">
+                                    <svg viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="m7.05 3.606 13.49 7.788a.7.7 0 0 1 0 1.212L7.05 20.394A.7.7 0 0 1 6 19.788V4.212a.7.7 0 0 1 1.05-.606"/>
+                                    </svg>
+                                </button>
                             </article>
-
                             <article class="nome-categoria">
-                                <p class="nome">Pluto</p>
-                                <a href="visualizarArtista.php"><p class="categoria">Alina Simpson</p></a>
+                                <p class="nome"><?php echo htmlspecialchars($artista['nome']); ?></p>
+                                <p class="categoria"><?php echo translateText($artista['tipo']); ?></p>
                             </article>
                         </section>
-                    </a>
+                    <?php endforeach; ?>
                 </section>
             </section>
 
-            <section class="cards" >
+            <section class="cards">
                 <article class="albuns-titulo">
-                    <!--Título-->
-                    <h1>Recomendado</h1>
-                    <button>Mostrar tudo</button>
+                    <article>
+                        <h1><?php echo translateText('Artistas mais tocados este mês'); ?></h1>
+                    </article>
+                    <button><?php echo translateText('Mostrar tudo'); ?></button>
                 </article>
 
-                <section class="albuns" >
-                    <!--Álbuns-->
-                    <a href="verMusica.php">
-                        <section class="card">
-                            <article class="card-img">
-                                <img src="../img/capas-albums/capa-berlinist-neva.jpg">
+                <section class="albuns">
+                    <?php foreach ($usuario['musicas'] as $musica): ?>
+                        <section class="card" onclick="window.location.href='verMusica.php?id=<? $musica['id']; ?>'">
+                            <article class="card-img musica">
+                                <img src="<?php echo htmlspecialchars($musica['capa_path']); ?>" alt="<?php echo htmlspecialchars($musica['titulo']); ?>">
+                                <button class="card-play-btn" onclick="event.stopPropagation();">
+                                    <svg viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="m7.05 3.606 13.49 7.788a.7.7 0 0 1 0 1.212L7.05 20.394A.7.7 0 0 1 6 19.788V4.212a.7.7 0 0 1 1.05-.606"/>
+                                    </svg>
+                                </button>
                             </article>
-
                             <article class="nome-categoria">
-                                <p class="nome">In courage abide</p>
-                                <p class="categoria">Berlinist</p>
+                                <p class="nome"><?php echo htmlspecialchars($musica['titulo']); ?></p>
+                                <p class="categoria"><?php echo translateText($musica['artista']); ?></p>
                             </article>
                         </section>
-                    </a>
+                    <?php endforeach; ?>
                 </section>
             </section>
         </section>
