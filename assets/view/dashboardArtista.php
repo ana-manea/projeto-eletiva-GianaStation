@@ -4,6 +4,41 @@ $pageTitle = 'Dashboard';
 ?>
 
 <link rel="stylesheet" href="../css/style-dashboardArtista.css">
+<style>
+/* Ação Rápida */
+.quick-action {
+    margin-bottom: 32px;
+}
+
+.btn-add-release {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 20px;
+    background: linear-gradient(135deg, rgba(213, 24, 238, 0.1) 0%, rgba(213, 24, 238, 0.05) 100%);
+    border: 2px dashed rgba(213, 24, 238, 0.4);
+    border-radius: 12px;
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-add-release:hover {
+    background: linear-gradient(135deg, rgba(213, 24, 238, 0.2) 0%, rgba(213, 24, 238, 0.1) 100%);
+    border-color: var(--primary);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(213, 24, 238, 0.3);
+}
+
+.btn-add-release svg {
+    width: 24px;
+    height: 24px;
+}
+</style>
 
 <!DOCTYPE html>
 <html lang="<?php echo $langCode; ?>">
@@ -23,13 +58,13 @@ $pageTitle = 'Dashboard';
                         <img src="https://image-cdn-ak.spotifycdn.com/image/ab6761860000101685ec2d2af58d2b838a744ac4" alt="AnaVitoria">
                     </section>
                     <section class="artist-info">
-                        <h2><?php echo translate('artist_name'); ?></h2>
+                        <h2>AnaVitória</h2>
                         <p><?php echo translateText('Artista Verificado'); ?></p>
                     </section>
                 </a>
                 <section class="nav-links">
                     <a href="dashboardArtista.php?lang=<?php echo $currentLang; ?>" class="nav-link active"><?php echo translate('home'); ?></a>
-                    <a href="dashboardArtMusica.php?lang=<?php echo $currentLang; ?>" class="nav-link"><?php echo translateText('Música'); ?></a>
+                    <a href="dashboardArtDiscografia.php?lang=<?php echo $currentLang; ?>" class="nav-link"><?php echo translateText('Discografia'); ?></a>
                     <a href="dashboardArtAudiencia.php?lang=<?php echo $currentLang; ?>" class="nav-link"><?php echo translateText('Audiência'); ?></a>
                     <a href="dashboardArtPerfil.php?lang=<?php echo $currentLang; ?>" class="nav-link"><?php echo translateText('Perfil'); ?></a>
                 </section>
@@ -70,7 +105,7 @@ $pageTitle = 'Dashboard';
 
         <nav class="nav-mobile" id="navMobile">
             <a href="dashboardArtista.php?lang=<?php echo $currentLang; ?>" class="nav-link"><?php echo translate('home'); ?></a>
-            <a href="dashboardArtMusica.php?lang=<?php echo $currentLang; ?>" class="nav-link"><?php echo translateText('Música'); ?></a>
+            <a href="dashboardArtDiscografia.php?lang=<?php echo $currentLang; ?>" class="nav-link"><?php echo translateText('Discografia'); ?></a>
             <a href="dashboardArtAudiencia.php?lang=<?php echo $currentLang; ?>" class="nav-link"><?php echo translateText('Audiência'); ?></a>
             <a href="dashboardArtPerfil.php?lang=<?php echo $currentLang; ?>" class="nav-link"><?php echo translateText('Perfil'); ?></a>
             
@@ -116,6 +151,17 @@ $pageTitle = 'Dashboard';
     </section>
 
     <main class="main-content">
+        <!-- Ação Rápida -->
+        <section class="quick-action">
+            <button class="btn-add-release" onclick="window.location.href='formCadMusica.php?lang=<?php echo $currentLang; ?>'">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="12" y1="5" x2="12" y2="19"/>
+                    <line x1="5" y1="12" x2="19" y2="12"/>
+                </svg>
+                <span><?php echo translateText('Adicionar Novo Lançamento'); ?></span>
+            </button>
+        </section>
+
         <section class="stats-grid">
             <section class="stat-card stat-primary">
                 <section class="stat-header">
@@ -195,9 +241,45 @@ $pageTitle = 'Dashboard';
                 <section class="section">
                     <section class="section-header">
                         <h2><?php echo translateText('Lançamentos Recentes'); ?></h2>
-                        <a href="dashboardArtMusica.php?lang=<?php echo $currentLang; ?>" class="link-primary"><?php echo translateText('Ver todos'); ?></a>
+                        <a href="dashboardArtDiscografia.php?lang=<?php echo $currentLang; ?>" class="link-primary"><?php echo translateText('Ver todos'); ?></a>
                     </section>
-                    <section class="releases-grid" id="recentReleases"></section>
+                    <section class="releases-grid">
+                        <article class="release-card" onclick="window.location.href='detalhesLancamento.php?id=3&type=album&lang=<?php echo $currentLang; ?>'">
+                            <div class="release-cover">
+                                <img src="https://i.scdn.co/image/ab67616d0000b273190aaad879fd91cebab37efd" alt="Esquinas">
+                            </div>
+                            <div class="release-info">
+                                <span class="release-badge">Álbum</span>
+                                <h3>Esquinas</h3>
+                                <p class="release-year">2024</p>
+                                <p class="release-streams">1.8M streams</p>
+                            </div>
+                        </article>
+
+                        <article class="release-card" onclick="window.location.href='detalhesLancamento.php?id=2&type=album&lang=<?php echo $currentLang; ?>'">
+                            <div class="release-cover">
+                                <img src="https://i.scdn.co/image/ab67616d0000b2735d7cf1a8508aa994d4bde5c8" alt="O Tempo É Agora">
+                            </div>
+                            <div class="release-info">
+                                <span class="release-badge">Álbum</span>
+                                <h3>O Tempo É Agora</h3>
+                                <p class="release-year">2018</p>
+                                <p class="release-streams">3.1M streams</p>
+                            </div>
+                        </article>
+
+                        <article class="release-card" onclick="window.location.href='detalhesLancamento.php?id=1&type=album&lang=<?php echo $currentLang; ?>'">
+                            <div class="release-cover">
+                                <img src="https://i.scdn.co/image/ab67616d0000b2732d9442517e36cd23c60efe50" alt="Trevo">
+                            </div>
+                            <div class="release-info">
+                                <span class="release-badge">Álbum</span>
+                                <h3>Trevo</h3>
+                                <p class="release-year">2017</p>
+                                <p class="release-streams">2.5M streams</p>
+                            </div>
+                        </article>
+                    </section>
                 </section>
 
                 <section class="section">
@@ -244,7 +326,29 @@ $pageTitle = 'Dashboard';
                             <h2><?php echo translateText('Top Músicas'); ?></h2>
                             <a href="dashboardArtAudiencia.php?lang=<?php echo $currentLang; ?>" class="link-primary"><?php echo translateText('Ver detalhes'); ?></a>
                         </section>
-                        <section class="top-songs-list" id="topSongsList"></section>
+                        <section class="top-songs-list">
+                            <section class="song-item">
+                                <span class="song-position">1</span>
+                                <section class="song-info">
+                                    <p class="song-title">Trevo (Tu)</p>
+                                    <p class="song-streams">450K streams</p>
+                                </section>
+                            </section>
+                            <section class="song-item">
+                                <span class="song-position">2</span>
+                                <section class="song-info">
+                                    <p class="song-title">Singular</p>
+                                    <p class="song-streams">320K streams</p>
+                                </section>
+                            </section>
+                            <section class="song-item">
+                                <span class="song-position">3</span>
+                                <section class="song-info">
+                                    <p class="song-title">Esquinas</p>
+                                    <p class="song-streams">280K streams</p>
+                                </section>
+                            </section>
+                        </section>
                     </section>
                 </section>
 
@@ -318,7 +422,6 @@ $pageTitle = 'Dashboard';
             if (menuIcon) menuIcon.style.display = isActive ? 'block' : 'none';
             if (closeIcon) closeIcon.style.display = isActive ? 'none' : 'block';
         }
-
 
         document.addEventListener('DOMContentLoaded', function() {
             const mobileMenuToggle = document.getElementById('mobileMenuToggle');

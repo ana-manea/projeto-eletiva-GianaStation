@@ -53,7 +53,7 @@ $showSuccess = isset($_GET['updated']) && $_GET['updated'] == '1';
                 </a>
                 <section class="nav-links">
                     <a href="dashboardArtista.php?lang=<?php echo $currentLang; ?>" class="nav-link"><?php echo translate('home'); ?></a>
-                    <a href="dashboardArtMusica.php?lang=<?php echo $currentLang; ?>" class="nav-link"><?php echo translateText('Música'); ?></a>
+                    <a href="dashboardArtDiscografia.php?lang=<?php echo $currentLang; ?>" class="nav-link"><?php echo translateText('Discografia'); ?></a>
                     <a href="dashboardArtAudiencia.php?lang=<?php echo $currentLang; ?>" class="nav-link"><?php echo translateText('Audiência'); ?></a>
                     <a href="dashboardArtPerfil.php?lang=<?php echo $currentLang; ?>" class="nav-link active"><?php echo translateText('Perfil'); ?></a>
                 </section>
@@ -94,7 +94,7 @@ $showSuccess = isset($_GET['updated']) && $_GET['updated'] == '1';
 
         <nav class="nav-mobile" id="navMobile">
             <a href="dashboardArtista.php?lang=<?php echo $currentLang; ?>" class="nav-link"><?php echo translate('home'); ?></a>
-            <a href="dashboardArtMusica.php?lang=<?php echo $currentLang; ?>" class="nav-link"><?php echo translateText('Música'); ?></a>
+            <a href="dashboardArtDiscografia.php?lang=<?php echo $currentLang; ?>" class="nav-link"><?php echo translateText('Discografia'); ?></a>
             <a href="dashboardArtAudiencia.php?lang=<?php echo $currentLang; ?>" class="nav-link"><?php echo translateText('Audiência'); ?></a>
             <a href="dashboardArtPerfil.php?lang=<?php echo $currentLang; ?>" class="nav-link"><?php echo translateText('Perfil'); ?></a>
             
@@ -405,7 +405,6 @@ $showSuccess = isset($_GET['updated']) && $_GET['updated'] == '1';
             if (closeIcon) closeIcon.style.display = isActive ? 'none' : 'block';
         }
 
-
         document.addEventListener('DOMContentLoaded', function() {
             const mobileMenuToggle = document.getElementById('mobileMenuToggle');
             const mobileMenuOverlay = document.getElementById('mobileMenuOverlay');
@@ -434,7 +433,6 @@ $showSuccess = isset($_GET['updated']) && $_GET['updated'] == '1';
                 }, 250);
             });
         });
-
 
         const CHARACTER_LIMITS = {
             bio: 1000,

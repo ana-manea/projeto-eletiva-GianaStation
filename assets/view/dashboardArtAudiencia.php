@@ -28,7 +28,7 @@ $pageTitle = translateText('Audiência');
                 </a>
                 <section class="nav-links">
                     <a href="dashboardArtista.php?lang=<?php echo $currentLang; ?>" class="nav-link"><?php echo translate('home'); ?></a>
-                    <a href="dashboardArtMusica.php?lang=<?php echo $currentLang; ?>" class="nav-link"><?php echo translateText('Música'); ?></a>
+                    <a href="dashboardArtDiscografia.php?lang=<?php echo $currentLang; ?>" class="nav-link"><?php echo translateText('Discografia'); ?></a>
                     <a href="dashboardArtAudiencia.php?lang=<?php echo $currentLang; ?>" class="nav-link active"><?php echo translateText('Audiência'); ?></a>
                     <a href="dashboardArtPerfil.php?lang=<?php echo $currentLang; ?>" class="nav-link"><?php echo translateText('Perfil'); ?></a>
                 </section>
@@ -69,7 +69,7 @@ $pageTitle = translateText('Audiência');
 
         <nav class="nav-mobile" id="navMobile">
             <a href="dashboardArtista.php?lang=<?php echo $currentLang; ?>" class="nav-link"><?php echo translate('home'); ?></a>
-            <a href="dashboardArtMusica.php?lang=<?php echo $currentLang; ?>" class="nav-link"><?php echo translateText('Música'); ?></a>
+            <a href="dashboardArtDiscografia.php?lang=<?php echo $currentLang; ?>" class="nav-link"><?php echo translateText('Discografia'); ?></a>
             <a href="dashboardArtAudiencia.php?lang=<?php echo $currentLang; ?>" class="nav-link"><?php echo translateText('Audiência'); ?></a>
             <a href="dashboardArtPerfil.php?lang=<?php echo $currentLang; ?>" class="nav-link"><?php echo translateText('Perfil'); ?></a>
             
@@ -183,8 +183,72 @@ $pageTitle = translateText('Audiência');
             <section class="content-main">
                 <section class="card">
                     <h2><?php echo translateText('Top Músicas'); ?></h2>
-                    <section class="top-songs-list" id="topSongsList">
-                        <!-- Conteúdo será preenchido via JavaScript -->
+                    <section class="top-songs-list">
+                        <section class="song-item">
+                            <span class="song-position">1</span>
+                            <section class="song-info">
+                                <p class="song-title">Trevo (Tu)</p>
+                                <section class="song-details">
+                                    <span>Trevo</span>
+                                    <span>•</span>
+                                    <span>2017</span>
+                                </section>
+                            </section>
+                            <p class="song-streams">450K</p>
+                            <span class="song-change positive">
+                                <span class="song-change-text positive">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
+                                        <polyline points="17 6 23 6 23 12"/>
+                                    </svg>
+                                    +12%
+                                </span>
+                            </span>
+                        </section>
+
+                        <section class="song-item">
+                            <span class="song-position">2</span>
+                            <section class="song-info">
+                                <p class="song-title">Singular</p>
+                                <section class="song-details">
+                                    <span>Esquinas</span>
+                                    <span>•</span>
+                                    <span>2024</span>
+                                </section>
+                            </section>
+                            <p class="song-streams">320K</p>
+                            <span class="song-change positive">
+                                <span class="song-change-text positive">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
+                                        <polyline points="17 6 23 6 23 12"/>
+                                    </svg>
+                                    +8%
+                                </span>
+                            </span>
+                        </section>
+
+                        <section class="song-item">
+                            <span class="song-position">3</span>
+                            <section class="song-info">
+                                <p class="song-title">Esquinas</p>
+                                <section class="song-details">
+                                    <span>Esquinas</span>
+                                    <span>•</span>
+                                    <span>2024</span>
+                                </section>
+                            </section>
+                            <p class="song-streams">280K</p>
+                            <span class="song-change positive">
+                                <span class="song-change-text positive">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
+                                        <polyline points="17 6 23 6 23 12"/>
+                                    </svg>
+                                    +5%
+                                </span>
+                            </span>
+                        </section>
                     </section>
                 </section>
             </section>
@@ -192,15 +256,86 @@ $pageTitle = translateText('Audiência');
             <section class="content-sidebar">
                 <section class="card">
                     <h2><?php echo translateText('Países (Top Ouvintes)'); ?></h2>
-                    <section class="countries-list" id="countriesList">
-                        <!-- Conteúdo será preenchido via JavaScript -->
+                    <section class="countries-list">
+                        <section class="country-item">
+                            <section class="country-header">
+                                <span class="country-name">
+                                    <span class="country-flag">🇧🇷</span>
+                                    Brasil
+                                </span>
+                                <span class="country-percentage">45%</span>
+                            </section>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 45%"></div>
+                            </div>
+                            <p class="country-listeners">9.5K ouvintes</p>
+                        </section>
+
+                        <section class="country-item">
+                            <section class="country-header">
+                                <span class="country-name">
+                                    <span class="country-flag">🇺🇸</span>
+                                    Estados Unidos
+                                </span>
+                                <span class="country-percentage">22%</span>
+                            </section>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 22%"></div>
+                            </div>
+                            <p class="country-listeners">4.7K ouvintes</p>
+                        </section>
+
+                        <section class="country-item">
+                            <section class="country-header">
+                                <span class="country-name">
+                                    <span class="country-flag">🇵🇹</span>
+                                    Portugal
+                                </span>
+                                <span class="country-percentage">18%</span>
+                            </section>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 18%"></div>
+                            </div>
+                            <p class="country-listeners">3.8K ouvintes</p>
+                        </section>
                     </section>
                 </section>
 
                 <section class="card">
                     <h2><?php echo translateText('Faixa Etária'); ?></h2>
-                    <section class="demographics-list" id="demographicsList">
-                        <!-- Conteúdo será preenchido via JavaScript -->
+                    <section class="demographics-list">
+                        <section class="demo-item">
+                            <section class="demo-header">
+                                <span class="demo-age">18-24</span>
+                                <span class="demo-percentage">35%</span>
+                            </section>
+                            <div class="progress-bar">
+                                <div class="progress-fill blue" style="width: 35%"></div>
+                            </div>
+                            <p class="demo-count">7.4K ouvintes</p>
+                        </section>
+
+                        <section class="demo-item">
+                            <section class="demo-header">
+                                <span class="demo-age">25-34</span>
+                                <span class="demo-percentage">40%</span>
+                            </section>
+                            <div class="progress-bar">
+                                <div class="progress-fill blue" style="width: 40%"></div>
+                            </div>
+                            <p class="demo-count">8.5K ouvintes</p>
+                        </section>
+
+                        <section class="demo-item">
+                            <section class="demo-header">
+                                <span class="demo-age">35+</span>
+                                <span class="demo-percentage">25%</span>
+                            </section>
+                            <div class="progress-bar">
+                                <div class="progress-fill blue" style="width: 25%"></div>
+                            </div>
+                            <p class="demo-count">5.3K ouvintes</p>
+                        </section>
                     </section>
                 </section>
             </section>
@@ -258,7 +393,6 @@ $pageTitle = translateText('Audiência');
             if (menuIcon) menuIcon.style.display = isActive ? 'block' : 'none';
             if (closeIcon) closeIcon.style.display = isActive ? 'none' : 'block';
         }
-
 
         document.addEventListener('DOMContentLoaded', function() {
             const mobileMenuToggle = document.getElementById('mobileMenuToggle');
