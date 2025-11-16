@@ -65,6 +65,11 @@ form .inputSpace {
     width: 100%;
 }
 
+form .inputSpace label {
+    width: var(--tamanhoInput);
+    align-self: center;
+}
+
 form input,
 form button#reenviar_btn {
     border: 1px var(--border-input) solid;
@@ -149,6 +154,57 @@ input::-webkit-inner-spin-button {
     transform: scale(1.02);
 }
 
+/* Campo de senha com botão de visualização */
+.botao-senha {
+    position: relative;
+    width: var(--tamanhoInput);
+}
+
+.botao-senha input[type="password"],
+.botao-senha input[type="text"] {
+    width: 100%;
+    padding: 16px 50px 16px 32px;
+    background-color: transparent;
+    border: 1px solid var(--border-input);
+    border-radius: 10px;
+    color: var(--foreground);
+    font-size: 1rem;
+    font-weight: 900;
+    outline: none;
+    transition: var(--transition-all);
+}
+
+.botao-senha input:focus {
+    border-color: var(--foreground);
+}
+
+.visualizacao-senha {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    padding: 0;
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition-all);
+}
+
+.visualizacao-senha:hover {
+    opacity: 0.7;
+}
+
+.visualizacao-senha img {
+    width: 20px;
+    height: 20px;
+    filter: brightness(0) invert(0.6);
+}
+
 .linkCodigo button,
 .linkSenha button {
     text-align: center;
@@ -229,4 +285,40 @@ footer a {
 
 footer a:hover {
     color: #d518ee;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .conteudo {
+        width: 90%;
+        --tamanhoInput: 80%;
+    }
+    
+    .password-input-wrapper {
+        width: 100%;
+    }
+    
+    .password-input-wrapper .inputSenha {
+        width: 100%;
+    }
+    
+    footer.footerSenha p {
+        width: 80%;
+    }
+}
+
+@media (max-width: 480px) {
+    .conteudo {
+        --tamanhoInput: 90%;
+        padding: 30px 15px;
+    }
+    
+    .conteudo .titulo {
+        font-size: 1.3em;
+    }
+    
+    footer.footerSenha p {
+        width: 90%;
+        font-size: 0.8em;
+    }
 }

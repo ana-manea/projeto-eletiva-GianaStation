@@ -1,23 +1,99 @@
 @import 'style-cadUsuarioPadrao.css';
 
+/* Cabeçalho */
+.cabecalho {
+    margin-bottom: 1rem;
+    width: 100%;
+}
+
 .cabecalho img {
     width: 20%;
     min-width: 50px;
+    max-width: 80px;
 }
 
-.cabecalho {
-    margin-bottom: 1rem;
+/* Barra de progresso */
+.barra-progresso {
+    width: 100%;
+    height: 8px;
+    background-color: var(--background-hover);
+    border-radius: var(--border-radius-full);
+    overflow: hidden;
+    margin-bottom: 2rem;
 }
 
 .porcentagem {
     width: 100%;
+    height: 100%;
+    background: var(--gradient-primary);
+    transition: width 0.3s ease;
 }
 
+/* Seção de etapas */
+.etapa {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    width: 100%;
+}
+
+.btn-voltar {
+    background: transparent;
+    border: 1px solid var(--border-medium);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: var(--transition-all);
+}
+
+.btn-voltar:hover {
+    background-color: var(--background-hover);
+    border-color: var(--foreground);
+    transform: scale(1.05);
+}
+
+.btn-voltar img {
+    width: 20px;
+    height: 20px;
+    filter: brightness(0) invert(1);
+}
+
+.etapa-conteudo {
+    flex: 1;
+}
+
+.info-etapa {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.5rem;
+}
+
+.etapa-conteudo h1 {
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--foreground);
+    margin: 0;
+}
+
+/* Formulário */
+.conteudo form {
+    width: 100%;
+}
+
+/* Grupo de checkboxes */
 .checkbox-grupo {
     display: flex;
     flex-direction: column;
     gap: 16px;
     margin-bottom: 1.5rem;
+    width: 100%;
 }
 
 .opcao-checkbox {
@@ -25,19 +101,22 @@
     align-items: flex-start;
     gap: 16px;
     padding: 20px;
-    background-color: var(--background-light);
+    background-color: var(--background-hover);
     border-radius: var(--border-radius-lg);
     cursor: pointer;
     transition: background-color var(--transition-normal);
+    border: 1px solid var(--border-input);
 }
 
 .opcao-checkbox:hover {
-    background-color: var(--background-hover);
+    background-color: var(--background-light);
+    border-color: var(--border-medium);
 }
 
 .opcao-checkbox input[type="checkbox"] {
     width: 20px;
     height: 20px;
+    min-width: 20px;
     margin: 0;
     margin-top: 2px;
     cursor: pointer;
@@ -50,20 +129,55 @@
     line-height: 1.5;
     font-weight: 500;
     user-select: none;
-    color: var(--text-secondary);
+    color: var(--foreground);
+    flex: 1;
 }
 
+.link-destaque {
+    color: var(--primary);
+    text-decoration: underline;
+    transition: color var(--transition-normal);
+}
+
+.link-destaque:hover {
+    color: var(--primary-light);
+}
+
+/* Aviso de privacidade */
 .aviso-privacidade {
     margin-bottom: 2rem;
+    width: 100%;
 }
 
 .aviso-privacidade p {
     font-size: 0.875rem;
-    color: var(--foreground);
+    color: var(--text-secondary);
     line-height: 1.6;
     font-weight: 400;
 }
 
+/* Botão desabilitado */
+.btn-avancar:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: var(--border-medium);
+}
+
+.btn-avancar:disabled:hover {
+    transform: none;
+    box-shadow: none;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .etapa-conteudo h1 {
+        font-size: 1.5rem;
+    }
+    
+    .conteudo {
+        padding: 30px 20px;
+    }
+}
 
 @media (max-width: 640px) {
     .opcao-checkbox {
@@ -72,5 +186,20 @@
     
     .opcao-checkbox span {
         font-size: 0.9375rem;
+    }
+    
+    .etapa-conteudo h1 {
+        font-size: 1.25rem;
+    }
+    
+    .btn-voltar {
+        width: 36px;
+        height: 36px;
+        min-width: 36px;
+    }
+    
+    .btn-voltar img {
+        width: 16px;
+        height: 16px;
     }
 }

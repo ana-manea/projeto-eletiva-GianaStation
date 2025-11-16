@@ -61,16 +61,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['email'])) {
 
             <section class="inputSpace">
                 <label for="senha-login"><?php echo translate('password'); ?></label>
-                <input 
-                    type="password" 
-                    name="senha" 
-                    id="senha-login" 
-                    class="inputSenha" 
-                    placeholder="<?php echo translate('password_placeholder'); ?>"
-                    minlength="10"
-                    pattern="^(?=.*[0-9])(?=.*[!@#$%^&*()_+\-=\[\]{};':|,.<>\/?])(?=.*[a-zA-Z]).{10,}$"
-                    required 
-                    autofocus>
+                <section class="botao-senha">
+                    <input 
+                        type="password" 
+                        name="senha" 
+                        id="senha-login" 
+                        class="inputSenha" 
+                        placeholder="<?php echo translate('password_placeholder'); ?>"
+                        minlength="10"
+                        pattern="^(?=.*[0-9])(?=.*[!@#$%^&*()_+\-=\[\]{};':|,.<>\/?])(?=.*[a-zA-Z]).{10,}$"
+                        required 
+                        autofocus>
+                    <button type="button" class="visualizacao-senha" id="visualizacaoSenha">
+                        <img id="verSenha" src="../img/esconder.png" alt="<?php echo translate('hide_password'); ?>">
+                        <img id="esconderSenha" src="../img/ver.png" style="display: none;" alt="<?php echo translate('show_password'); ?>">
+                    </button>
+                </section>
             </section>
             
             <input type="hidden" name="lang" value="<?php echo $currentLang; ?>">
@@ -99,6 +105,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['email'])) {
     ?>
 
     <script>
+        const passwordInput = document.getElementById('senha-login');
+        const visualizacaoSenha = document.getElementById('visualizacaoSenha');
+        const verSenha = document.getElementById('verSenha');
+        const esconderSenha = document.getElementById('esconderSenha');
+        
+        let mostrarSenha = false;
+
+        visualizacaoSenha.addEventListener('click', () => {
+            mostrarSenha = !mostrarSenha;
+            passwordInput.type = mostrarSenha ? 'text' : 'password';
+            verSenha.style.display = mostrarSenha ? 'none' : 'block';
+            esconderSenha.style.display = mostrarSenha ? 'block' : 'none';
+        });
+
         function changeLangAndSubmit(lang) {
             const form = document.createElement('form');
             form.method = 'POST';

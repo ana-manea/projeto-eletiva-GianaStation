@@ -1,11 +1,6 @@
 <?php
 require_once 'config.php';
 $pageTitle = translate('sign_up');
-
-$modalConfig = [
-    'returnUrl' => 'cadastrarUsuario.php', 
-    'preserveParams' => []
-];
 ?>
 
 <!DOCTYPE html>
@@ -33,13 +28,13 @@ $modalConfig = [
             <h1><?php echo translate('sign_up_title'); ?></h1>
         </section>
 
-        <form method="POST" action="cadUsuarioSenha.php?lang=<?php echo $currentLang; ?>" id="singup">
+        <form method="POST" action="cadUsuarioSenha.php">
             <section class="form-grupo">
                 <label for="email"><?php echo translate('email_address'); ?></label>
                 <input 
                     type="email" 
                     id="email" 
-                    names="email"
+                    name="email"
                     placeholder="<?php echo translate('email_placeholder'); ?>"
                     pattern="[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}"
                     required>
