@@ -27,6 +27,30 @@ if (!isset($_SESSION['translation_cache'])) {
     $_SESSION['translation_cache'] = [];
 }
 
+function buildLanguageUrl($lang) {
+    global $modalConfig;
+    
+    $currentFile = basename($_SERVER['PHP_SELF']);
+    $params = [];
+    
+    if (isset($modalConfig['preserveParams'])) {
+        foreach ($modalConfig['preserveParams'] as $param) {
+            if (isset($_GET[$param])) {
+                $params[$param] = $_GET[$param];
+            } elseif (isset($_POST[$param])) {
+                $params[$param] = $_POST[$param];
+            }
+        }
+    }
+    
+    $params['lang'] = $lang;
+    
+    $returnUrl = $modalConfig['returnUrl'] ?? $currentFile;
+    $queryString = http_build_query($params);
+    
+    return $returnUrl . ($queryString ? '?' . $queryString : '');
+}
+
 function translateText($text, $toLang = null) {
     global $currentLang;
     $toLang = $toLang ?? $currentLang;

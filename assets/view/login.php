@@ -51,9 +51,10 @@ require_once 'config.php';
         <form method="POST" action="entrarSenha.php">
             <label for="email-login"><?php echo translate('email_username'); ?></label>
             <input 
-                type="text" 
+                type="email" 
                 name="email" 
                 id="email-login" 
+                attern="[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}"
                 placeholder="<?php echo translate('email_username_placeholder'); ?>"
                 required>
             
@@ -80,5 +81,17 @@ require_once 'config.php';
     ];
     require_once 'languageModal.php';
     ?>
+
+    <script>
+        emailInput.addEventListener('input', function() {
+            const emailRegex = /^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/;
+            
+            if (this.value && !emailRegex.test(this.value)) {
+                this.setCustomValidity('Digite um email válido no formato: nome@dominio.com');
+            } else {
+                this.setCustomValidity('');
+            }
+        });
+    </script>
 </body>
 </html>

@@ -149,18 +149,44 @@ input::-webkit-inner-spin-button {
     transform: scale(1.02);
 }
 
-.conteudo .linkSenha,
-.conteudo .linkCodigo {
-    color: var(--text-gray);
-    font-size: .9em;
-    font-weight: 700;
-    text-decoration: none;
-    transition: color var(--transition-fast);
+.linkCodigo button,
+.linkSenha button {
+    text-align: center;
+    width: 100%;
+    font-family: inherit;
+    font-size: inherit;
+    text-decoration: underline;
 }
 
-.conteudo .linkSenha:hover,
-.conteudo .linkCodigo:hover {
-    color: #fff;
+.linkCodigo button:hover,
+.linkSenha button:hover {
+    opacity: 0.8;
+}
+
+.linkCodigo p,
+.linkSenha p {
+    margin: 0;
+}
+
+.btn-language {
+    cursor: pointer;
+}
+
+.btn-language:hover {
+    background: rgba(255, 255, 255, 0.15) !important;
+    border-color: rgba(213, 24, 238, 0.5) !important;
+}
+
+#languageModal {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+#languageModal a {
+    transition: all 0.3s ease;
+}
+
+#languageModal a:hover {
+    transform: translateX(4px);
 }
 
 footer {
@@ -171,6 +197,9 @@ footer {
     height: 10vh;
     padding: 8px 20px;
     font-size: .8em;
+    padding: 20px;
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.7);
 }
 
 footer.footerSenha {
@@ -190,4 +219,13 @@ footer.footerSenha a {
 
 footer.footerSenha a:hover {
     color: var(--primary-light);
+}
+
+footer a {
+    color: rgba(255, 255, 255, 0.9);
+    text-decoration: underline;
+}
+
+footer a:hover {
+    color: #d518ee;
 }
