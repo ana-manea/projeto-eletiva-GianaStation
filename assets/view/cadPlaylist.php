@@ -1,23 +1,29 @@
+<?php
+    // Guardar a URL anterior
+    $paginaAnterior = $_SERVER['HTTP_REFERER'] ?? 'pagInicial.php';
+?>
+
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Giana Station</title>
+
     
     <!-- CSS Comuns -->
     <link rel="stylesheet" href="../css/style-cabecalho.css">
-    <link rel="stylesheet" href="../css/style-menusSuspenso-Lateral.css">
     <link rel="stylesheet" href="../css/style-cardsMusica.css">
+    <link rel="stylesheet" href="../css/style-menusSuspenso-Lateral.css">
     <link rel="stylesheet" href="../css/style-rodape.css">
     
     <!-- CSS da Página -->
-    <link rel="stylesheet" href="../css/style-visualizarMusica.css">
+    <link rel="stylesheet" href="../css/style-formMusica.css">
 
-    <!--
+
     <script src="../scripts/script-menuSuspenso.js"></script>
     <script src="../scripts/script-redirecionar.js"></script>
--->
+
 
 </head>
 <body>
@@ -33,7 +39,7 @@
                         </svg>
                     </button> 
                 </a>
-
+                
                 <form>
                     <label for="pesquisa-inicio">
                         <svg xmlns="http://www.w3.org/2000/svg" class="bi bi-search" viewBox="0 0 16 16">
@@ -57,129 +63,61 @@
                         <img>
                     </button> <!--Perfil/Conta -->
                     <ul id="perfil-menu-suspenso">
-                        <a href="perfilUsuario.html"><li>Perfil</li></a>
+                        <a href="perfilUsuario.php"><li>Perfil</li></a>
                         <div></div>
-                        <a href="../../index.html"><li id="sair">Sair</li></a>
+                        <a href="../../index.php"><li id="sair">Sair</li></a>
                     </ul>
                 </section>
             </section>
         </nav>
     </header>
 
-    <section class="conteudo">
-        <aside class="lateral-menu"> <!-- Menu lateral-->
-            <section class="lateral-menu-top">
-                <h3>Sua Biblioteca</h3>
-                <a href="cadPlaylist.php">
-                    <button id="criar-playlist">
-                        Criar
-                    </button>
-                </a>
-            </section>
+    <section class="conteudo playlist">
+        <section class="container playlist">
+        <div class="form-wrapper">
+            <a role="button" href="<?= $paginaAnterior ?>" class="back-link">
+                <svg class="icon-small" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="19" y1="12" x2="5" y2="12"/>
+                    <polyline points="12 19 5 12 12 5"/>
+                </svg>
+                <span data-translate>Voltar</span>
+            </a>
 
-            <section class="lateral-menu-content sem-playlist">
-                <h3>Crie sua primeira playlist</h3>
-                <p>É fácil, vamos te ajudar.</p>
-                <button>Criar Playlist</button>
-            </section>
-        </aside>
+            <h1 class="form-title" data-translate>Criar Playlist</h1>
+            <p class="form-subtitle" data-translate>Crie uma playlist que combine com seu humor</p>
 
-        <section class="principal"> <!-- Principal -->
-            <section class="infos"> <!-- Infos -->
-                <section class="espacoFoto">
-                    <article>
-                        <img src="../img/capas-albums/capa-alina-pluto.jpg" id="foto-perfil">
-                    </article>
-                </section>
+            <form class="form" id="formMusica">
+                <div class="form-group">
+                    <label for="Nome_playlist" class="form-label" data-translate>Título da Playlist *</label>
+                    <input
+                        type="text"
+                        id="Nome_playlist"
+                        name="Nome_playlist"
+                        placeholder="Ex: Aqui na ZL só toca isso"
+                        required
+                        class="form-input"
+                        data-translate
+                    />
+                </div>
 
+                <div class="form-group">
+                    <label for="Capa_play_path" class="form-label" data-translate>Foto da playlist</label>
+                    <input
+                        type="file"
+                        id="Capa_play_path"
+                        name="Capa_play_path"
+                        accept="image/*"
+                        class="form-file"
+                    />
+                    <p class="form-help" data-translate>Formato JPG ou PNG, mínimo 3000x3000px</p>
+                </div>
 
-                <section class="dados">
-                    <p>Single</p>
-                    <h1>Pluto</h1>
-                    <section class="alinhados">
-                        <article class="artista" id="artista">
-                            <img src="../img/foto-perfil/alina-foto.jpg">
-                            <a><p id="nome-artista">Alina Simpson</p></a>
-                        </article>
-                        <div></div>
-                        <p>Piano</p>
-                    </section>
-                </section>
-            </section>
-
-            <section class="tabela-secao">
-                <table class="lista-musicas">
-                    <thead>
-                        <tr>
-                            <th class="num-lista">#</th>
-                            <th class="musica-lista">Título</th>
-                            <th class="album-lista">Álbum</th>
-                            <th class="artista-lista">Artista</th>
-                            <th class="duracao-lista">Duração</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td class="num-lista">
-                                1
-                                <svg viewBox="0 0 24 24">
-                                    <path d="m7.05 3.606 13.49 7.788a.7.7 0 0 1 0 1.212L7.05 20.394A.7.7 0 0 1 6 19.788V4.212a.7.7 0 0 1 1.05-.606"></path>
-                                </svg>
-                            </td>
-                            <td class="musica-lista">Pluto</td>
-                            <td class="album-lista">Pluto</td>
-                            <td class="artista-lista"><a>Alina Simpson</a></td>
-                            <td class="add-musica-lista" role="button">
-                                <svg viewBox="0 0 16 16">
-                                    <path d="M8 1.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8"></path><path d="M11.75 8a.75.75 0 0 1-.75.75H8.75V11a.75.75 0 0 1-1.5 0V8.75H5a.75.75 0 0 1 0-1.5h2.25V5a.75.75 0 0 1 1.5 0v2.25H11a.75.75 0 0 1 .75.75"></path>
-                                </svg>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="num-lista">
-                                2
-                                <svg viewBox="0 0 24 24">
-                                    <path d="m7.05 3.606 13.49 7.788a.7.7 0 0 1 0 1.212L7.05 20.394A.7.7 0 0 1 6 19.788V4.212a.7.7 0 0 1 1.05-.606"></path>
-                                </svg>
-                            </td>
-                            <td class="musica-lista">Pluto</td>
-                            <td class="album-lista">Pluto</td>
-                            <td class="artista-lista"><a>Alina Simpson</a></td>
-                            <td class="musica-adicionada-lista" role="button">
-                                <svg viewBox="0 0 16 16">
-                                    <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m11.748-1.97a.75.75 0 0 0-1.06-1.06l-4.47 4.47-1.405-1.406a.75.75 0 1 0-1.061 1.06l2.466 2.467 5.53-5.53z"></path>
-                                </svg>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </section>
-
-            <section class="cards"> <!--2o Carrossel-->
-                <article class="albuns-titulo">
-                    <!--Título-->
-                    <h1>Recomendado</h1>
-                </article>
-
-                <section class="albuns">
-                    <!--Álbuns-->
-                    <a href="verMusica.php">
-                        <section class="card">
-                            <article class="card-img">
-                                <img src="../img/capas-albums/capa-berlinist-neva.jpg">
-                            </article>
-    
-                            <article class="nome-categoria">
-                                <p class="nome">In courage abide</p>
-                                <p class="categoria">Berlinist</p>
-                            </article>
-                        </section>
-                    </a>
-                </section>
-            </section>
-            
-        </section>
-
+                <button type="submit" class="btn-submit" data-translate>
+                    Criar Playlist
+                </button>
+            </form>
+        </div>
+    </section>
     </section>
 
     <footer class="rodape">
@@ -254,6 +192,5 @@
             </article>
         </section>
     </footer>
-
 </body>
 </html>
