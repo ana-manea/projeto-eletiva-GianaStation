@@ -224,23 +224,6 @@
     font-weight: 600;
 }
 
-.btn-create-playlist {
-    padding: 6px 16px;
-    background: transparent;
-    border: 1px solid var(--border);
-    border-radius: 500px;
-    color: white;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: var(--transition-all);
-}
-
-.btn-create-playlist:hover {
-    background: var(--overlay-medium);
-    border-color: var(--primary);
-}
-
 .sidebar-empty {
     background: var(--background-light);
     border-radius: var(--radius);
@@ -261,23 +244,6 @@
     line-height: 1.4;
 }
 
-.btn-primary-small {
-    padding: 10px 24px;
-    background: white;
-    color: black;
-    border: none;
-    border-radius: 500px;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: var(--transition-all);
-    align-self: flex-start;
-}
-
-.btn-primary-small:hover {
-    transform: scale(1.02);
-}
-
 /* Conteúdo Principal */
 .main-content {
     flex: 1;
@@ -286,305 +252,245 @@
     overflow-y: auto;
 }
 
-/* Hero da Música */
-.song-hero {
-    background: linear-gradient(180deg, #424242 0%, var(--background-card) 100%);
-    padding: 48px 32px 32px;
-    display: flex;
-    align-items: flex-end;
+/* Container da Playlist */
+.playlist-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 48px 32px;
 }
 
-.hero-content {
+.playlist-header {
     display: flex;
-    align-items: flex-end;
+    align-items: center;
     gap: 24px;
-    width: 100%;
+    margin-bottom: 48px;
 }
 
-.song-cover {
-    width: 232px;
-    height: 232px;
-    flex-shrink: 0;
-    border-radius: 4px;
-    overflow: hidden;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
-}
-
-.song-cover img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.song-info {
-    flex: 1;
-    padding-bottom: 8px;
-}
-
-.song-type {
-    font-size: 14px;
-    font-weight: 600;
-    margin-bottom: 8px;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-}
-
-.song-title {
-    font-size: 4rem;
-    font-weight: 900;
-    line-height: 1.1;
-    margin-bottom: 24px;
-    word-break: break-word;
-}
-
-.song-meta {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    flex-wrap: wrap;
-    font-size: 14px;
-    color: var(--text-muted);
-}
-
-.artist-info {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.artist-info img {
-    width: 24px;
-    height: 24px;
+.btn-back {
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
-    object-fit: cover;
-}
-
-.artist-link {
+    background: var(--background-light);
+    border: none;
     color: white;
-    text-decoration: none;
-    font-weight: 600;
-    transition: text-decoration 0.2s;
-}
-
-.artist-link:hover {
-    text-decoration: underline;
-}
-
-.separator {
-    color: var(--text-disabled);
-}
-
-/* Controles da Música */
-.song-controls {
+    cursor: pointer;
     display: flex;
     align-items: center;
-    gap: 24px;
+    justify-content: center;
+    transition: var(--transition-all);
+}
+
+.btn-back:hover {
+    background: var(--background-hover);
+    transform: scale(1.05);
+}
+
+.btn-back svg {
+    width: 20px;
+    height: 20px;
+}
+
+.playlist-header h1 {
+    font-size: 2.5rem;
+    font-weight: 900;
+}
+
+/* Alert */
+.alert {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px;
+    border-radius: var(--radius);
+    margin-bottom: 24px;
+}
+
+.alert-error {
+    background: var(--error-light);
+    border: 1px solid var(--error);
+    color: var(--error);
+}
+
+.alert svg {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+}
+
+.alert p {
+    margin: 0;
+    font-size: 14px;
+}
+
+/* Formulário */
+.playlist-form-wrapper {
+    background: var(--background-light);
+    border-radius: var(--radius);
     padding: 32px;
 }
 
-.btn-play-large {
-    width: 56px;
-    height: 56px;
-    border-radius: 50%;
-    background: var(--primary);
-    border: none;
-    color: black;
-    cursor: pointer;
+.playlist-form {
     display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: var(--transition-all);
-    box-shadow: 0 4px 12px rgba(213, 24, 238, 0.4);
+    gap: 32px;
 }
 
-.btn-play-large:hover {
-    transform: scale(1.05);
-    background: var(--primary-light);
-    box-shadow: 0 6px 16px rgba(213, 24, 238, 0.5);
-}
-
-.btn-play-large svg {
-    width: 28px;
-    height: 28px;
-    margin-left: 2px;
-}
-
-.btn-like-large {
-    width: 32px;
-    height: 32px;
-    background: transparent;
-    border: none;
-    color: var(--text-muted);
-    cursor: pointer;
+/* Preview da Capa */
+.cover-preview-container {
+    flex-shrink: 0;
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: center;
-    transition: var(--transition-all);
+    gap: 16px;
 }
 
-.btn-like-large:hover {
-    color: white;
-    transform: scale(1.1);
-}
-
-.btn-like-large.liked {
-    color: var(--primary);
-}
-
-.btn-like-large svg {
-    width: 24px;
-    height: 24px;
-}
-
-.btn-more {
-    width: 32px;
-    height: 32px;
-    background: transparent;
-    border: none;
-    color: var(--text-muted);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: var(--transition-all);
-}
-
-.btn-more:hover {
-    color: white;
-    transform: scale(1.1);
-}
-
-.btn-more svg {
-    width: 24px;
-    height: 24px;
-}
-
-/* Seção de Letra */
-.lyrics-section {
-    padding: 0 32px 48px;
-}
-
-.lyrics-section h2 {
-    font-size: 24px;
-    font-weight: 700;
-    margin-bottom: 24px;
-}
-
-.lyrics-content {
-    max-width: 800px;
-    line-height: 1.8;
-}
-
-.lyrics-content p {
-    font-size: 16px;
-    margin-bottom: 12px;
-    color: var(--text-secondary);
-}
-
-.lyrics-content p:empty {
-    margin-bottom: 24px;
-}
-
-/* Músicas Relacionadas */
-.related-section {
-    padding: 0 32px 48px;
-}
-
-.section-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 24px;
-}
-
-.related-section h2 {
-    font-size: 24px;
-    font-weight: 700;
-}
-
-.related-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-    gap: 24px;
-}
-
-.song-card {
-    background: var(--background-light);
-    border-radius: var(--radius);
-    padding: 16px;
-    transition: var(--transition-all);
-    cursor: pointer;
-}
-
-.song-card:hover {
-    background: var(--background-hover);
-}
-
-.song-card-cover {
-    position: relative;
-    aspect-ratio: 1;
-    margin-bottom: 16px;
-    overflow: hidden;
+.cover-preview {
+    width: 232px;
+    height: 232px;
     border-radius: 4px;
-}
-
-.song-card-cover img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.3s;
-}
-
-.song-card:hover .song-card-cover img {
-    transform: scale(1.05);
-}
-
-.song-play-btn {
-    position: absolute;
-    right: 12px;
-    bottom: 12px;
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    background: var(--primary);
-    border: none;
-    color: black;
-    cursor: pointer;
+    background: var(--background-medium);
     display: flex;
     align-items: center;
     justify-content: center;
-    opacity: 0;
-    transform: translateY(8px);
-    transition: all 0.3s;
+    overflow: hidden;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
 }
 
-.song-card:hover .song-play-btn {
-    opacity: 1;
-    transform: translateY(0);
+.cover-preview .default-icon {
+    width: 80px;
+    height: 80px;
+    color: var(--text-disabled);
 }
 
-.song-play-btn svg {
-    width: 20px;
-    height: 20px;
-    margin-left: 2px;
+.cover-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
-.song-card-info h3 {
-    font-size: 16px;
-    font-weight: 600;
-    margin-bottom: 4px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.song-card-info p {
+.cover-upload-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    background: white;
+    color: black;
+    border: none;
+    border-radius: 500px;
     font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition-all);
+}
+
+.cover-upload-btn:hover {
+    transform: scale(1.02);
+}
+
+.cover-upload-btn svg {
+    width: 16px;
+    height: 16px;
+}
+
+.cover-help {
+    font-size: 12px;
     color: var(--text-muted);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    text-align: center;
+}
+
+/* Campos do Formulário */
+.form-fields {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: white;
+}
+
+.form-input,
+.form-textarea {
+    width: 100%;
+    padding: 12px 16px;
+    background: var(--background-medium);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: white;
+    font-size: 14px;
+    font-family: var(--font-sans);
+    transition: var(--transition-all);
+}
+
+.form-input:hover,
+.form-textarea:hover {
+    border-color: var(--border-medium);
+}
+
+.form-input:focus,
+.form-textarea:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+.form-input::placeholder,
+.form-textarea::placeholder {
+    color: var(--text-disabled);
+}
+
+.form-textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+/* Ações do Formulário */
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 8px;
+}
+
+.btn-cancel,
+.btn-submit {
+    padding: 12px 32px;
+    border: none;
+    border-radius: 500px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition-all);
+}
+
+.btn-cancel {
+    background: transparent;
+    color: white;
+    border: 1px solid var(--border);
+}
+
+.btn-cancel:hover {
+    background: var(--overlay-medium);
+    border-color: var(--primary);
+}
+
+.btn-submit {
+    background: var(--primary);
+    color: white;
+    box-shadow: var(--shadow-sm);
+}
+
+.btn-submit:hover {
+    background: var(--primary-light);
+    transform: scale(1.02);
+    box-shadow: var(--shadow-md);
 }
 
 /* Footer */
@@ -704,17 +610,13 @@
         width: 100%;
     }
     
-    .song-title {
-        font-size: 3rem;
+    .playlist-form {
+        flex-direction: column;
+        align-items: center;
     }
     
-    .hero-content {
-        gap: 24px;
-    }
-    
-    .song-cover {
-        width: 192px;
-        height: 192px;
+    .form-fields {
+        width: 100%;
     }
     
     .rodape .top {
@@ -727,38 +629,25 @@
         max-width: 400px;
     }
     
-    .song-hero {
+    .playlist-container {
         padding: 24px 16px;
     }
     
-    .hero-content {
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
+    .playlist-header {
+        margin-bottom: 32px;
     }
     
-    .song-cover {
-        width: 200px;
-        height: 200px;
-    }
-    
-    .song-title {
+    .playlist-header h1 {
         font-size: 2rem;
     }
     
-    .song-meta {
-        justify-content: center;
+    .playlist-form-wrapper {
+        padding: 24px;
     }
     
-    .song-controls,
-    .lyrics-section,
-    .related-section {
-        padding: 16px;
-    }
-    
-    .related-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 16px;
+    .cover-preview {
+        width: 200px;
+        height: 200px;
     }
     
     .rodape .top {
@@ -788,16 +677,21 @@
         height: 20px;
     }
     
-    .song-title {
+    .playlist-header h1 {
         font-size: 1.5rem;
     }
     
-    .song-cover {
+    .cover-preview {
         width: 160px;
         height: 160px;
     }
     
-    .related-grid {
-        grid-template-columns: 1fr;
+    .form-actions {
+        flex-direction: column-reverse;
+    }
+    
+    .btn-cancel,
+    .btn-submit {
+        width: 100%;
     }
 }

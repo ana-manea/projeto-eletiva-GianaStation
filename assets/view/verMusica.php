@@ -1,41 +1,143 @@
 <?php
 require_once 'config.php';
 
-// Obter ID do artista da URL
-$musId = 5;
-$musArtista = "Anavitória";
-$musArtFoto = "https://image-cdn-ak.spotifycdn.com/image/ab6761860000101685ec2d2af58d2b838a744ac4";
-$musTitulo = "nosferatu";
-$musAlbum = "claraboia";
-$musTipo = "Single";
-$musGenero = "MPB";
-$musAno = 2025;
-$musDuracao = "2:25";
-$musCapa = "https://i.scdn.co/image/ab67616d00001e02060bf5d261b6f21511b8c789";
+// Obter ID da música da URL
+$musicId = isset($_GET['id']) ? (int)$_GET['id'] : 1;
 
-
-// Dados do usuário (exemplo - substituir por dados do banco)
-$usuario = [
-    'id' => 1,
-    'nome' => 'Usuário Giana',
-    'foto_perfil' => '../img/sem-foto.png',
-    'artistas_mais_tocados' => [
-        ['id' => 1, 'nome' => 'AnaVitória', 'foto' => 'https://image-cdn-ak.spotifycdn.com/image/ab6761860000101685ec2d2af58d2b838a744ac4', 'tipo' => 'Artista'],
-        ['id' => 2, 'nome' => 'Marília Mendonça', 'foto' => '../img/sem-foto.png', 'tipo' => 'Artista'],
-        ['id' => 3, 'nome' => 'Jorge & Mateus', 'foto' => '../img/sem-foto.png', 'tipo' => 'Artista'],
-        ['id' => 4, 'nome' => 'My Chemical Romance', 'foto' => '../img/sem-foto.png', 'tipo' => 'Artista']
+// Dados da música 
+$musicas = [
+    1 => [
+        'id' => 1,
+        'titulo' => 'nosferatu',
+        'artista' => 'AnaVitória',
+        'artista_id' => 1,
+        'album' => 'claraboia',
+        'album_id' => 1,
+        'capa' => 'https://i.scdn.co/image/ab67616d00001e02060bf5d261b6f21511b8c789',
+        'foto_artista' => 'https://image-cdn-ak.spotifycdn.com/image/ab6761860000101685ec2d2af58d2b838a744ac4',
+        'duracao' => '2:25',
+        'ano' => 2025,
+        'genero' => 'MPB',
+        'explicit' => false,
+        'letra' => [
+            "Eu sou antes, depois, quase nada ou muito",
+            "Tudo isso eu ganhei ao deixar de te amar",
+            "Sem lanternas e mapas, descobri um mundo",
+            "Tudo isso eu ganhei ao deixar de te amar",
+            "",
+            "Decidi fazer por mim",
+            "O que ninguém jamais poderia fazer",
+            "Um altar, um desvio, um novo caminho",
+            "Essa música é tão viva, tão real",
+            "",
+            "Um altar, um desvio, um novo caminho",
+            "Essa música é tão viva, tão real"
+        ],
+        'musicas_relacionadas' => [
+            ['id' => 2, 'titulo' => 'The Fate of Ophelia', 'artista' => 'Taylor Swift', 'capa' => 'https://i.scdn.co/image/ab67616d00001e02d7812467811a7da6e6a44902', 'duracao' => '3:46'],
+            ['id' => 3, 'titulo' => 'Pluto', 'artista' => 'Alina Simpson', 'capa' => '../img/capas-albums/capa-alina-pluto.jpg', 'duracao' => '3:45'],
+            ['id' => 4, 'titulo' => 'In courage abide', 'artista' => 'Berlinist', 'capa' => '../img/capas-albums/capa-berlinist-neva.jpg', 'duracao' => '4:12']
+        ]
     ],
-    'musicas' => [
-        ['id' => 5, 'artista' => 'AnaVitória', 'titulo' => 'nosferatu', 'album' => 'claraboia', 'tipo' => 'single', 'genero' => 'mpb', 'ano' => 2025, 'duracao' => '2:25', 'audio_path' => 'https://open.spotify.com/track/72lqj4bouGaZr3c6tRNp5a?si=gNlC-cYZR1WSBvbtlIrbig&context=spotify%3Apl', 'capa_path' => 'https://i.scdn.co/image/ab67616d00001e02060bf5d261b6f21511b8c789'],
-        ['id' => 4, 'artista' => 'Taylor Swift', 'titulo' => 'The Fate of Ophelia', 'album' => 'The Life of a Showgirl', 'tipo' => 'single', 'genero' => 'pop', 'ano' => 2025, 'duracao' => '3:46', 'audio_path' => 'https://open.spotify.com/track/53iuhJlwXhSER5J2IYYv1W?si=cecBdpCiQZWJ2RiWLRdBDQ&context=spotify%3Apl', 'capa_path' => 'https://i.scdn.co/image/ab67616d00001e02d7812467811a7da6e6a44902']
+    2 => [
+        'id' => 2,
+        'titulo' => 'The Fate of Ophelia',
+        'artista' => 'Taylor Swift',
+        'artista_id' => 2,
+        'album' => 'The Life of a Showgirl',
+        'album_id' => 2,
+        'capa' => 'https://i.scdn.co/image/ab67616d00001e02d7812467811a7da6e6a44902',
+        'foto_artista' => '../img/sem-foto.png',
+        'duracao' => '3:46',
+        'ano' => 2025,
+        'genero' => 'Pop',
+        'explicit' => false,
+        'letra' => [
+            "Verso 1:",
+            "Keep it one hundred",
+            "On the land, the sea, the sky",
+            "Pledge allegiance to your hands",
+            "Your team, your vibes",
+            "Don't care where the hell you been",
+            "'Cause now you're mine",
+            "It's 'bout to be the sleepless night",
+            "You've been dreaming of",
+            "The fate of Ophelia"
+        ],
+        'musicas_relacionadas' => [
+            ['id' => 1, 'titulo' => 'nosferatu', 'artista' => 'AnaVitória', 'capa' => 'https://i.scdn.co/image/ab67616d00001e02060bf5d261b6f21511b8c789', 'duracao' => '2:25'],
+            ['id' => 3, 'titulo' => 'Pluto', 'artista' => 'Alina Simpson', 'capa' => '../img/capas-albums/capa-alina-pluto.jpg', 'duracao' => '3:45'],
+            ['id' => 4, 'titulo' => 'In courage abide', 'artista' => 'Berlinist', 'capa' => '../img/capas-albums/capa-berlinist-neva.jpg', 'duracao' => '4:12']
+        ]
+    ],
+    3 => [
+        'id' => 3,
+        'titulo' => 'Pluto',
+        'artista' => 'Alina Simpson',
+        'artista_id' => 3,
+        'album' => 'Pluto',
+        'album_id' => 3,
+        'capa' => '../img/capas-albums/capa-alina-pluto.jpg',
+        'foto_artista' => '../img/foto-perfil/alina-foto.jpg',
+        'duracao' => '3:45',
+        'ano' => 2024,
+        'genero' => 'Piano',
+        'explicit' => false,
+        'letra' => [
+            "Verso 1:",
+            "Walking through the stars tonight",
+            "Feeling like I'm losing sight",
+            "Of everything I used to know",
+            "Before you let me go",
+            "",
+            "Refrão:",
+            "Pluto, so far away",
+            "Can't reach you no matter what I say",
+            "Pluto, in the dark",
+            "You're still the brightest in my heart"
+        ],
+        'musicas_relacionadas' => [
+            ['id' => 1, 'titulo' => 'nosferatu', 'artista' => 'AnaVitória', 'capa' => 'https://i.scdn.co/image/ab67616d00001e02060bf5d261b6f21511b8c789', 'duracao' => '2:25'],
+            ['id' => 2, 'titulo' => 'The Fate of Ophelia', 'artista' => 'Taylor Swift', 'capa' => 'https://i.scdn.co/image/ab67616d00001e02d7812467811a7da6e6a44902', 'duracao' => '3:46'],
+            ['id' => 4, 'titulo' => 'In courage abide', 'artista' => 'Berlinist', 'capa' => '../img/capas-albums/capa-berlinist-neva.jpg', 'duracao' => '4:12']
+        ]
+    ],
+    4 => [
+        'id' => 4,
+        'titulo' => 'In courage abide',
+        'artista' => 'Berlinist',
+        'artista_id' => 4,
+        'album' => 'Neva',
+        'album_id' => 4,
+        'capa' => '../img/capas-albums/capa-berlinist-neva.jpg',
+        'foto_artista' => '../img/sem-foto.png',
+        'duracao' => '4:12',
+        'ano' => 2024,
+        'genero' => 'Electronic',
+        'explicit' => false,
+        'letra' => [
+            "Verso 1:",
+            "In courage we abide",
+            "Through the stormy nights",
+            "When the world divides",
+            "We hold on tight",
+            "",
+            "Refrão:",
+            "In courage abide",
+            "We'll make it through",
+            "In courage abide",
+            "I believe in you"
+        ],
+        'musicas_relacionadas' => [
+            ['id' => 1, 'titulo' => 'nosferatu', 'artista' => 'AnaVitória', 'capa' => 'https://i.scdn.co/image/ab67616d00001e02060bf5d261b6f21511b8c789', 'duracao' => '2:25'],
+            ['id' => 2, 'titulo' => 'The Fate of Ophelia', 'artista' => 'Taylor Swift', 'capa' => 'https://i.scdn.co/image/ab67616d00001e02d7812467811a7da6e6a44902', 'duracao' => '3:46'],
+            ['id' => 3, 'titulo' => 'Pluto', 'artista' => 'Alina Simpson', 'capa' => '../img/capas-albums/capa-alina-pluto.jpg', 'duracao' => '3:45']
+        ]
     ]
 ];
 
-$pageTitle = $usuario['nome'];
-
-// Obter ID do artista da URL
-$artistId = isset($_GET['id']) ? (int)$_GET['id'] : 1;
-
+$musica = $musicas[$musicId] ?? $musicas[1];
+$pageTitle = $musica['titulo'] . ' - ' . $musica['artista'];
 ?>
 
 <!DOCTYPE html>
@@ -92,7 +194,7 @@ $artistId = isset($_GET['id']) ? (int)$_GET['id'] : 1;
                 
                 <section class="perfil-btn">
                     <button id="perfil" onclick="interagirMenuPerfil()">
-                        <img src="<?php echo htmlspecialchars($usuario['foto_perfil']); ?>" alt="Perfil">
+                        <img src="../img/sem-foto.png" alt="Perfil">
                     </button>
                     <ul id="perfil-menu-suspenso">
                         <a href="perfilUsuario.php?lang=<?php echo $currentLang; ?>"><li><?php echo translateText('Perfil'); ?></li></a>
@@ -104,127 +206,117 @@ $artistId = isset($_GET['id']) ? (int)$_GET['id'] : 1;
         </nav>
     </header>
 
-    <section class="conteudo">
-        <!-- Menu Lateral -->
-        <aside class="lateral-menu">
-            <section class="lateral-menu-top">
-<<<<<<< HEAD
+    <main class="content">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <section class="sidebar-header">
                 <h3><?php echo translateText('Sua Biblioteca'); ?></h3>
-                <a href="cadPlaylist.php?lang=<?php echo $currentLang; ?>">
-=======
-                <h3>Sua Biblioteca</h3>
-                <a href="cadastrarPlaylist.php">
->>>>>>> conexaoBD
-                    <button id="criar-playlist">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" width="16" height="16">
-                            <path d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2"/>
-                        </svg>
+                <a href="cadastrarPlaylist.php?lang=<?php echo $currentLang; ?>">
+                    <button class="btn-create-playlist">
                         <?php echo translateText('Criar'); ?>
                     </button>
                 </a>
             </section>
-
-            <section class="lateral-menu-content sem-playlist">
+            
+            <section class="sidebar-empty">
                 <h3><?php echo translateText('Crie sua primeira playlist'); ?></h3>
                 <p><?php echo translateText('É fácil, vamos te ajudar.'); ?></p>
-                <button><?php echo translateText('Criar Playlist'); ?></button>
+                <button class="btn-primary-small"><?php echo translateText('Criar Playlist'); ?></button>
             </section>
         </aside>
 
         <!-- Conteúdo Principal -->
-        <section class="principal">
-            <!-- Informações da música -->
-            <section class="infos">
-                <section class="espacoFoto">
-                    <article>
-                        <img src="<?php echo htmlspecialchars($musCapa); ?>" id="foto-perfil">
-                    </article>
-                </section>
-
-
-                <section class="dados">
-                    <p><?php echo htmlspecialchars($musTipo); ?></p>
-                    <h1><?php echo htmlspecialchars($musTitulo); ?></h1>
-                    <section class="alinhados">
-                        <article class="artista" id="artista">
-                            <img src="<?php echo htmlspecialchars($musArtFoto); ?>">
-                            <a><p id="nome-artista"><?php echo htmlspecialchars($musArtista); ?></p></a>
-                        </article>
-                        <div></div>
-                        <p><?php echo htmlspecialchars($musAno); ?></p>
-                    </section>
-                </section>
+        <section class="main-content">
+            <!-- Hero da Música -->
+            <section class="song-hero">
+                <div class="hero-content">
+                    <div class="song-cover">
+                        <img src="<?php echo htmlspecialchars($musica['capa']); ?>" alt="<?php echo htmlspecialchars($musica['titulo']); ?>">
+                    </div>
+                    
+                    <div class="song-info">
+                        <p class="song-type"><?php echo translateText('Single'); ?></p>
+                        <h1 class="song-title"><?php echo htmlspecialchars($musica['titulo']); ?></h1>
+                        <div class="song-meta">
+                            <div class="artist-info">
+                                <img src="<?php echo htmlspecialchars($musica['foto_artista']); ?>" alt="<?php echo htmlspecialchars($musica['artista']); ?>">
+                                <a href="visualizarArtista.php?id=<?php echo $musica['artista_id']; ?>&lang=<?php echo $currentLang; ?>" class="artist-link">
+                                    <?php echo htmlspecialchars($musica['artista']); ?>
+                                </a>
+                            </div>
+                            <span class="separator">•</span>
+                            <span><?php echo htmlspecialchars($musica['genero']); ?></span>
+                        </div>
+                    </div>
+                </div>
             </section>
 
-            <!-- Lista das músicas -->
-            <section class="tabela-secao">
-                <table class="lista-musicas">
-                    <thead>
-                        <tr>
-                            <th class="num-lista">#</th>
-                            <th class="musica-lista">Título</th>
-                            <th class="album-lista">Álbum</th>
-                            <th class="artista-lista">Artista</th>
-                            <th class="duracao-lista">Duração</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td class="num-lista">
-                                1
-                                <svg viewBox="0 0 24 24">
-                                    <path d="m7.05 3.606 13.49 7.788a.7.7 0 0 1 0 1.212L7.05 20.394A.7.7 0 0 1 6 19.788V4.212a.7.7 0 0 1 1.05-.606"></path>
-                                </svg>
-                            </td>
-                            <td class="musica-lista"><?php echo htmlspecialchars($musTitulo); ?></td>
-                            <td class="album-lista"><?php echo htmlspecialchars($musAlbum); ?></td>
-                            <td class="artista-lista"><a><?php echo htmlspecialchars($musArtista); ?></a></td>
-                            <td class="add-musica-lista" role="button">
-                                <svg viewBox="0 0 16 16">
-                                    <path d="M8 1.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8"></path><path d="M11.75 8a.75.75 0 0 1-.75.75H8.75V11a.75.75 0 0 1-1.5 0V8.75H5a.75.75 0 0 1 0-1.5h2.25V5a.75.75 0 0 1 1.5 0v2.25H11a.75.75 0 0 1 .75.75"></path>
-                                </svg>
-                            </td>
-                            <td class="duracao-lista"><a><?php echo htmlspecialchars($musDuracao); ?></a></td>
-                        </tr>
-                    </tbody>
-                </table>
+            <!-- Controles da Música -->
+            <section class="song-controls">
+                <button class="btn-play-large" title="<?php echo translateText('Reproduzir'); ?>">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="m7.05 3.606 13.49 7.788a.7.7 0 0 1 0 1.212L7.05 20.394A.7.7 0 0 1 6 19.788V4.212a.7.7 0 0 1 1.05-.606"/>
+                    </svg>
+                </button>
+                
+                <button class="btn-like-large" id="likeBtn" title="<?php echo translateText('Curtir'); ?>">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                    </svg>
+                </button>
+                
+                <button class="btn-more" title="<?php echo translateText('Mais opções'); ?>">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <circle cx="12" cy="5" r="2"/>
+                        <circle cx="12" cy="12" r="2"/>
+                        <circle cx="12" cy="19" r="2"/>
+                    </svg>
+                </button>
             </section>
-            
-            <!-- Artistas Mais Tocados -->
-            <section class="cards">
-                <article class="albuns-titulo">
-                    <article>
-                        <h1><?php echo translateText('Artistas mais tocados este mês'); ?></h1>
-                    </article>
-                    <button><?php echo translateText('Mostrar tudo'); ?></button>
-                </article>
 
-                <section class="albuns">
-                    <?php foreach ($usuario['artistas_mais_tocados'] as $artista): ?>
-                        <section class="card" onclick="window.location.href='visualizarArtista.php?id=<?php echo $artista['id']; ?>&lang=<?php echo $currentLang; ?>'">
-                            <article class="card-img">
-                                <img src="<?php echo htmlspecialchars($artista['foto']); ?>" alt="<?php echo htmlspecialchars($artista['nome']); ?>">
-                                <button class="card-play-btn" onclick="event.stopPropagation();">
+            <!-- Letra da Música -->
+            <?php if (!empty($musica['letra'])): ?>
+            <section class="lyrics-section">
+                <h2><?php echo translateText('Letra'); ?></h2>
+                <div class="lyrics-content">
+                    <?php foreach ($musica['letra'] as $linha): ?>
+                        <p><?php echo htmlspecialchars($linha); ?></p>
+                    <?php endforeach; ?>
+                </div>
+            </section>
+            <?php endif; ?>
+
+            <!-- Músicas Relacionadas -->
+            <section class="related-section">
+                <div class="section-header">
+                    <h2><?php echo translateText('Recomendado'); ?></h2>
+                </div>
+                <div class="related-grid">
+                    <?php foreach ($musica['musicas_relacionadas'] as $relacionada): ?>
+                        <article class="song-card" onclick="window.location.href='verMusica.php?id=<?php echo $relacionada['id']; ?>&lang=<?php echo $currentLang; ?>'">
+                            <div class="song-card-cover">
+                                <img src="<?php echo htmlspecialchars($relacionada['capa']); ?>" alt="<?php echo htmlspecialchars($relacionada['titulo']); ?>">
+                                <button class="song-play-btn" onclick="event.stopPropagation();" title="<?php echo translateText('Reproduzir'); ?>">
                                     <svg viewBox="0 0 24 24" fill="currentColor">
                                         <path d="m7.05 3.606 13.49 7.788a.7.7 0 0 1 0 1.212L7.05 20.394A.7.7 0 0 1 6 19.788V4.212a.7.7 0 0 1 1.05-.606"/>
                                     </svg>
                                 </button>
-                            </article>
-                            <article class="nome-categoria">
-                                <p class="nome"><?php echo htmlspecialchars($artista['nome']); ?></p>
-                                <p class="categoria"><?php echo translateText($artista['tipo']); ?></p>
-                            </article>
-                        </section>
+                            </div>
+                            <div class="song-card-info">
+                                <h3><?php echo htmlspecialchars($relacionada['titulo']); ?></h3>
+                                <p><?php echo htmlspecialchars($relacionada['artista']); ?></p>
+                            </div>
+                        </article>
                     <?php endforeach; ?>
-                </section>
+                </div>
             </section>
         </section>
-    </section>
+    </main>
 
     <?php
     $modalConfig = [
-        'returnUrl' => 'perfilUsuario.php',
-        'preserveParams' => []
+        'returnUrl' => 'verMusica.php',
+        'preserveParams' => ['id']
     ];
     require_once 'languageModal.php';
     ?>
@@ -240,11 +332,7 @@ $artistId = isset($_GET['id']) ? (int)$_GET['id'] : 1;
     
             <section>
                 <h4>Comunidades</h4>
-<<<<<<< HEAD
-                <a href="page2.php?lang=<?php echo $currentLang; ?>"><p>Para Artistas</p></a>
-=======
                 <a href="homePaginaCadastro.php"><p>Para Artistas</p></a>
->>>>>>> conexaoBD
                 <p>Desenvolvedores</p>
                 <p>Publicidade</p>
                 <p>Investidores</p>
@@ -310,168 +398,46 @@ $artistId = isset($_GET['id']) ? (int)$_GET['id'] : 1;
         function interagirMenuPerfil() {
             const menu = document.getElementById('perfil-menu-suspenso');
             if (menu) {
-                menu.classList.toggle('aberto');
+                menu.classList.toggle('active');
             }
         }
 
-        // Menu de opções
-        function interagirMenuOpcoes() {
-            const menu = document.getElementById('opcoes-menu-suspenso');
-            if (menu) {
-                menu.classList.toggle('aberto');
-            }
-        }
-
-        // Fechar menus ao clicar fora
+        // Fechar menu ao clicar fora
         document.addEventListener('click', function(e) {
-            const perfilBtn = document.querySelector('.perfil-btn');
-            const perfilMenu = document.getElementById('perfil-menu-suspenso');
-            const opcoesBtn = document.querySelector('.opcoes article');
-            const opcoesMenu = document.getElementById('opcoes-menu-suspenso');
+            const perfil = document.getElementById('perfil');
+            const menu = document.getElementById('perfil-menu-suspenso');
             
-            if (perfilMenu && perfilBtn && !perfilBtn.contains(e.target)) {
-                perfilMenu.classList.remove('aberto');
-            }
-            
-            if (opcoesMenu && opcoesBtn && !opcoesBtn.contains(e.target) && !opcoesMenu.contains(e.target)) {
-                opcoesMenu.classList.remove('aberto');
+            if (menu && perfil && !perfil.contains(e.target) && !menu.contains(e.target)) {
+                menu.classList.remove('active');
             }
         });
 
-        // Abrir pop-up de edição
-        function abrirEdicao() {
-            const popup = document.getElementById('pop-up');
-            if (popup) {
-                popup.style.display = 'flex';
-                popup.classList.add('aberto');
-                document.body.style.overflow = 'hidden';
-            }
-            // Fechar menu de opções se estiver aberto
-            const opcoesMenu = document.getElementById('opcoes-menu-suspenso');
-            if (opcoesMenu) {
-                opcoesMenu.classList.remove('aberto');
-            }
-        }
-
-        // Fechar pop-up de edição
-        function fecharEdicao() {
-            const popup = document.getElementById('pop-up');
-            if (popup) {
-                popup.style.display = 'none';
-                popup.classList.remove('aberto');
-                document.body.style.overflow = '';
-            }
-        }
-
-        // Preview da foto ao selecionar
-        const inputFoto = document.getElementById('definir-foto-btn');
-        if (inputFoto) {
-            inputFoto.addEventListener('change', function(e) {
-                const file = e.target.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        const fotoEdicao = document.getElementById('foto-edicao');
-                        if (fotoEdicao) {
-                            fotoEdicao.src = e.target.result;
-                        }
-                    };
-                    reader.readAsDataURL(file);
+        // Botão curtir
+        const likeBtn = document.getElementById('likeBtn');
+        if (likeBtn) {
+            likeBtn.addEventListener('click', function() {
+                const isLiked = this.classList.contains('liked');
+                
+                if (isLiked) {
+                    this.classList.remove('liked');
+                    this.querySelector('svg').setAttribute('fill', 'none');
+                    this.querySelector('svg').setAttribute('stroke', 'currentColor');
+                } else {
+                    this.classList.add('liked');
+                    this.querySelector('svg').setAttribute('fill', '#d518ee');
+                    this.querySelector('svg').setAttribute('stroke', 'none');
                 }
             });
         }
 
-        // Remover foto
-        function removerFoto() {
-            const fotoEdicao = document.getElementById('foto-edicao');
-            const fotoPerfil = document.getElementById('foto-perfil-img');
-            const inputFoto = document.getElementById('definir-foto-btn');
-            
-            if (fotoEdicao) {
-                fotoEdicao.src = '../img/sem-foto.png';
-            }
-            if (inputFoto) {
-                inputFoto.value = '';
-            }
-        }
-
-        // Copiar URL do perfil
-        function copiarURL() {
-            const url = window.location.href;
-            navigator.clipboard.writeText(url).then(() => {
-                alert('<?php echo translateText('URL copiada para a área de transferência!'); ?>');
-            }).catch(err => {
-                console.error('Erro ao copiar URL:', err);
-            });
-            
-            // Fechar menu de opções
-            const opcoesMenu = document.getElementById('opcoes-menu-suspenso');
-            if (opcoesMenu) {
-                opcoesMenu.classList.remove('aberto');
-            }
-        }
-
-        // Submeter formulário de edição
-        const formEditarPerfil = document.getElementById('form-editar-perfil');
-        if (formEditarPerfil) {
-            formEditarPerfil.addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                const nomeUsuario = document.getElementById('nome-usuario').value;
-                const fotoEdicao = document.getElementById('foto-edicao').src;
-                
-                // Atualizar nome no perfil
-                const btnEditarPerfil = document.getElementById('editar-perfil');
-                if (btnEditarPerfil) {
-                    btnEditarPerfil.textContent = nomeUsuario;
-                }
-                
-                // Atualizar foto no perfil
-                const fotoPerfil = document.getElementById('foto-perfil-img');
-                const fotoHeader = document.querySelector('#perfil img');
-                if (fotoPerfil) {
-                    fotoPerfil.src = fotoEdicao;
-                }
-                if (fotoHeader) {
-                    fotoHeader.src = fotoEdicao;
-                }
-                
-                // Aqui você implementaria o envio para o servidor
-                console.log('Salvando perfil:', {
-                    nome: nomeUsuario,
-                    foto: fotoEdicao
-                });
-                
-                // Fechar pop-up
-                fecharEdicao();
-                
-                // Mostrar mensagem de sucesso (opcional)
-                alert('<?php echo translateText('Perfil atualizado com sucesso!'); ?>');
+        // Botão de play
+        const playBtn = document.querySelector('.btn-play-large');
+        if (playBtn) {
+            playBtn.addEventListener('click', function() {
+                console.log('Reproduzindo música');
+                alert('Reproduzindo música...');
             });
         }
-
-        // Fechar pop-up ao clicar fora
-        const popup = document.getElementById('pop-up');
-        if (popup) {
-            popup.addEventListener('click', function(e) {
-                if (e.target === popup) {
-                    fecharEdicao();
-                }
-            });
-        }
-
-        // Fechar pop-up com ESC
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                fecharEdicao();
-                
-                // Fechar modal de idioma se estiver aberto
-                const languageModal = document.getElementById('languageModal');
-                if (languageModal && languageModal.style.display === 'block') {
-                    toggleLanguageModal();
-                }
-            }
-        });
 
         // Language Modal
         function toggleLanguageModal() {
@@ -489,6 +455,13 @@ $artistId = isset($_GET['id']) ? (int)$_GET['id'] : 1;
                 toggleLanguageModal();
             }
         }
+
+        document.addEventListener('keydown', (e) => {
+            const modal = document.getElementById('languageModal');
+            if (e.key === 'Escape' && modal && modal.style.display === 'block') {
+                toggleLanguageModal();
+            }
+        });
     </script>
 </body>
 </html>

@@ -16,8 +16,10 @@ $usuario = [
         ['id' => 4, 'nome' => 'My Chemical Romance', 'foto' => '../img/sem-foto.png', 'tipo' => 'Artista']
     ],
     'musicas' => [
-        ['id' => 5, 'artista' => 'AnaVitória', 'foto_artista' => 'https://image-cdn-ak.spotifycdn.com/image/ab6761860000101685ec2d2af58d2b838a744ac4', 'titulo' => 'nosferatu', 'album' => 'claraboia', 'tipo' => 'single', 'genero' => 'mpb', 'ano' => 2025, 'duracao' => '2:25', 'audio_path' => 'https://open.spotify.com/track/72lqj4bouGaZr3c6tRNp5a?si=gNlC-cYZR1WSBvbtlIrbig&context=spotify%3Apl', 'capa_path' => 'https://i.scdn.co/image/ab67616d00001e02060bf5d261b6f21511b8c789'],
-        ['id' => 4, 'artista' => 'Taylor Swift', 'foto_artista'  => '../img/sem-foto.png' , 'titulo' => 'The Fate of Ophelia', 'album' => 'The Life of a Showgirl', 'tipo' => 'single', 'genero' => 'pop', 'ano' => 2025, 'duracao' => '3:46', 'audio_path' => 'https://open.spotify.com/track/53iuhJlwXhSER5J2IYYv1W?si=cecBdpCiQZWJ2RiWLRdBDQ&context=spotify%3Apl', 'capa_path' => 'https://i.scdn.co/image/ab67616d00001e02d7812467811a7da6e6a44902']
+        ['id' => 1, 'artista' => 'AnaVitória', 'foto_artista' => 'https://image-cdn-ak.spotifycdn.com/image/ab6761860000101685ec2d2af58d2b838a744ac4', 'titulo' => 'nosferatu', 'album' => 'claraboia', 'tipo' => 'single', 'genero' => 'mpb', 'ano' => 2025, 'duracao' => '2:25', 'audio_path' => 'https://open.spotify.com/track/72lqj4bouGaZr3c6tRNp5a', 'capa_path' => 'https://i.scdn.co/image/ab67616d00001e02060bf5d261b6f21511b8c789'],
+        ['id' => 2, 'artista' => 'Taylor Swift', 'foto_artista'  => '../img/sem-foto.png', 'titulo' => 'The Fate of Ophelia', 'album' => 'The Life of a Showgirl', 'tipo' => 'single', 'genero' => 'pop', 'ano' => 2025, 'duracao' => '3:46', 'audio_path' => 'https://open.spotify.com/track/53iuhJlwXhSER5J2IYYv1W', 'capa_path' => 'https://i.scdn.co/image/ab67616d00001e02d7812467811a7da6e6a44902'],
+        ['id' => 3, 'artista' => 'Alina Simpson', 'foto_artista' => '../img/foto-perfil/alina-foto.jpg', 'titulo' => 'Pluto', 'album' => 'Pluto', 'tipo' => 'single', 'genero' => 'Piano', 'ano' => 2024, 'duracao' => '3:45', 'audio_path' => '', 'capa_path' => '../img/capas-albums/capa-alina-pluto.jpg'],
+        ['id' => 4, 'artista' => 'Berlinist', 'foto_artista' => '../img/sem-foto.png', 'titulo' => 'In courage abide', 'album' => 'Neva', 'tipo' => 'single', 'genero' => 'Electronic', 'ano' => 2024, 'duracao' => '4:12', 'audio_path' => '', 'capa_path' => '../img/capas-albums/capa-berlinist-neva.jpg']
     ]
 ];
 
@@ -25,30 +27,14 @@ $pageTitle = $usuario['nome'];
 ?>
 
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="<?php echo $langCode; ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" sizes="96x96" href="../img/GA-Station.png">
     <title><?php echo $pageTitle; ?> | Giana Station</title>
-    <!-- CSS da Página -->
     <link rel="stylesheet" href="../css/style-padrao.css">
     <link rel="stylesheet" href="../css/style-pagInicial.css">
-
-
-    <script>
-        let abertoPerfil = false;
-
-        function interagirMenuPerfil()
-        {
-            abertoPerfil = !abertoPerfil;
-            if (abertoPerfil)
-                document.getElementById('perfil-menu-suspenso').classList.add('aberto');
-
-            else
-                document.getElementById('perfil-menu-suspenso').classList.remove('aberto');
-        }
-    </script>
 </head>
 <body>
     <!-- Cabeçalho -->
@@ -110,13 +96,8 @@ $pageTitle = $usuario['nome'];
         <!-- Menu Lateral -->
         <aside class="lateral-menu">
             <section class="lateral-menu-top">
-<<<<<<< HEAD
                 <h3><?php echo translateText('Sua Biblioteca'); ?></h3>
-                <a href="cadPlaylist.php?lang=<?php echo $currentLang; ?>">
-=======
-                <h3>Sua Biblioteca</h3>
-                <a href="cadastrarPlaylist.php">
->>>>>>> conexaoBD
+                <a href="cadastrarPlaylist.php?lang=<?php echo $currentLang; ?>">
                     <button id="criar-playlist">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" width="16" height="16">
                             <path d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2"/>
@@ -129,17 +110,11 @@ $pageTitle = $usuario['nome'];
             <section class="lateral-menu-content sem-playlist">
                 <h3><?php echo translateText('Crie sua primeira playlist'); ?></h3>
                 <p><?php echo translateText('É fácil, vamos te ajudar.'); ?></p>
-                <button><?php echo translateText('Criar Playlist'); ?></button>
+                <button onclick="window.location.href='cadastrarPlaylist.php?lang=<?php echo $currentLang; ?>'"><?php echo translateText('Criar Playlist'); ?></button>
             </section>
         </aside>
 
-        <section class="principal"> <!-- Principal -->
-        <!--    <section class="filter"> Filtro
-                <button>Tudo</button>
-                <button>Minhas Músicas</button>
-                <button>Recomendadas</button>
-            </section>-->
-
+        <section class="principal">
             <!-- Artistas Mais Tocados -->
             <section class="cards">
                 <article class="albuns-titulo">
@@ -170,17 +145,19 @@ $pageTitle = $usuario['nome'];
                 </section>
             </section>
 
+            <!-- Músicas Populares -->
             <section class="cards">
                 <article class="albuns-titulo">
                     <article>
-                        <h1><?php echo translateText('Artistas mais tocados este mês'); ?></h1>
+                        <h1><?php echo translateText('Suas músicas favoritas'); ?></h1>
+                        <p><?php echo translateText('Baseado no que você está ouvindo'); ?></p>
                     </article>
                     <button><?php echo translateText('Mostrar tudo'); ?></button>
                 </article>
 
                 <section class="albuns">
                     <?php foreach ($usuario['musicas'] as $musica): ?>
-                        <section class="card" onclick="window.location.href='verMusica.php?id=<? $musica['id']; ?>'">
+                        <section class="card" onclick="window.location.href='verMusica.php?id=<?php echo $musica['id']; ?>&lang=<?php echo $currentLang; ?>'">
                             <article class="card-img musica">
                                 <img src="<?php echo htmlspecialchars($musica['capa_path']); ?>" alt="<?php echo htmlspecialchars($musica['titulo']); ?>">
                                 <button class="card-play-btn" onclick="event.stopPropagation();">
@@ -191,21 +168,62 @@ $pageTitle = $usuario['nome'];
                             </article>
                             <article class="nome-categoria">
                                 <p class="nome"><?php echo htmlspecialchars($musica['titulo']); ?></p>
-                                <p class="categoria"><?php echo translateText($musica['artista']); ?></p>
+                                <p class="categoria"><?php echo htmlspecialchars($musica['artista']); ?></p>
+                            </article>
+                        </section>
+                    <?php endforeach; ?>
+                </section>
+            </section>
+
+            <!-- Recomendações Baseadas no Gosto -->
+            <section class="cards">
+                <article class="albuns-titulo">
+                    <article>
+                        <h1><?php echo translateText('Recomendado para você'); ?></h1>
+                        <p><?php echo translateText('Com base nos seus artistas favoritos'); ?></p>
+                    </article>
+                    <button><?php echo translateText('Mostrar tudo'); ?></button>
+                </article>
+
+                <section class="albuns">
+                    <!-- Mix de músicas recomendadas -->
+                    <?php 
+                    $recomendacoes = array_slice($usuario['musicas'], 0, 4);
+                    foreach ($recomendacoes as $musica): 
+                    ?>
+                        <section class="card" onclick="window.location.href='verMusica.php?id=<?php echo $musica['id']; ?>&lang=<?php echo $currentLang; ?>'">
+                            <article class="card-img musica">
+                                <img src="<?php echo htmlspecialchars($musica['capa_path']); ?>" alt="<?php echo htmlspecialchars($musica['titulo']); ?>">
+                                <button class="card-play-btn" onclick="event.stopPropagation();">
+                                    <svg viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="m7.05 3.606 13.49 7.788a.7.7 0 0 1 0 1.212L7.05 20.394A.7.7 0 0 1 6 19.788V4.212a.7.7 0 0 1 1.05-.606"/>
+                                    </svg>
+                                </button>
+                            </article>
+                            <article class="nome-categoria">
+                                <p class="nome"><?php echo htmlspecialchars($musica['titulo']); ?></p>
+                                <p class="categoria"><?php echo htmlspecialchars($musica['artista']); ?></p>
                             </article>
                         </section>
                     <?php endforeach; ?>
                 </section>
             </section>
         </section>
-
     </section>
+
+    <?php
+    $modalConfig = [
+        'returnUrl' => 'pagInicial.php',
+        'preserveParams' => []
+    ];
+    require_once 'languageModal.php';
+    ?>
 
     <footer class="rodape">
         <section class="top">
             <section>
-                <h4>Empresa</h4>
-                <p>Sobre</p>
+                <h4><?php echo translate('useful_links'); ?></h4>
+                <p><?php echo translate('about'); ?></p>
                 <p>Empregos</p>
                 <p>For the Record</p>
             </section>
@@ -228,12 +246,12 @@ $pageTitle = $usuario['nome'];
             </section>
     
             <section>
-                <h4>Planos do Spotify</h4>
+                <h4>Planos do Giana Station</h4>
                 <p>Premium Individual</p>
                 <p>Premium Duo</p>
                 <p>Premium Família</p>
                 <p>Premium Universitário</p>
-                <p>Spotify Free</p>
+                <p>Giana Station Free</p>
             </section>
             
             <section class="redes">
@@ -245,7 +263,7 @@ $pageTitle = $usuario['nome'];
 
                 <button>
                     <svg xmlns="http://www.w3.org/2000/svg" class="bi bi-twitter" viewBox="0 0 16 16">
-                        <path d="M5.026 15c6.038 0 9.341-5.003 9.341-9.334q.002-.211-.006-.422A6.7 6.7 0 0 0 16 3.542a6.7 6.7 0 0 1-1.889.518 3.3 3.3 0 0 0 1.447-1.817 6.5 6.5 0 0 1-2.087.793A3.286 3.286 0 0 0 7.875 6.03a9.32 9.32 0 0 1-6.767-3.429 3.29 3.29 0 0 0 1.018 4.382A3.3 3.3 0 0 1 .64 6.575v.045a3.29 3.29 0 0 0 2.632 3.218 3.2 3.2 0 0 1-.865.115 3 3 0 0 1-.614-.057 3.28 3.28 0 0 0 3.067 2.277A6.6 6.6 0 0 1 .78 13.58a6 6 0 0 1-.78-.045A9.34 9.34 0 0 0 5.026 15"/>
+                        <path d="M5.026 15c6.038 0 9.341-5.003 9.341-9.334q.002-.211-.006-.422A6.7 6.7 0 0 0 16 3.542a6.7 6.7 0 0 1-1.889.518 3.3 3.3 0 0 0 1.447-1.817 6.5 6.5 0 0 1-2.087.793A3.286 3.286 0 0 0 7.875 6.03a9.32 9.32 0 0 1-6.767-3.429 3.29 3.29 0 0 0 1.018 4.382A3.3 3.3 0 0 1 .64 6.575v.045a3.29 3.29 0 0 0 2.632 3.218 3.2 3.2 0 0 1-.865.115 3 3 0 0 1-.614-.057a3.28 3.28 0 0 0 3.067 2.277A6.6 6.6 0 0 1 .78 13.58a6 6 0 0 1-.78-.045A9.34 9.34 0 0 0 5.026 15"/>
                     </svg>
                 </button>
                 
@@ -254,16 +272,15 @@ $pageTitle = $usuario['nome'];
                         <path d="M16 8.049c0-4.446-3.582-8.05-8-8.05C3.58 0-.002 3.603-.002 8.05c0 4.017 2.926 7.347 6.75 7.951v-5.625h-2.03V8.05H6.75V6.275c0-2.017 1.195-3.131 3.022-3.131.876 0 1.791.157 1.791.157v1.98h-1.009c-.993 0-1.303.621-1.303 1.258v1.51h2.218l-.354 2.326H9.25V16c3.824-.604 6.75-3.934 6.75-7.951"/>
                     </svg>
                 </button>
-                
             </section>
         </section>
 
         <section class="bottom">
             <article>
-                <p>Legal</p>
+                <p><?php echo translate('legal'); ?></p>
                 <p>Segurança e Centro de privacidade</p>
-                <p>Política de privacidade</p>
-                <p>Cookies</p>
+                <p><?php echo translate('privacy'); ?></p>
+                <p><?php echo translate('cookies'); ?></p>
                 <p>Sobre anúncios</p>
                 <p>Acessibilidade</p>
             </article>
@@ -274,5 +291,48 @@ $pageTitle = $usuario['nome'];
         </section>
     </footer>
 
+    <script>
+        // Menu do perfil
+        function interagirMenuPerfil() {
+            const menu = document.getElementById('perfil-menu-suspenso');
+            if (menu) {
+                menu.classList.toggle('active');
+            }
+        }
+
+        // Fechar menu ao clicar fora
+        document.addEventListener('click', function(e) {
+            const perfil = document.getElementById('perfil');
+            const menu = document.getElementById('perfil-menu-suspenso');
+            
+            if (menu && perfil && !perfil.contains(e.target) && !menu.contains(e.target)) {
+                menu.classList.remove('active');
+            }
+        });
+
+        // Language Modal
+        function toggleLanguageModal() {
+            const modal = document.getElementById('languageModal');
+            if (modal) {
+                const isHidden = modal.style.display === 'none' || !modal.style.display;
+                modal.style.display = isHidden ? 'block' : 'none';
+                document.body.style.overflow = isHidden ? 'hidden' : '';
+            }
+        }
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('languageModal');
+            if (event.target === modal) {
+                toggleLanguageModal();
+            }
+        }
+
+        document.addEventListener('keydown', (e) => {
+            const modal = document.getElementById('languageModal');
+            if (e.key === 'Escape' && modal && modal.style.display === 'block') {
+                toggleLanguageModal();
+            }
+        });
+    </script>
 </body>
 </html>
