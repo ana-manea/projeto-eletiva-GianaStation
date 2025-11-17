@@ -4,41 +4,6 @@ $pageTitle = 'Dashboard';
 ?>
 
 <link rel="stylesheet" href="../css/style-dashboardArtista.css">
-<style>
-/* Ação Rápida */
-.quick-action {
-    margin-bottom: 32px;
-}
-
-.btn-add-release {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-    padding: 20px;
-    background: linear-gradient(135deg, rgba(213, 24, 238, 0.1) 0%, rgba(213, 24, 238, 0.05) 100%);
-    border: 2px dashed rgba(213, 24, 238, 0.4);
-    border-radius: 12px;
-    color: white;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s;
-}
-
-.btn-add-release:hover {
-    background: linear-gradient(135deg, rgba(213, 24, 238, 0.2) 0%, rgba(213, 24, 238, 0.1) 100%);
-    border-color: var(--primary);
-    transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(213, 24, 238, 0.3);
-}
-
-.btn-add-release svg {
-    width: 24px;
-    height: 24px;
-}
-</style>
 
 <!DOCTYPE html>
 <html lang="<?php echo $langCode; ?>">
@@ -53,7 +18,7 @@ $pageTitle = 'Dashboard';
     <nav class="navbar">
         <section class="navbar-content">
             <section class="navbar-left">
-                <a href="pagInicial.php" class="artist-profile">
+                <a href="dashboardArtista.php" class="artist-profile">
                     <section class="artist-avatar">
                         <img src="https://image-cdn-ak.spotifycdn.com/image/ab6761860000101685ec2d2af58d2b838a744ac4" alt="AnaVitoria">
                     </section>

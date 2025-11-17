@@ -42,7 +42,7 @@ $showSuccess = isset($_GET['updated']) && $_GET['updated'] == '1';
     <nav class="navbar">
         <section class="navbar-content">
             <section class="navbar-left">
-                <a href="pagInicial.php" class="artist-profile">
+                <a href="dashboardArtista.php" class="artist-profile">
                     <section class="artist-avatar">
                         <img src="<?php echo htmlspecialchars($artistData['avatar']); ?>" alt="<?php echo htmlspecialchars($artistData['nome']); ?>" id="navAvatar">
                     </section>

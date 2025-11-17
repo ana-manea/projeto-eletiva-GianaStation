@@ -79,7 +79,7 @@
         <aside class="lateral-menu"> <!-- Menu lateral-->
             <section class="lateral-menu-top">
                 <h3>Sua Biblioteca</h3>
-                <a href="cadPlaylist.php">
+                <a href="cadastrarPlaylist.php">
                     <button id="criar-playlist">
                         Criar
                     </button>
@@ -202,7 +202,7 @@
     
             <section>
                 <h4>Comunidades</h4>
-                <a href=""><p>Para Artistas</p></a>
+                <a href="homePaginaCadastro.php"><p>Para Artistas</p></a>
                 <p>Desenvolvedores</p>
                 <p>Publicidade</p>
                 <p>Investidores</p>

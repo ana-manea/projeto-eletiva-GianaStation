@@ -2,92 +2,19 @@
 require_once 'config.php';
 $pageTitle = translate('register_artist');
 
-$errors = [];
-$success = false;
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $nome = trim($_POST['nome'] ?? '');
-    $genero = trim($_POST['genero'] ?? '');
-    $bio = trim($_POST['bio'] ?? '');
-    $instagram = trim($_POST['instagram'] ?? '');
-    $twitter = trim($_POST['twitter'] ?? '');
-    $tiktok = trim($_POST['tiktok'] ?? '');
-    $website = trim($_POST['website'] ?? '');
-    
-    if (empty($nome)) {
-        $errors[] = 'Nome artístico é obrigatório';
-    } elseif (mb_strlen($nome) > 50) {
-        $errors[] = 'Nome artístico deve ter no máximo 50 caracteres';
-    }
-    
-    if (empty($instagram)) {
-        $errors[] = 'Instagram é obrigatório';
-    } elseif (!filter_var($instagram, FILTER_VALIDATE_URL)) {
-        $errors[] = 'URL do Instagram inválida';
-    }
-    
-    if (!empty($bio) && mb_strlen($bio) > 1000) {
-        $errors[] = 'Biografia deve ter no máximo 1000 caracteres';
-    }
-    
-    if (!empty($twitter) && !filter_var($twitter, FILTER_VALIDATE_URL)) {
-        $errors[] = 'URL do Twitter inválida';
-    }
-    
-    if (!empty($tiktok) && !filter_var($tiktok, FILTER_VALIDATE_URL)) {
-        $errors[] = 'URL do TikTok inválida';
-    }
-    
-    if (!empty($website) && !filter_var($website, FILTER_VALIDATE_URL)) {
-        $errors[] = 'URL do Website inválida';
-    }
-    
-    if (isset($_FILES['capa']) && $_FILES['capa']['error'] === UPLOAD_ERR_OK) {
-        $allowed = ['image/jpeg', 'image/png', 'image/jpg'];
-        $fileType = $_FILES['capa']['type'];
-        
-        if (!in_array($fileType, $allowed)) {
-            $errors[] = 'Formato de imagem inválido. Use JPG ou PNG';
-        }
-        
-        $maxSize = 10 * 1024 * 1024; 
-        if ($_FILES['capa']['size'] > $maxSize) {
-            $errors[] = 'Arquivo de capa muito grande. Máximo 10MB';
-        }
-    }
-    
-    if (empty($errors)) {
-        
-        $artistData = [
-            'nome' => $nome,
-            'genero' => $genero,
-            'bio' => $bio,
-            'instagram' => $instagram,
-            'twitter' => $twitter,
-            'tiktok' => $tiktok,
-            'website' => $website,
-            'dataCadastro' => date('Y-m-d H:i:s')
-        ];
-        
-        if (isset($_FILES['capa']) && $_FILES['capa']['error'] === UPLOAD_ERR_OK) {
-            $uploadDir = '../uploads/capas/';
-            if (!is_dir($uploadDir)) {
-                mkdir($uploadDir, 0755, true);
-            }
-            
-            $filename = uniqid('capa_') . '_' . basename($_FILES['capa']['name']);
-            $uploadPath = $uploadDir . $filename;
-            
-            if (move_uploaded_file($_FILES['capa']['tmp_name'], $uploadPath)) {
-                $artistData['capa'] = $filename;
-            }
-        }
-        
-        $_SESSION['artist_data'] = $artistData;
-        
-        $success = true;
-    }
+// Verificar se usuário está logado
+if (!isset($_SESSION['user_id'])) {
+    $_SESSION['error_message'] = 'Você precisa estar logado para cadastrar um artista';
+    header('Location: login.php?lang=' . $currentLang);
+    exit;
 }
+
+// Recuperar erros e dados do formulário da sessão
+$errors = $_SESSION['artista_errors'] ?? [];
+$formData = $_SESSION['form_data'] ?? [];
+
+// Limpar mensagens após exibir
+unset($_SESSION['artista_errors']);
 ?>
 
 <link rel="stylesheet" href="../css/style-formArtista.css">
@@ -115,17 +42,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
         <?php endif; ?>
 
-        <?php if ($success): ?>
-            <div class="alert alert-success">
-                <div class="alert-icon">✓</div>
-                <div class="alert-title">Perfil de artista criado com sucesso!</div>
-                <div class="alert-description">
-                    Nome: <?php echo htmlspecialchars($artistData['nome']); ?>
-                </div>
-            </div>
-        <?php endif; ?>
-
-        <form class="form" method="POST" enctype="multipart/form-data">
+        <form class="form" method="POST" action="../processamento/processamentoCadArtista.php" enctype="multipart/form-data">
+            <input type="hidden" name="lang" value="<?php echo $currentLang; ?>">
+            
             <div class="form-group">
                 <label for="nome" class="form-label"><?php echo translate('artist_name'); ?> *</label>
                 <input
@@ -136,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     maxlength="50"
                     required
                     class="form-input"
-                    value="<?php echo htmlspecialchars($_POST['nome'] ?? ''); ?>"
+                    value="<?php echo htmlspecialchars($formData['nome'] ?? ''); ?>"
                     oninput="updateCounter('nome', 50)"
                 />
                 <p class="char-count"><span id="nomeCount">0</span>/50 <?php echo translate('characters'); ?></p>
@@ -148,7 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     type="file"
                     id="capa"
                     name="capa"
-                    accept="image/*"
+                    accept="image/jpeg,image/png,image/jpg,image/gif,image/webp"
                     class="form-file"
                 />
                 <p class="form-help"><?php echo translate('profile_cover_help'); ?></p>
@@ -162,7 +81,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     name="genero"
                     placeholder="<?php echo translate('genre_placeholder'); ?>"
                     class="form-input"
-                    value="<?php echo htmlspecialchars($_POST['genero'] ?? ''); ?>"
+                    value="<?php echo htmlspecialchars($formData['genero'] ?? ''); ?>"
                 />
             </div>
 
@@ -176,7 +95,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     maxlength="1000"
                     class="form-textarea"
                     oninput="updateCounter('bio', 1000)"
-                ><?php echo htmlspecialchars($_POST['bio'] ?? ''); ?></textarea>
+                ><?php echo htmlspecialchars($formData['bio'] ?? ''); ?></textarea>
                 <p class="char-count"><span id="bioCount">0</span>/1000 <?php echo translate('characters'); ?></p>
             </div>
 
@@ -189,37 +108,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     placeholder="https://www.instagram.com/..."
                     required
                     class="form-input"
-                    value="<?php echo htmlspecialchars($_POST['instagram'] ?? ''); ?>"
+                    value="<?php echo htmlspecialchars($formData['instagram'] ?? ''); ?>"
                 />
 
-                <label for="twitter" class="form-label">Twitter / X</label>
+                <label for="twitter" class="form-label" style="margin-top: 1rem;">Twitter / X</label>
                 <input
                     type="url"
                     id="twitter"
                     name="twitter"
                     placeholder="https://x.com/..."
                     class="form-input"
-                    value="<?php echo htmlspecialchars($_POST['twitter'] ?? ''); ?>"
+                    value="<?php echo htmlspecialchars($formData['twitter'] ?? ''); ?>"
                 />
 
-                <label for="tiktok" class="form-label">TikTok</label>
+                <label for="tiktok" class="form-label" style="margin-top: 1rem;">TikTok</label>
                 <input
                     type="url"
                     id="tiktok"
                     name="tiktok"
                     placeholder="https://www.tiktok.com/..."
                     class="form-input"
-                    value="<?php echo htmlspecialchars($_POST['tiktok'] ?? ''); ?>"
+                    value="<?php echo htmlspecialchars($formData['tiktok'] ?? ''); ?>"
                 />
 
-                <label for="website" class="form-label">Website</label>
+                <label for="website" class="form-label" style="margin-top: 1rem;">Website</label>
                 <input
                     type="url"
                     id="website"
                     name="website"
                     placeholder="https://..."
                     class="form-input"
-                    value="<?php echo htmlspecialchars($_POST['website'] ?? ''); ?>"
+                    value="<?php echo htmlspecialchars($formData['website'] ?? ''); ?>"
                 />
             </div>
 

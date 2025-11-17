@@ -305,7 +305,7 @@ $pageTitle = $artista['nome'];
     
             <section>
                 <h4>Comunidades</h4>
-                <a href="page2.php?lang=<?php echo $currentLang; ?>"><p>Para Artistas</p></a>
+                <a href="homePaginaCadastro.php"><p>Para Artistas</p></a>
                 <p>Desenvolvedores</p>
                 <p>Publicidade</p>
                 <p>Investidores</p>

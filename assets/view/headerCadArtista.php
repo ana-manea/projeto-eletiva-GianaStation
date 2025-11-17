@@ -15,7 +15,7 @@ if (!defined('SITE_NAME')) {
 <body>
     <header class="header" id="header">
         <section class="header-content">
-            <a href="pagInicial.php" class="logo">
+            <a href="homePaginaCadastro.php" class="logo">
                 <img src="../img/GA-Station.png" alt="Giana Station" style="width: 40px; height: 40px;">
                 <span>for Artists</span>
             </a>
