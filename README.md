@@ -35,60 +35,64 @@
 ### Telas
 - Login
 > HTML, CSS e JS - **GiAna**
+> PHP, CSS e JS - **GiAna**
 
 - Entrar com Senha
 > HTML e CSS - **Gi**
+> PHP, CSS e JS - **GiAna**
 
 - Entrar com Código
 > HTML e CSS - **Gi**
+> PHP, CSS e JS - **GiAna**
 
 - Cadastrar Usuario
 > HTML, CSS e JS - **Ana**
+> PHP, CSS e JS - **GiAna**
 
 - Cadastrar Artista
 > HTML, CSS e JS - **Ana**
+> PHP, CSS e JS - **GiAna**
 
 - Cadastrar Álbum/Ep/Single
 > HTML, CSS e JS - **Ana**
+> PHP, CSS e JS - **GiAna**
 
 - Cadastrar Playlist
-> 
+> PHP, CSS e JS - **GiAna**
 
 - Editar Usuario
 > HTML e CSS - **Ana**
+> PHP, CSS e JS - **GiAna**
 
 - Editar Artista
 > HTML, CSS, JS - **Ana**
+> PHP, CSS e JS - **GiAna**
 
 - Editar Álbum/Ep/Single
-> 
-
-- Editar Playlist
-> 
+> PHP, CSS e JS - **GiAna**
 
 - Página Inicial
 > HTML e CSS - **Gi**
+> PHP, CSS e JS - **GiAna**
 
 - Perfil do Usuário
 > HTML, CSS e JS - **Gi**
+> PHP, CSS e JS - **GiAna**
 
 - Perfil do Artista
-> > HTML, CSS, JS - **Ana**
+> HTML, CSS, JS - **Ana**
+> PHP, CSS e JS - **GiAna**
 
 - Playlist
->
+> PHP, CSS e JS - **GiAna**
 
 - Álbum/Ep/Single
 > HTML, CSS e JS - **Gi**
-
-- Fila de Reprodução
->
+> PHP, CSS e JS - **GiAna**
 
 - Navegar
->
+> PHP, CSS e JS - **GiAna**
 
-- Notificações
->
-
-- Tocando agora em tela cheia: Capa da música
->
+------------------------------------------------------------------------------
+- Criação do banco de dados - **Gi**
+- Processamento e funções do BD no PHP - **Ana**
