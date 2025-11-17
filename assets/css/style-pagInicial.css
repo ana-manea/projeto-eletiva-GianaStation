@@ -144,7 +144,6 @@
     cursor: pointer;
     overflow: hidden;
     background: none;
-    padding: 0;
 }
 
 #perfil img {
@@ -168,7 +167,7 @@
     z-index: 1000;
 }
 
-#perfil-menu-suspenso.aberto {
+#perfil-menu-suspenso.active {
     display: block;
 }
 
@@ -194,6 +193,7 @@
     background: var(--border);
     margin: 4px 0;
 }
+
 
 /* Layout Principal */
 .conteudo {

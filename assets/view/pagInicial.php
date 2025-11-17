@@ -1,29 +1,36 @@
 <?php
 require_once 'config.php';
+require_once '../processamento/funcoesBD.php';
 
-// Dados do usuário (exemplo - substituir por dados do banco)
-$usuario = [
-    'id' => 1,
-    'nome' => 'Usuário Giana',
-    'foto_perfil' => '../img/sem-foto.png',
-    'playlists_publicas' => 1,
-    'seguidores' => 1,
-    'seguindo' => 56,
-    'artistas_mais_tocados' => [
-        ['id' => 1, 'nome' => 'AnaVitória', 'foto' => 'https://image-cdn-ak.spotifycdn.com/image/ab6761860000101685ec2d2af58d2b838a744ac4', 'tipo' => 'Artista'],
-        ['id' => 2, 'nome' => 'Marília Mendonça', 'foto' => '../img/sem-foto.png', 'tipo' => 'Artista'],
-        ['id' => 3, 'nome' => 'Jorge & Mateus', 'foto' => '../img/sem-foto.png', 'tipo' => 'Artista'],
-        ['id' => 4, 'nome' => 'My Chemical Romance', 'foto' => '../img/sem-foto.png', 'tipo' => 'Artista']
-    ],
-    'musicas' => [
-        ['id' => 1, 'artista' => 'AnaVitória', 'foto_artista' => 'https://image-cdn-ak.spotifycdn.com/image/ab6761860000101685ec2d2af58d2b838a744ac4', 'titulo' => 'nosferatu', 'album' => 'claraboia', 'tipo' => 'single', 'genero' => 'mpb', 'ano' => 2025, 'duracao' => '2:25', 'audio_path' => 'https://open.spotify.com/track/72lqj4bouGaZr3c6tRNp5a', 'capa_path' => 'https://i.scdn.co/image/ab67616d00001e02060bf5d261b6f21511b8c789'],
-        ['id' => 2, 'artista' => 'Taylor Swift', 'foto_artista'  => '../img/sem-foto.png', 'titulo' => 'The Fate of Ophelia', 'album' => 'The Life of a Showgirl', 'tipo' => 'single', 'genero' => 'pop', 'ano' => 2025, 'duracao' => '3:46', 'audio_path' => 'https://open.spotify.com/track/53iuhJlwXhSER5J2IYYv1W', 'capa_path' => 'https://i.scdn.co/image/ab67616d00001e02d7812467811a7da6e6a44902'],
-        ['id' => 3, 'artista' => 'Alina Simpson', 'foto_artista' => '../img/foto-perfil/alina-foto.jpg', 'titulo' => 'Pluto', 'album' => 'Pluto', 'tipo' => 'single', 'genero' => 'Piano', 'ano' => 2024, 'duracao' => '3:45', 'audio_path' => '', 'capa_path' => '../img/capas-albums/capa-alina-pluto.jpg'],
-        ['id' => 4, 'artista' => 'Berlinist', 'foto_artista' => '../img/sem-foto.png', 'titulo' => 'In courage abide', 'album' => 'Neva', 'tipo' => 'single', 'genero' => 'Electronic', 'ano' => 2024, 'duracao' => '4:12', 'audio_path' => '', 'capa_path' => '../img/capas-albums/capa-berlinist-neva.jpg']
-    ]
-];
+// Verificar se usuário está logado
+if (!isset($_SESSION['user_id'])) {
+    header('Location: login.php?lang=' . $currentLang);
+    exit;
+}
 
-$pageTitle = $usuario['nome'];
+// Buscar dados do usuário
+$usuario = buscarUsuarioID($_SESSION['user_id']);
+
+if (!$usuario) {
+    session_destroy();
+    header('Location: login.php?lang=' . $currentLang);
+    exit;
+}
+
+// Buscar artistas populares
+$artistas_populares = buscarArtistasPopulares(4);
+
+// Buscar músicas recentes
+$musicas_recentes = buscarMusicasRecentes(8);
+
+// Buscar playlists do usuário
+$playlists_usuario = listarPlaylistsUsuario($_SESSION['user_id']);
+
+// Preparar dados para exibição
+$pageTitle = $usuario['Nome'];
+
+// Verificar se tem foto de perfil
+$foto_perfil = !empty($usuario['Foto_perfil']) ? $usuario['Foto_perfil'] : '../img/sem-foto.png';
 ?>
 
 <!DOCTYPE html>
@@ -32,7 +39,7 @@ $pageTitle = $usuario['nome'];
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" sizes="96x96" href="../img/GA-Station.png">
-    <title><?php echo $pageTitle; ?> | Giana Station</title>
+    <title><?php echo htmlspecialchars($pageTitle); ?> | Giana Station</title>
     <link rel="stylesheet" href="../css/style-padrao.css">
     <link rel="stylesheet" href="../css/style-pagInicial.css">
 </head>
@@ -80,7 +87,7 @@ $pageTitle = $usuario['nome'];
                 
                 <section class="perfil-btn">
                     <button id="perfil" onclick="interagirMenuPerfil()">
-                        <img src="<?php echo htmlspecialchars($usuario['foto_perfil']); ?>" alt="Perfil">
+                        <img src="../img/sem-foto.png" alt="Perfil">
                     </button>
                     <ul id="perfil-menu-suspenso">
                         <a href="perfilUsuario.php?lang=<?php echo $currentLang; ?>"><li><?php echo translateText('Perfil'); ?></li></a>
@@ -107,29 +114,43 @@ $pageTitle = $usuario['nome'];
                 </a>
             </section>
 
+            <?php if (empty($playlists_usuario)): ?>
             <section class="lateral-menu-content sem-playlist">
                 <h3><?php echo translateText('Crie sua primeira playlist'); ?></h3>
                 <p><?php echo translateText('É fácil, vamos te ajudar.'); ?></p>
                 <button onclick="window.location.href='cadastrarPlaylist.php?lang=<?php echo $currentLang; ?>'"><?php echo translateText('Criar Playlist'); ?></button>
             </section>
+            <?php else: ?>
+            <section class="lateral-menu-content">
+                <?php foreach ($playlists_usuario as $playlist): ?>
+                    <article class="playlist-item" onclick="window.location.href='#'">
+                        <img src="<?php echo !empty($playlist['Capa_play_path']) ? htmlspecialchars($playlist['Capa_play_path']) : '../img/playlist-default.png'; ?>" alt="<?php echo htmlspecialchars($playlist['Nome_playlist']); ?>">
+                        <div>
+                            <h4><?php echo htmlspecialchars($playlist['Nome_playlist']); ?></h4>
+                            <p><?php echo translateText('Playlist'); ?></p>
+                        </div>
+                    </article>
+                <?php endforeach; ?>
+            </section>
+            <?php endif; ?>
         </aside>
 
         <section class="principal">
             <!-- Artistas Mais Tocados -->
+            <?php if (!empty($artistas_populares)): ?>
             <section class="cards">
                 <article class="albuns-titulo">
                     <article>
-                        <h1><?php echo translateText('Artistas mais tocados este mês'); ?></h1>
-                        <p><?php echo translateText('Visíveis apenas para você'); ?></p>
+                        <h1><?php echo translateText('Artistas populares'); ?></h1>
+                        <p><?php echo translateText('Descubra novos artistas'); ?></p>
                     </article>
-                    <button><?php echo translateText('Mostrar tudo'); ?></button>
                 </article>
 
                 <section class="albuns">
-                    <?php foreach ($usuario['artistas_mais_tocados'] as $artista): ?>
-                        <section class="card" onclick="window.location.href='visualizarArtista.php?id=<?php echo $artista['id']; ?>&lang=<?php echo $currentLang; ?>'">
+                    <?php foreach ($artistas_populares as $artista): ?>
+                        <section class="card" onclick="window.location.href='visualizarArtista.php?id=<?php echo $artista['ID_Artista']; ?>&lang=<?php echo $currentLang; ?>'">
                             <article class="card-img">
-                                <img src="<?php echo htmlspecialchars($artista['foto']); ?>" alt="<?php echo htmlspecialchars($artista['nome']); ?>">
+                                <img src="<?php echo htmlspecialchars($artista['Capa_path']); ?>" alt="<?php echo htmlspecialchars($artista['Nome_artistico']); ?>">
                                 <button class="card-play-btn" onclick="event.stopPropagation();">
                                     <svg viewBox="0 0 24 24" fill="currentColor">
                                         <path d="m7.05 3.606 13.49 7.788a.7.7 0 0 1 0 1.212L7.05 20.394A.7.7 0 0 1 6 19.788V4.212a.7.7 0 0 1 1.05-.606"/>
@@ -137,29 +158,30 @@ $pageTitle = $usuario['nome'];
                                 </button>
                             </article>
                             <article class="nome-categoria">
-                                <p class="nome"><?php echo htmlspecialchars($artista['nome']); ?></p>
-                                <p class="categoria"><?php echo translateText($artista['tipo']); ?></p>
+                                <p class="nome"><?php echo htmlspecialchars($artista['Nome_artistico']); ?></p>
+                                <p class="categoria"><?php echo translateText('Artista'); ?></p>
                             </article>
                         </section>
                     <?php endforeach; ?>
                 </section>
             </section>
+            <?php endif; ?>
 
             <!-- Músicas Populares -->
+            <?php if (!empty($musicas_recentes)): ?>
             <section class="cards">
                 <article class="albuns-titulo">
                     <article>
-                        <h1><?php echo translateText('Suas músicas favoritas'); ?></h1>
-                        <p><?php echo translateText('Baseado no que você está ouvindo'); ?></p>
+                        <h1><?php echo translateText('Músicas recentes'); ?></h1>
+                        <p><?php echo translateText('Novidades para você'); ?></p>
                     </article>
-                    <button><?php echo translateText('Mostrar tudo'); ?></button>
                 </article>
 
                 <section class="albuns">
-                    <?php foreach ($usuario['musicas'] as $musica): ?>
-                        <section class="card" onclick="window.location.href='verMusica.php?id=<?php echo $musica['id']; ?>&lang=<?php echo $currentLang; ?>'">
+                    <?php foreach (array_slice($musicas_recentes, 0, 4) as $musica): ?>
+                        <section class="card" onclick="window.location.href='verMusica.php?id=<?php echo $musica['ID_Musica']; ?>&lang=<?php echo $currentLang; ?>'">
                             <article class="card-img musica">
-                                <img src="<?php echo htmlspecialchars($musica['capa_path']); ?>" alt="<?php echo htmlspecialchars($musica['titulo']); ?>">
+                                <img src="<?php echo htmlspecialchars(!empty($musica['Capa_mus_path']) ? $musica['Capa_mus_path'] : '../img/sem-capa.png'); ?>" alt="<?php echo htmlspecialchars($musica['Titulo']); ?>">
                                 <button class="card-play-btn" onclick="event.stopPropagation();">
                                     <svg viewBox="0 0 24 24" fill="currentColor">
                                         <path d="m7.05 3.606 13.49 7.788a.7.7 0 0 1 0 1.212L7.05 20.394A.7.7 0 0 1 6 19.788V4.212a.7.7 0 0 1 1.05-.606"/>
@@ -167,33 +189,30 @@ $pageTitle = $usuario['nome'];
                                 </button>
                             </article>
                             <article class="nome-categoria">
-                                <p class="nome"><?php echo htmlspecialchars($musica['titulo']); ?></p>
-                                <p class="categoria"><?php echo htmlspecialchars($musica['artista']); ?></p>
+                                <p class="nome"><?php echo htmlspecialchars($musica['Titulo']); ?></p>
+                                <p class="categoria"><?php echo htmlspecialchars($musica['Nome_artistico']); ?></p>
                             </article>
                         </section>
                     <?php endforeach; ?>
                 </section>
             </section>
+            <?php endif; ?>
 
-            <!-- Recomendações Baseadas no Gosto -->
+            <!-- Recomendações -->
+            <?php if (!empty($musicas_recentes) && count($musicas_recentes) > 4): ?>
             <section class="cards">
                 <article class="albuns-titulo">
                     <article>
                         <h1><?php echo translateText('Recomendado para você'); ?></h1>
                         <p><?php echo translateText('Com base nos seus artistas favoritos'); ?></p>
                     </article>
-                    <button><?php echo translateText('Mostrar tudo'); ?></button>
                 </article>
 
                 <section class="albuns">
-                    <!-- Mix de músicas recomendadas -->
-                    <?php 
-                    $recomendacoes = array_slice($usuario['musicas'], 0, 4);
-                    foreach ($recomendacoes as $musica): 
-                    ?>
-                        <section class="card" onclick="window.location.href='verMusica.php?id=<?php echo $musica['id']; ?>&lang=<?php echo $currentLang; ?>'">
+                    <?php foreach (array_slice($musicas_recentes, 4, 4) as $musica): ?>
+                        <section class="card" onclick="window.location.href='verMusica.php?id=<?php echo $musica['ID_Musica']; ?>&lang=<?php echo $currentLang; ?>'">
                             <article class="card-img musica">
-                                <img src="<?php echo htmlspecialchars($musica['capa_path']); ?>" alt="<?php echo htmlspecialchars($musica['titulo']); ?>">
+                                <img src="<?php echo htmlspecialchars(!empty($musica['Capa_mus_path']) ? $musica['Capa_mus_path'] : '../img/sem-capa.png'); ?>" alt="<?php echo htmlspecialchars($musica['Titulo']); ?>">
                                 <button class="card-play-btn" onclick="event.stopPropagation();">
                                     <svg viewBox="0 0 24 24" fill="currentColor">
                                         <path d="m7.05 3.606 13.49 7.788a.7.7 0 0 1 0 1.212L7.05 20.394A.7.7 0 0 1 6 19.788V4.212a.7.7 0 0 1 1.05-.606"/>
@@ -201,13 +220,14 @@ $pageTitle = $usuario['nome'];
                                 </button>
                             </article>
                             <article class="nome-categoria">
-                                <p class="nome"><?php echo htmlspecialchars($musica['titulo']); ?></p>
-                                <p class="categoria"><?php echo htmlspecialchars($musica['artista']); ?></p>
+                                <p class="nome"><?php echo htmlspecialchars($musica['Titulo']); ?></p>
+                                <p class="categoria"><?php echo htmlspecialchars($musica['Nome_artistico']); ?></p>
                             </article>
                         </section>
                     <?php endforeach; ?>
                 </section>
             </section>
+            <?php endif; ?>
         </section>
     </section>
 
@@ -257,19 +277,19 @@ $pageTitle = $usuario['nome'];
             <section class="redes">
                 <button>
                     <svg xmlns="http://www.w3.org/2000/svg" class="bi bi-instagram" viewBox="0 0 16 16">
-                        <path d="M8 0C5.829 0 5.556.01 4.703.048 3.85.088 3.269.222 2.76.42a3.9 3.9 0 0 0-1.417.923A3.9 3.9 0 0 0 .42 2.76C.222 3.268.087 3.85.048 4.7.01 5.555 0 5.827 0 8.001c0 2.172.01 2.444.048 3.297.04.852.174 1.433.372 1.942.205.526.478.972.923 1.417.444.445.89.719 1.416.923.51.198 1.09.333 1.942.372C5.555 15.99 5.827 16 8 16s2.444-.01 3.298-.048c.851-.04 1.434-.174 1.943-.372a3.9 3.9 0 0 0 1.416-.923c.445-.445.718-.891.923-1.417.197-.509.332-1.09.372-1.942C15.99 10.445 16 10.173 16 8s-.01-2.445-.048-3.299c-.04-.851-.175-1.433-.372-1.941a3.9 3.9 0 0 0-.923-1.417A3.9 3.9 0 0 0 13.24.42c-.51-.198-1.092-.333-1.943-.372C10.443.01 10.172 0 7.998 0zm-.717 1.442h.718c2.136 0 2.389.007 3.232.046.78.035 1.204.166 1.486.275.373.145.64.319.92.599s.453.546.598.92c.11.281.24.705.275 1.485.039.843.047 1.096.047 3.231s-.008 2.389-.047 3.232c-.035.78-.166 1.203-.275 1.485a2.5 2.5 0 0 1-.599.919c-.28.28-.546.453-.92.598-.28.11-.704.24-1.485.276-.843.038-1.096.047-3.232.047s-2.39-.009-3.233-.047c-.78-.036-1.203-.166-1.485-.276a2.5 2.5 0 0 1-.92-.598 2.5 2.5 0 0 1-.6-.92c-.109-.281-.24-.705-.275-1.485-.038-.843-.046-1.096-.046-3.233s.008-2.388.046-3.231c.036-.78.166-1.204.276-1.486.145-.373.319-.64.599-.92s.546-.453.92-.598c.282-.11.705-.24 1.485-.276.738-.034 1.024-.044 2.515-.045zm4.988 1.328a.96.96 0 1 0 0 1.92.96.96 0 0 0 0-1.92m-4.27 1.122a4.109 4.109 0 1 0 0 8.217 4.109 4.109 0 0 0 0-8.217m0 1.441a2.667 2.667 0 1 1 0 5.334 2.667 2.667 0 0 1 0-5.334"/>
+                        <path d="M8 0C5.829 0 5.556.01 4.703.048 3.85.088 3.269.222 2.76.42a3.9 3.9 0 0 0-1.417.923A3.9 3.9 0 0 0 .42 2.76C.222 3.268.087 3.85.048 4.7.01 5.555 0 5.827 0 8.001c0 2.172.01 2.444.048 3.297.04.852.174 1.433.372 1.942.205.526.478.972.923 1.417.444.445.89.719 1.416.923.51.198 1.09.333 1.942.372C5.555 15.99 5.827 16 8 16s2.444-.01 3.298-.048c.851-.04 1.434-.174 1.943-.372a3.9 3.9 0 0 0 1.416-.923c.445-.445.718-.891.923-1.417.197-.509.332-1.09.372-1.942C15.99 10.445 16 10.173 16 8s-.01-2.445-.048-3.299c-.04-.851-.175-1.433-.372-1.941a3.9 3.9 0 0 0-.923-1.417A3.9 3.9 0 0 0 13.24.42c-.51-.198-1.092-.333-1.943-.372C10.443.01 10.172 0 7.998 0zm-.717 1.442h.718c2.136 0 2.389.007 3.232.046.78.035 1.204.166 1.486.275.373.145.64.319.92.599s.453.546.598.92c.11.281.24.705.275 1.485.039.843.047 1.096.047 3.231s-.008 2.389-.047 3.232c-.035.78-.166 1.203-.275 1.485a2.5 2.5 0 0 1-.599.919c-.28.28-.546.453-.92.598-.28.11-.704.24-1.485.276-.843.038-1.096.047-3.232.047s-2.39-.009-3.233-.047c-.78-.036-1.203-.166-1.485-.276a2.5 2.5 0 0 1-.92-.598 2.5 2.5 0 0 1-.6-.92c-.109-.281-.24-.705-.275-1.485-.038-.843-.046-1.096-.046-3.233s.008-2.388.046-3.231c.036-.78.166-1.204.276-1.486.145-.373.319-.64.599-.92s.546-.453.92-.598c.282-.11.705-.24 1.485-.276.738-.034 1.024-.044 2.515-.045zm4.988 1.328a.96.96 0 1 0 0 1.92.96.96 0 0 0 0-1.92m-4.27 1.122a4.109 4.109 0 1 0 0 8.217 4.109 4.109 0 0 0 0-8.217m0 1.441a2.667 2.667 0 1 1 0 5.334 2.667 2.667 0 0 1 0-5.334"></path>
                     </svg>
                 </button>
 
                 <button>
                     <svg xmlns="http://www.w3.org/2000/svg" class="bi bi-twitter" viewBox="0 0 16 16">
-                        <path d="M5.026 15c6.038 0 9.341-5.003 9.341-9.334q.002-.211-.006-.422A6.7 6.7 0 0 0 16 3.542a6.7 6.7 0 0 1-1.889.518 3.3 3.3 0 0 0 1.447-1.817 6.5 6.5 0 0 1-2.087.793A3.286 3.286 0 0 0 7.875 6.03a9.32 9.32 0 0 1-6.767-3.429 3.29 3.29 0 0 0 1.018 4.382A3.3 3.3 0 0 1 .64 6.575v.045a3.29 3.29 0 0 0 2.632 3.218 3.2 3.2 0 0 1-.865.115 3 3 0 0 1-.614-.057a3.28 3.28 0 0 0 3.067 2.277A6.6 6.6 0 0 1 .78 13.58a6 6 0 0 1-.78-.045A9.34 9.34 0 0 0 5.026 15"/>
+                        <path d="M5.026 15c6.038 0 9.341-5.003 9.341-9.334q.002-.211-.006-.422A6.7 6.7 0 0 0 16 3.542a6.7 6.7 0 0 1-1.889.518 3.3 3.3 0 0 0 1.447-1.817 6.5 6.5 0 0 1-2.087.793A3.286 3.286 0 0 0 7.875 6.03a9.32 9.32 0 0 1-6.767-3.429 3.29 3.29 0 0 0 1.018 4.382A3.3 3.3 0 0 1 .64 6.575v.045a3.29 3.29 0 0 0 2.632 3.218 3.2 3.2 0 0 1-.865.115 3 3 0 0 1-.614-.057a3.28 3.28 0 0 0 3.067 2.277A6.6 6.6 0 0 1 .78 13.58a6 6 0 0 1-.78-.045A9.34 9.34 0 0 0 5.026 15"></path>
                     </svg>
                 </button>
                 
                 <button>
                     <svg xmlns="http://www.w3.org/2000/svg" class="bi bi-facebook" viewBox="0 0 16 16">
-                        <path d="M16 8.049c0-4.446-3.582-8.05-8-8.05C3.58 0-.002 3.603-.002 8.05c0 4.017 2.926 7.347 6.75 7.951v-5.625h-2.03V8.05H6.75V6.275c0-2.017 1.195-3.131 3.022-3.131.876 0 1.791.157 1.791.157v1.98h-1.009c-.993 0-1.303.621-1.303 1.258v1.51h2.218l-.354 2.326H9.25V16c3.824-.604 6.75-3.934 6.75-7.951"/>
+                        <path d="M16 8.049c0-4.446-3.582-8.05-8-8.05C3.58 0-.002 3.603-.002 8.05c0 4.017 2.926 7.347 6.75 7.951v-5.625h-2.03V8.05H6.75V6.275c0-2.017 1.195-3.131 3.022-3.131.876 0 1.791.157 1.791.157v1.98h-1.009c-.993 0-1.303.621-1.303 1.258v1.51h2.218l-.354 2.326H9.25V16c3.824-.604 6.75-3.934 6.75-7.951"></path>
                     </svg>
                 </button>
             </section>
@@ -297,16 +317,35 @@ $pageTitle = $usuario['nome'];
             const menu = document.getElementById('perfil-menu-suspenso');
             if (menu) {
                 menu.classList.toggle('active');
+                console.log('Menu toggled:', menu.classList.contains('active'));
+            } else {
+                console.error('Menu não encontrado');
             }
         }
 
         // Fechar menu ao clicar fora
         document.addEventListener('click', function(e) {
+            const perfilBtn = document.querySelector('.perfil-btn');
             const perfil = document.getElementById('perfil');
             const menu = document.getElementById('perfil-menu-suspenso');
             
-            if (menu && perfil && !perfil.contains(e.target) && !menu.contains(e.target)) {
+            // Se clicou fora do botão e do menu
+            if (menu && perfilBtn && !perfilBtn.contains(e.target)) {
                 menu.classList.remove('active');
+            }
+        });
+
+        // Adicionar listener direto no botão também
+        document.addEventListener('DOMContentLoaded', function() {
+            const perfilBtn = document.getElementById('perfil');
+            if (perfilBtn) {
+                perfilBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    interagirMenuPerfil();
+                });
+                console.log('Event listener adicionado ao botão perfil');
+            } else {
+                console.error('Botão perfil não encontrado');
             }
         });
 

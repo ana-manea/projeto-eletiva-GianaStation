@@ -1,143 +1,50 @@
 <?php
 require_once 'config.php';
+require_once '../processamento/funcoesBD.php';
+
+// Verificar se usuário está logado
+if (!isset($_SESSION['user_id'])) {
+    header('Location: login.php?lang=' . $currentLang);
+    exit;
+}
 
 // Obter ID da música da URL
-$musicId = isset($_GET['id']) ? (int)$_GET['id'] : 1;
+$musicId = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
-// Dados da música 
-$musicas = [
-    1 => [
-        'id' => 1,
-        'titulo' => 'nosferatu',
-        'artista' => 'AnaVitória',
-        'artista_id' => 1,
-        'album' => 'claraboia',
-        'album_id' => 1,
-        'capa' => 'https://i.scdn.co/image/ab67616d00001e02060bf5d261b6f21511b8c789',
-        'foto_artista' => 'https://image-cdn-ak.spotifycdn.com/image/ab6761860000101685ec2d2af58d2b838a744ac4',
-        'duracao' => '2:25',
-        'ano' => 2025,
-        'genero' => 'MPB',
-        'explicit' => false,
-        'letra' => [
-            "Eu sou antes, depois, quase nada ou muito",
-            "Tudo isso eu ganhei ao deixar de te amar",
-            "Sem lanternas e mapas, descobri um mundo",
-            "Tudo isso eu ganhei ao deixar de te amar",
-            "",
-            "Decidi fazer por mim",
-            "O que ninguém jamais poderia fazer",
-            "Um altar, um desvio, um novo caminho",
-            "Essa música é tão viva, tão real",
-            "",
-            "Um altar, um desvio, um novo caminho",
-            "Essa música é tão viva, tão real"
-        ],
-        'musicas_relacionadas' => [
-            ['id' => 2, 'titulo' => 'The Fate of Ophelia', 'artista' => 'Taylor Swift', 'capa' => 'https://i.scdn.co/image/ab67616d00001e02d7812467811a7da6e6a44902', 'duracao' => '3:46'],
-            ['id' => 3, 'titulo' => 'Pluto', 'artista' => 'Alina Simpson', 'capa' => '../img/capas-albums/capa-alina-pluto.jpg', 'duracao' => '3:45'],
-            ['id' => 4, 'titulo' => 'In courage abide', 'artista' => 'Berlinist', 'capa' => '../img/capas-albums/capa-berlinist-neva.jpg', 'duracao' => '4:12']
-        ]
-    ],
-    2 => [
-        'id' => 2,
-        'titulo' => 'The Fate of Ophelia',
-        'artista' => 'Taylor Swift',
-        'artista_id' => 2,
-        'album' => 'The Life of a Showgirl',
-        'album_id' => 2,
-        'capa' => 'https://i.scdn.co/image/ab67616d00001e02d7812467811a7da6e6a44902',
-        'foto_artista' => '../img/sem-foto.png',
-        'duracao' => '3:46',
-        'ano' => 2025,
-        'genero' => 'Pop',
-        'explicit' => false,
-        'letra' => [
-            "Verso 1:",
-            "Keep it one hundred",
-            "On the land, the sea, the sky",
-            "Pledge allegiance to your hands",
-            "Your team, your vibes",
-            "Don't care where the hell you been",
-            "'Cause now you're mine",
-            "It's 'bout to be the sleepless night",
-            "You've been dreaming of",
-            "The fate of Ophelia"
-        ],
-        'musicas_relacionadas' => [
-            ['id' => 1, 'titulo' => 'nosferatu', 'artista' => 'AnaVitória', 'capa' => 'https://i.scdn.co/image/ab67616d00001e02060bf5d261b6f21511b8c789', 'duracao' => '2:25'],
-            ['id' => 3, 'titulo' => 'Pluto', 'artista' => 'Alina Simpson', 'capa' => '../img/capas-albums/capa-alina-pluto.jpg', 'duracao' => '3:45'],
-            ['id' => 4, 'titulo' => 'In courage abide', 'artista' => 'Berlinist', 'capa' => '../img/capas-albums/capa-berlinist-neva.jpg', 'duracao' => '4:12']
-        ]
-    ],
-    3 => [
-        'id' => 3,
-        'titulo' => 'Pluto',
-        'artista' => 'Alina Simpson',
-        'artista_id' => 3,
-        'album' => 'Pluto',
-        'album_id' => 3,
-        'capa' => '../img/capas-albums/capa-alina-pluto.jpg',
-        'foto_artista' => '../img/foto-perfil/alina-foto.jpg',
-        'duracao' => '3:45',
-        'ano' => 2024,
-        'genero' => 'Piano',
-        'explicit' => false,
-        'letra' => [
-            "Verso 1:",
-            "Walking through the stars tonight",
-            "Feeling like I'm losing sight",
-            "Of everything I used to know",
-            "Before you let me go",
-            "",
-            "Refrão:",
-            "Pluto, so far away",
-            "Can't reach you no matter what I say",
-            "Pluto, in the dark",
-            "You're still the brightest in my heart"
-        ],
-        'musicas_relacionadas' => [
-            ['id' => 1, 'titulo' => 'nosferatu', 'artista' => 'AnaVitória', 'capa' => 'https://i.scdn.co/image/ab67616d00001e02060bf5d261b6f21511b8c789', 'duracao' => '2:25'],
-            ['id' => 2, 'titulo' => 'The Fate of Ophelia', 'artista' => 'Taylor Swift', 'capa' => 'https://i.scdn.co/image/ab67616d00001e02d7812467811a7da6e6a44902', 'duracao' => '3:46'],
-            ['id' => 4, 'titulo' => 'In courage abide', 'artista' => 'Berlinist', 'capa' => '../img/capas-albums/capa-berlinist-neva.jpg', 'duracao' => '4:12']
-        ]
-    ],
-    4 => [
-        'id' => 4,
-        'titulo' => 'In courage abide',
-        'artista' => 'Berlinist',
-        'artista_id' => 4,
-        'album' => 'Neva',
-        'album_id' => 4,
-        'capa' => '../img/capas-albums/capa-berlinist-neva.jpg',
-        'foto_artista' => '../img/sem-foto.png',
-        'duracao' => '4:12',
-        'ano' => 2024,
-        'genero' => 'Electronic',
-        'explicit' => false,
-        'letra' => [
-            "Verso 1:",
-            "In courage we abide",
-            "Through the stormy nights",
-            "When the world divides",
-            "We hold on tight",
-            "",
-            "Refrão:",
-            "In courage abide",
-            "We'll make it through",
-            "In courage abide",
-            "I believe in you"
-        ],
-        'musicas_relacionadas' => [
-            ['id' => 1, 'titulo' => 'nosferatu', 'artista' => 'AnaVitória', 'capa' => 'https://i.scdn.co/image/ab67616d00001e02060bf5d261b6f21511b8c789', 'duracao' => '2:25'],
-            ['id' => 2, 'titulo' => 'The Fate of Ophelia', 'artista' => 'Taylor Swift', 'capa' => 'https://i.scdn.co/image/ab67616d00001e02d7812467811a7da6e6a44902', 'duracao' => '3:46'],
-            ['id' => 3, 'titulo' => 'Pluto', 'artista' => 'Alina Simpson', 'capa' => '../img/capas-albums/capa-alina-pluto.jpg', 'duracao' => '3:45']
-        ]
-    ]
-];
+if ($musicId == 0) {
+    header('Location: pagInicial.php?lang=' . $currentLang);
+    exit;
+}
 
-$musica = $musicas[$musicId] ?? $musicas[1];
-$pageTitle = $musica['titulo'] . ' - ' . $musica['artista'];
+// Buscar dados da música no banco
+$musica = buscarMusicaCompleta($musicId);
+
+if (!$musica) {
+    $_SESSION['error_message'] = 'Música não encontrada';
+    header('Location: pagInicial.php?lang=' . $currentLang);
+    exit;
+}
+
+// Buscar músicas relacionadas
+$musicas_relacionadas = buscarMusicasRelacionadas(
+    $musica['ID_Musica'], 
+    $musica['FK_Artista'], 
+    $musica['Genero_mus'], 
+    4
+);
+
+// Preparar dados para exibição
+$pageTitle = $musica['Titulo'] . ' - ' . $musica['Nome_artistico'];
+
+// Processar letra (dividir por linhas)
+$letra_array = array();
+if (!empty($musica['Letra'])) {
+    $letra_array = explode("\n", $musica['Letra']);
+}
+
+// Verificar se tem capa
+$capa_musica = !empty($musica['Capa_mus_path']) ? $musica['Capa_mus_path'] : '../img/sem-capa.png';
+$foto_artista = !empty($musica['Foto_artista']) ? $musica['Foto_artista'] : '../img/sem-foto.png';
 ?>
 
 <!DOCTYPE html>
@@ -146,7 +53,7 @@ $pageTitle = $musica['titulo'] . ' - ' . $musica['artista'];
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" sizes="96x96" href="../img/GA-Station.png">
-    <title><?php echo $pageTitle; ?> | Giana Station</title>
+    <title><?php echo htmlspecialchars($pageTitle); ?> | Giana Station</title>
     <link rel="stylesheet" href="../css/style-padrao.css">
     <link rel="stylesheet" href="../css/style-visualizarMusica.css">
 </head>
@@ -221,7 +128,7 @@ $pageTitle = $musica['titulo'] . ' - ' . $musica['artista'];
             <section class="sidebar-empty">
                 <h3><?php echo translateText('Crie sua primeira playlist'); ?></h3>
                 <p><?php echo translateText('É fácil, vamos te ajudar.'); ?></p>
-                <button class="btn-primary-small"><?php echo translateText('Criar Playlist'); ?></button>
+                <button class="btn-primary-small" onclick="window.location.href='cadastrarPlaylist.php?lang=<?php echo $currentLang; ?>'"><?php echo translateText('Criar Playlist'); ?></button>
             </section>
         </aside>
 
@@ -231,21 +138,33 @@ $pageTitle = $musica['titulo'] . ' - ' . $musica['artista'];
             <section class="song-hero">
                 <div class="hero-content">
                     <div class="song-cover">
-                        <img src="<?php echo htmlspecialchars($musica['capa']); ?>" alt="<?php echo htmlspecialchars($musica['titulo']); ?>">
+                        <img src="<?php echo htmlspecialchars($capa_musica); ?>" alt="<?php echo htmlspecialchars($musica['Titulo']); ?>">
                     </div>
                     
                     <div class="song-info">
-                        <p class="song-type"><?php echo translateText('Single'); ?></p>
-                        <h1 class="song-title"><?php echo htmlspecialchars($musica['titulo']); ?></h1>
+                        <p class="song-type"><?php echo translateText($musica['Tipo']); ?></p>
+                        <h1 class="song-title"><?php echo htmlspecialchars($musica['Titulo']); ?></h1>
                         <div class="song-meta">
                             <div class="artist-info">
-                                <img src="<?php echo htmlspecialchars($musica['foto_artista']); ?>" alt="<?php echo htmlspecialchars($musica['artista']); ?>">
-                                <a href="visualizarArtista.php?id=<?php echo $musica['artista_id']; ?>&lang=<?php echo $currentLang; ?>" class="artist-link">
-                                    <?php echo htmlspecialchars($musica['artista']); ?>
+                                <img src="<?php echo htmlspecialchars($foto_artista); ?>" alt="<?php echo htmlspecialchars($musica['Nome_artistico']); ?>">
+                                <a href="visualizarArtista.php?id=<?php echo $musica['ID_Artista']; ?>&lang=<?php echo $currentLang; ?>" class="artist-link">
+                                    <?php echo htmlspecialchars($musica['Nome_artistico']); ?>
                                 </a>
                             </div>
                             <span class="separator">•</span>
-                            <span><?php echo htmlspecialchars($musica['genero']); ?></span>
+                            <span><?php echo htmlspecialchars($musica['Album']); ?></span>
+                            <?php if (!empty($musica['Ano'])): ?>
+                                <span class="separator">•</span>
+                                <span><?php echo $musica['Ano']; ?></span>
+                            <?php endif; ?>
+                            <?php if (!empty($musica['Genero_mus'])): ?>
+                                <span class="separator">•</span>
+                                <span><?php echo htmlspecialchars($musica['Genero_mus']); ?></span>
+                            <?php endif; ?>
+                            <?php if (!empty($musica['Duracao'])): ?>
+                                <span class="separator">•</span>
+                                <span><?php echo $musica['Duracao']; ?></span>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
@@ -253,11 +172,21 @@ $pageTitle = $musica['titulo'] . ' - ' . $musica['artista'];
 
             <!-- Controles da Música -->
             <section class="song-controls">
-                <button class="btn-play-large" title="<?php echo translateText('Reproduzir'); ?>">
+                <?php if (!empty($musica['Audio_path'])): ?>
+                <a href="<?php echo htmlspecialchars($musica['Audio_path']); ?>" target="_blank" rel="noopener noreferrer">
+                    <button class="btn-play-large" title="<?php echo translateText('Reproduzir'); ?>">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="m7.05 3.606 13.49 7.788a.7.7 0 0 1 0 1.212L7.05 20.394A.7.7 0 0 1 6 19.788V4.212a.7.7 0 0 1 1.05-.606"/>
+                        </svg>
+                    </button>
+                </a>
+                <?php else: ?>
+                <button class="btn-play-large" title="<?php echo translateText('Áudio não disponível'); ?>" disabled>
                     <svg viewBox="0 0 24 24" fill="currentColor">
                         <path d="m7.05 3.606 13.49 7.788a.7.7 0 0 1 0 1.212L7.05 20.394A.7.7 0 0 1 6 19.788V4.212a.7.7 0 0 1 1.05-.606"/>
                     </svg>
                 </button>
+                <?php endif; ?>
                 
                 <button class="btn-like-large" id="likeBtn" title="<?php echo translateText('Curtir'); ?>">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -275,11 +204,11 @@ $pageTitle = $musica['titulo'] . ' - ' . $musica['artista'];
             </section>
 
             <!-- Letra da Música -->
-            <?php if (!empty($musica['letra'])): ?>
+            <?php if (!empty($letra_array) && count($letra_array) > 0): ?>
             <section class="lyrics-section">
                 <h2><?php echo translateText('Letra'); ?></h2>
                 <div class="lyrics-content">
-                    <?php foreach ($musica['letra'] as $linha): ?>
+                    <?php foreach ($letra_array as $linha): ?>
                         <p><?php echo htmlspecialchars($linha); ?></p>
                     <?php endforeach; ?>
                 </div>
@@ -287,15 +216,16 @@ $pageTitle = $musica['titulo'] . ' - ' . $musica['artista'];
             <?php endif; ?>
 
             <!-- Músicas Relacionadas -->
+            <?php if (!empty($musicas_relacionadas)): ?>
             <section class="related-section">
                 <div class="section-header">
                     <h2><?php echo translateText('Recomendado'); ?></h2>
                 </div>
                 <div class="related-grid">
-                    <?php foreach ($musica['musicas_relacionadas'] as $relacionada): ?>
-                        <article class="song-card" onclick="window.location.href='verMusica.php?id=<?php echo $relacionada['id']; ?>&lang=<?php echo $currentLang; ?>'">
+                    <?php foreach ($musicas_relacionadas as $relacionada): ?>
+                        <article class="song-card" onclick="window.location.href='verMusica.php?id=<?php echo $relacionada['ID_Musica']; ?>&lang=<?php echo $currentLang; ?>'">
                             <div class="song-card-cover">
-                                <img src="<?php echo htmlspecialchars($relacionada['capa']); ?>" alt="<?php echo htmlspecialchars($relacionada['titulo']); ?>">
+                                <img src="<?php echo htmlspecialchars(!empty($relacionada['Capa_mus_path']) ? $relacionada['Capa_mus_path'] : '../img/sem-capa.png'); ?>" alt="<?php echo htmlspecialchars($relacionada['Titulo']); ?>">
                                 <button class="song-play-btn" onclick="event.stopPropagation();" title="<?php echo translateText('Reproduzir'); ?>">
                                     <svg viewBox="0 0 24 24" fill="currentColor">
                                         <path d="m7.05 3.606 13.49 7.788a.7.7 0 0 1 0 1.212L7.05 20.394A.7.7 0 0 1 6 19.788V4.212a.7.7 0 0 1 1.05-.606"/>
@@ -303,13 +233,14 @@ $pageTitle = $musica['titulo'] . ' - ' . $musica['artista'];
                                 </button>
                             </div>
                             <div class="song-card-info">
-                                <h3><?php echo htmlspecialchars($relacionada['titulo']); ?></h3>
-                                <p><?php echo htmlspecialchars($relacionada['artista']); ?></p>
+                                <h3><?php echo htmlspecialchars($relacionada['Titulo']); ?></h3>
+                                <p><?php echo htmlspecialchars($relacionada['Nome_artistico']); ?></p>
                             </div>
                         </article>
                     <?php endforeach; ?>
                 </div>
             </section>
+            <?php endif; ?>
         </section>
     </main>
 
@@ -427,15 +358,6 @@ $pageTitle = $musica['titulo'] . ' - ' . $musica['artista'];
                     this.querySelector('svg').setAttribute('fill', '#d518ee');
                     this.querySelector('svg').setAttribute('stroke', 'none');
                 }
-            });
-        }
-
-        // Botão de play
-        const playBtn = document.querySelector('.btn-play-large');
-        if (playBtn) {
-            playBtn.addEventListener('click', function() {
-                console.log('Reproduzindo música');
-                alert('Reproduzindo música...');
             });
         }
 

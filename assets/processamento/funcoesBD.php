@@ -461,4 +461,293 @@ function deletarPlaylist($id, $user_id) {
     fecharConexao($conexao);
     return $resultado;
 }
+
+function listarTodasMusicas($limit = null) {
+    $conexao = conectarBD();
+    
+    $sql = "SELECT m.*, a.Nome_artistico, a.Capa_path as Foto_artista 
+            FROM musicas m 
+            INNER JOIN artistas a ON m.FK_Artista = a.ID_Artista 
+            ORDER BY m.Ano DESC, m.Titulo ASC";
+    
+    if ($limit !== null) {
+        $sql .= " LIMIT $limit";
+    }
+    
+    $resultado = mysqli_query($conexao, $sql);
+    $musicas = array();
+    
+    if ($resultado) {
+        while ($row = mysqli_fetch_assoc($resultado)) {
+            $musicas[] = $row;
+        }
+    }
+    
+    fecharConexao($conexao);
+    return $musicas;
+}
+
+// Buscar música com detalhes completos
+function buscarMusicaCompleta($id) {
+    $conexao = conectarBD();
+    
+    $sql = "SELECT m.*, a.Nome_artistico, a.ID_Artista, a.Capa_path as Foto_artista, 
+            a.Genero_art, a.Instagram, a.Twitter, a.Tiktok, a.Site
+            FROM musicas m 
+            INNER JOIN artistas a ON m.FK_Artista = a.ID_Artista 
+            WHERE m.ID_Musica = $id";
+    
+    $resultado = mysqli_query($conexao, $sql);
+    
+    if ($resultado && mysqli_num_rows($resultado) > 0) {
+        $musica = mysqli_fetch_assoc($resultado);
+        fecharConexao($conexao);
+        return $musica;
+    } else {
+        fecharConexao($conexao);
+        return null;
+    }
+}
+
+// Buscar músicas relacionadas (mesmo gênero ou artista)
+function buscarMusicasRelacionadas($musica_id, $artista_id, $genero, $limit = 4) {
+    $conexao = conectarBD();
+    
+    $genero = mysqli_real_escape_string($conexao, $genero);
+    
+    $sql = "SELECT m.*, a.Nome_artistico, a.Capa_path as Foto_artista 
+            FROM musicas m 
+            INNER JOIN artistas a ON m.FK_Artista = a.ID_Artista 
+            WHERE m.ID_Musica != $musica_id 
+            AND (m.FK_Artista = $artista_id OR m.Genero_mus = '$genero')
+            ORDER BY RAND() 
+            LIMIT $limit";
+    
+    $resultado = mysqli_query($conexao, $sql);
+    $musicas = array();
+    
+    if ($resultado) {
+        while ($row = mysqli_fetch_assoc($resultado)) {
+            $musicas[] = $row;
+        }
+    }
+    
+    fecharConexao($conexao);
+    return $musicas;
+}
+
+// Buscar artista completo com estatísticas
+function buscarArtistaCompleto($id) {
+    $conexao = conectarBD();
+    
+    $sql = "SELECT a.*, u.Nome, u.Email 
+            FROM artistas a 
+            INNER JOIN usuarios u ON a.FK_Usuario = u.ID_Usuario 
+            WHERE a.ID_Artista = $id";
+    
+    $resultado = mysqli_query($conexao, $sql);
+    
+    if ($resultado && mysqli_num_rows($resultado) > 0) {
+        $artista = mysqli_fetch_assoc($resultado);
+        
+        // Contar total de músicas
+        $sql_musicas = "SELECT COUNT(*) as total FROM musicas WHERE FK_Artista = $id";
+        $resultado_musicas = mysqli_query($conexao, $sql_musicas);
+        $row_musicas = mysqli_fetch_assoc($resultado_musicas);
+        $artista['total_musicas'] = $row_musicas['total'];
+        
+        // Contar total de álbuns
+        $sql_albums = "SELECT COUNT(DISTINCT Album) as total FROM musicas WHERE FK_Artista = $id";
+        $resultado_albums = mysqli_query($conexao, $sql_albums);
+        $row_albums = mysqli_fetch_assoc($resultado_albums);
+        $artista['total_albums'] = $row_albums['total'];
+        
+        fecharConexao($conexao);
+        return $artista;
+    } else {
+        fecharConexao($conexao);
+        return null;
+    }
+}
+
+// Buscar músicas populares do artista
+function buscarMusicasPopularesArtista($artista_id, $limit = 5) {
+    $conexao = conectarBD();
+    
+    $sql = "SELECT m.*, a.Nome_artistico 
+            FROM musicas m 
+            INNER JOIN artistas a ON m.FK_Artista = a.ID_Artista 
+            WHERE m.FK_Artista = $artista_id 
+            ORDER BY m.Ano DESC, m.Titulo ASC 
+            LIMIT $limit";
+    
+    $resultado = mysqli_query($conexao, $sql);
+    $musicas = array();
+    
+    if ($resultado) {
+        while ($row = mysqli_fetch_assoc($resultado)) {
+            $musicas[] = $row;
+        }
+    }
+    
+    fecharConexao($conexao);
+    return $musicas;
+}
+
+// Buscar discografia do artista
+function buscarDiscografiaArtista($artista_id) {
+    $conexao = conectarBD();
+    
+    $sql = "SELECT DISTINCT Album, Tipo, Ano, 
+            (SELECT Capa_mus_path FROM musicas WHERE FK_Artista = $artista_id AND Album = m.Album LIMIT 1) as Capa,
+            (SELECT COUNT(*) FROM musicas WHERE FK_Artista = $artista_id AND Album = m.Album) as Total_faixas
+            FROM musicas m 
+            WHERE FK_Artista = $artista_id 
+            GROUP BY Album, Tipo, Ano 
+            ORDER BY Ano DESC";
+    
+    $resultado = mysqli_query($conexao, $sql);
+    $albums = array();
+    
+    if ($resultado) {
+        while ($row = mysqli_fetch_assoc($resultado)) {
+            $albums[] = $row;
+        }
+    }
+    
+    fecharConexao($conexao);
+    return $albums;
+}
+
+// Buscar playlist com detalhes
+function buscarPlaylistCompleta($id) {
+    $conexao = conectarBD();
+    
+    $sql = "SELECT p.*, u.Nome as Nome_usuario 
+            FROM playlists p 
+            INNER JOIN usuarios u ON p.FK_Usuario = u.ID_Usuario 
+            WHERE p.ID_Playlist = $id";
+    
+    $resultado = mysqli_query($conexao, $sql);
+    
+    if ($resultado && mysqli_num_rows($resultado) > 0) {
+        $playlist = mysqli_fetch_assoc($resultado);
+        fecharConexao($conexao);
+        return $playlist;
+    } else {
+        fecharConexao($conexao);
+        return null;
+    }
+}
+
+// Contar músicas na playlist
+function contarMusicasPlaylist($playlist_id) {
+    $conexao = conectarBD();
+    
+    $sql = "SELECT COUNT(*) as total FROM playlist_musicas WHERE FK_Playlist = $playlist_id";
+    $resultado = mysqli_query($conexao, $sql);
+    
+    if ($resultado) {
+        $row = mysqli_fetch_assoc($resultado);
+        $total = $row['total'];
+        fecharConexao($conexao);
+        return $total;
+    }
+    
+    fecharConexao($conexao);
+    return 0;
+}
+
+// Buscar artistas mais ouvidos (simulado - retorna artistas aleatórios)
+function buscarArtistasPopulares($limit = 4) {
+    $conexao = conectarBD();
+    
+    $sql = "SELECT a.ID_Artista, a.Nome_artistico, a.Capa_path, a.Genero_art,
+            (SELECT COUNT(*) FROM musicas WHERE FK_Artista = a.ID_Artista) as Total_musicas
+            FROM artistas a 
+            WHERE a.Capa_path IS NOT NULL AND a.Capa_path != ''
+            ORDER BY RAND() 
+            LIMIT $limit";
+    
+    $resultado = mysqli_query($conexao, $sql);
+    $artistas = array();
+    
+    if ($resultado) {
+        while ($row = mysqli_fetch_assoc($resultado)) {
+            $artistas[] = $row;
+        }
+    }
+    
+    fecharConexao($conexao);
+    return $artistas;
+}
+
+// Buscar músicas recentes
+function buscarMusicasRecentes($limit = 8) {
+    $conexao = conectarBD();
+    
+    $sql = "SELECT m.*, a.Nome_artistico, a.Capa_path as Foto_artista 
+            FROM musicas m 
+            INNER JOIN artistas a ON m.FK_Artista = a.ID_Artista 
+            ORDER BY m.Ano DESC, m.ID_Musica DESC 
+            LIMIT $limit";
+    
+    $resultado = mysqli_query($conexao, $sql);
+    $musicas = array();
+    
+    if ($resultado) {
+        while ($row = mysqli_fetch_assoc($resultado)) {
+            $musicas[] = $row;
+        }
+    }
+    
+    fecharConexao($conexao);
+    return $musicas;
+}
+
+// Buscar álbum completo
+function buscarAlbumCompleto($artista_id, $album_nome) {
+    $conexao = conectarBD();
+    
+    $album_nome = mysqli_real_escape_string($conexao, $album_nome);
+    
+    $sql = "SELECT m.*, a.Nome_artistico, a.ID_Artista, a.Capa_path as Foto_artista
+            FROM musicas m 
+            INNER JOIN artistas a ON m.FK_Artista = a.ID_Artista 
+            WHERE m.FK_Artista = $artista_id AND m.Album = '$album_nome'
+            ORDER BY m.Titulo ASC";
+    
+    $resultado = mysqli_query($conexao, $sql);
+    $musicas = array();
+    
+    if ($resultado) {
+        while ($row = mysqli_fetch_assoc($resultado)) {
+            $musicas[] = $row;
+        }
+    }
+    
+    fecharConexao($conexao);
+    return $musicas;
+}
+
+// Calcular duração total do álbum
+function calcularDuracaoTotal($musicas) {
+    $total_segundos = 0;
+    
+    foreach ($musicas as $musica) {
+        if (!empty($musica['Duracao'])) {
+            list($min, $sec) = explode(':', $musica['Duracao']);
+            $total_segundos += ($min * 60) + $sec;
+        }
+    }
+    
+    $horas = floor($total_segundos / 3600);
+    $minutos = floor(($total_segundos % 3600) / 60);
+    
+    if ($horas > 0) {
+        return $horas . 'h ' . $minutos . 'min';
+    } else {
+        return $minutos . ' min';
+    }
+}
 ?>

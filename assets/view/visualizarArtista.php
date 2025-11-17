@@ -1,44 +1,60 @@
 <?php
 require_once 'config.php';
+require_once '../processamento/funcoesBD.php';
+
+// Verificar se usuário está logado
+if (!isset($_SESSION['user_id'])) {
+    header('Location: login.php?lang=' . $currentLang);
+    exit;
+}
 
 // Obter ID do artista da URL
-$artistId = isset($_GET['id']) ? (int)$_GET['id'] : 1;
+$artistId = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
-// Dados do artista (exemplo - substituir por dados do banco)
-$artistas = [
-    1 => [
-        'id' => 1,
-        'nome' => 'AnaVitória',
-        'verificado' => true,
-        'avatar' => 'https://image-cdn-ak.spotifycdn.com/image/ab6761860000101685ec2d2af58d2b838a744ac4',
-        'capa' => 'https://image-cdn-ak.spotifycdn.com/image/ab6761860000101685ec2d2af58d2b838a744ac4',
-        'foto_perfil' => 'https://image-cdn-ak.spotifycdn.com/image/ab6761860000101685ec2d2af58d2b838a744ac4',
-        'seguidores' => 21201,
-        'bio' => 'ANAVITÓRIA é uma dupla musical brasileira formada por Ana Caetano e Vitória Falcão. Naturais de Araguaína, Tocantins, iniciaram a carreira em 2015 e rapidamente conquistaram o público brasileiro com letras sobre amor e autodescoberta.',
-        'generos' => ['MPB', 'Pop', 'Folk-pop'],
-        'redes_sociais' => [
-            'instagram' => '@anavitoria',
-            'twitter' => '@oanavitoria',
-            'tiktok' => '@asanavitoria',
-            'website' => 'https://www.asanavitoria.com'
-        ],
-        'musicas_populares' => [
-            ['id' => 1, 'titulo' => 'Trevo (Tu)', 'album' => 'Trevo', 'duracao' => '3:45', 'streams' => '450K'],
-            ['id' => 2, 'titulo' => 'Singular', 'album' => 'Esquinas', 'duracao' => '4:02', 'streams' => '320K'],
-            ['id' => 3, 'titulo' => 'Esquinas', 'album' => 'Esquinas', 'duracao' => '3:38', 'streams' => '280K'],
-            ['id' => 4, 'titulo' => 'Não Sinto Nada', 'album' => 'Trevo', 'duracao' => '3:28', 'streams' => '245K'],
-            ['id' => 5, 'titulo' => 'Tempo', 'album' => 'O Tempo É Agora', 'duracao' => '3:52', 'streams' => '210K']
-        ],
-        'discografia' => [
-            ['id' => 1, 'titulo' => 'Trevo', 'capa' => 'https://i.scdn.co/image/ab67616d0000b2732d9442517e36cd23c60efe50', 'ano' => 2017, 'tipo' => 'Álbum'],
-            ['id' => 2, 'titulo' => 'O Tempo É Agora', 'capa' => 'https://i.scdn.co/image/ab67616d0000b2735d7cf1a8508aa994d4bde5c8', 'ano' => 2018, 'tipo' => 'Álbum'],
-            ['id' => 3, 'titulo' => 'Esquinas', 'capa' => 'https://i.scdn.co/image/ab67616d0000b273190aaad879fd91cebab37efd', 'ano' => 2024, 'tipo' => 'Álbum']
-        ]
-    ]
-];
+if ($artistId == 0) {
+    header('Location: pagInicial.php?lang=' . $currentLang);
+    exit;
+}
 
-$artista = $artistas[$artistId] ?? $artistas[1];
-$pageTitle = $artista['nome'];
+// Buscar dados do artista no banco
+$artista = buscarArtistaCompleto($artistId);
+
+if (!$artista) {
+    $_SESSION['error_message'] = 'Artista não encontrado';
+    header('Location: pagInicial.php?lang=' . $currentLang);
+    exit;
+}
+
+// Buscar músicas populares do artista
+$musicas_populares = buscarMusicasPopularesArtista($artistId, 5);
+
+// Buscar discografia
+$discografia = buscarDiscografiaArtista($artistId);
+
+// Preparar dados para exibição
+$pageTitle = $artista['Nome_artistico'];
+
+// Verificar se tem imagens
+$capa_artista = !empty($artista['Capa_path']) ? $artista['Capa_path'] : '../img/sem-foto.png';
+$avatar_artista = $capa_artista;
+
+// Simular número de seguidores (você pode adicionar esta funcionalidade depois)
+$seguidores = rand(1000, 100000);
+
+// Processar redes sociais
+$redes_sociais = array();
+if (!empty($artista['Instagram'])) {
+    $redes_sociais['instagram'] = $artista['Instagram'];
+}
+if (!empty($artista['Twitter'])) {
+    $redes_sociais['twitter'] = $artista['Twitter'];
+}
+if (!empty($artista['Tiktok'])) {
+    $redes_sociais['tiktok'] = $artista['Tiktok'];
+}
+if (!empty($artista['Site'])) {
+    $redes_sociais['website'] = $artista['Site'];
+}
 ?>
 
 <!DOCTYPE html>
@@ -47,7 +63,7 @@ $pageTitle = $artista['nome'];
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" sizes="96x96" href="../img/GA-Station.png">
-    <title><?php echo $pageTitle; ?> | Giana Station</title>
+    <title><?php echo htmlspecialchars($pageTitle); ?> | Giana Station</title>
     <link rel="stylesheet" href="../css/style-padrao.css">
     <link rel="stylesheet" href="../css/style-visualizarArtista.css">
 </head>
@@ -124,21 +140,19 @@ $pageTitle = $artista['nome'];
         <section class="main-content">
             <!-- Hero Section -->
             <section class="artist-hero">
-                <div class="hero-background" style="background-image: url('<?php echo htmlspecialchars($artista['capa']); ?>')"></div>
+                <div class="hero-background" style="background-image: url('<?php echo htmlspecialchars($capa_artista); ?>')"></div>
                 <div class="hero-overlay"></div>
                 
                 <section class="infos">
-                    <?php if ($artista['verificado']): ?>
-                        <h3 class="verificado">
-                            <svg viewBox="0 0 24 24" style="fill: #4cb3ff; width: 1.5rem; height: 1.5rem; position: relative; background-image: linear-gradient(#fff, #fff); background-size: 50% 50%; background-position: center center; background-repeat: no-repeat;">
-                                <title>Verified account</title>
-                                <path d="M10.814.5a1.66 1.66 0 0 1 2.372 0l2.512 2.572 3.595-.043a1.66 1.66 0 0 1 1.678 1.678l-.043 3.595 2.572 2.512c.667.65.667 1.722 0 2.372l-2.572 2.512.043 3.595a1.66 1.66 0 0 1-1.678 1.678l-3.595-.043-2.512 2.572a1.66 1.66 0 0 1-2.372 0l-2.512-2.572-3.595.043a1.66 1.66 0 0 1-1.678-1.678l.043-3.595L.5 13.186a1.66 1.66 0 0 1 0-2.372l2.572-2.512-.043-3.595a1.66 1.66 0 0 1 1.678-1.678l3.595.043zm6.584 9.12a1 1 0 0 0-1.414-1.413l-6.011 6.01-1.894-1.893a1 1 0 0 0-1.414 1.414l3.308 3.308z"></path>
-                            </svg>
-                            <?php echo translateText('Artista verificado'); ?>
-                        </h3>
-                    <?php endif; ?>
-                    <h1 class="nome-artista"><?php echo htmlspecialchars($artista['nome']); ?></h1>
-                    <h2 class="seguidores"><?php echo number_format($artista['seguidores'], 0, ',', '.'); ?> <?php echo translateText('seguidores'); ?></h2>
+                    <h3 class="verificado">
+                        <svg viewBox="0 0 24 24" style="fill: #4cb3ff; width: 1.5rem; height: 1.5rem; position: relative; background-image: linear-gradient(#fff, #fff); background-size: 50% 50%; background-position: center center; background-repeat: no-repeat;">
+                            <title>Verified account</title>
+                            <path d="M10.814.5a1.66 1.66 0 0 1 2.372 0l2.512 2.572 3.595-.043a1.66 1.66 0 0 1 1.678 1.678l-.043 3.595 2.572 2.512c.667.65.667 1.722 0 2.372l-2.572 2.512.043 3.595a1.66 1.66 0 0 1-1.678 1.678l-3.595-.043-2.512 2.572a1.66 1.66 0 0 1-2.372 0l-2.512-2.572-3.595.043a1.66 1.66 0 0 1-1.678-1.678l.043-3.595L.5 13.186a1.66 1.66 0 0 1 0-2.372l2.572-2.512-.043-3.595a1.66 1.66 0 0 1 1.678-1.678l3.595.043zm6.584 9.12a1 1 0 0 0-1.414-1.413l-6.011 6.01-1.894-1.893a1 1 0 0 0-1.414 1.414l3.308 3.308z"></path>
+                        </svg>
+                        <?php echo translateText('Artista verificado'); ?>
+                    </h3>
+                    <h1 class="nome-artista"><?php echo htmlspecialchars($artista['Nome_artistico']); ?></h1>
+                    <h2 class="seguidores"><?php echo number_format($seguidores, 0, ',', '.'); ?> <?php echo translateText('seguidores'); ?></h2>
                 </section>
             </section>
 
@@ -164,52 +178,58 @@ $pageTitle = $artista['nome'];
             </section>
 
             <!-- Músicas Populares -->
+            <?php if (!empty($musicas_populares)): ?>
             <section class="popular-section">
                 <h2><?php echo translateText('Populares'); ?></h2>
                 <table class="tracks-table">
                     <tbody>
-                        <?php foreach ($artista['musicas_populares'] as $index => $musica): ?>
-                            <tr class="track-row" data-track-id="<?php echo $musica['id']; ?>">
+                        <?php foreach ($musicas_populares as $index => $musica): ?>
+                            <tr class="track-row" data-track-id="<?php echo $musica['ID_Musica']; ?>" onclick="window.location.href='verMusica.php?id=<?php echo $musica['ID_Musica']; ?>&lang=<?php echo $currentLang; ?>'">
                                 <td class="track-number">
                                     <span class="number"><?php echo $index + 1; ?></span>
-                                    <button class="play-btn" title="<?php echo translateText('Reproduzir'); ?>">
-                                        <svg viewBox="0 0 24 24" fill="currentColor">
-                                            <path d="m7.05 3.606 13.49 7.788a.7.7 0 0 1 0 1.212L7.05 20.394A.7.7 0 0 1 6 19.788V4.212a.7.7 0 0 1 1.05-.606"/>
-                                        </svg>
-                                    </button>
+                                    <?php if (!empty($musica['Audio_path'])): ?>
+                                    <a href="<?php echo htmlspecialchars($musica['Audio_path']); ?>" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation();">
+                                        <button class="play-btn" title="<?php echo translateText('Reproduzir'); ?>">
+                                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                                <path d="m7.05 3.606 13.49 7.788a.7.7 0 0 1 0 1.212L7.05 20.394A.7.7 0 0 1 6 19.788V4.212a.7.7 0 0 1 1.05-.606"/>
+                                            </svg>
+                                        </button>
+                                    </a>
+                                    <?php endif; ?>
                                 </td>
                                 <td class="track-title">
                                     <div class="track-info">
-                                        <p class="title"><?php echo htmlspecialchars($musica['titulo']); ?></p>
-                                        <p class="artist"><?php echo htmlspecialchars($artista['nome']); ?></p>
+                                        <p class="title"><?php echo htmlspecialchars($musica['Titulo']); ?></p>
+                                        <p class="artist"><?php echo htmlspecialchars($artista['Nome_artistico']); ?></p>
                                     </div>
                                 </td>
-                                <td class="track-album"><?php echo htmlspecialchars($musica['album']); ?></td>
+                                <td class="track-album"><?php echo htmlspecialchars($musica['Album']); ?></td>
                                 <td class="track-actions">
-                                    <button class="btn-like" data-track-id="<?php echo $musica['id']; ?>" title="<?php echo translateText('Curtir'); ?>">
+                                    <button class="btn-like" data-track-id="<?php echo $musica['ID_Musica']; ?>" title="<?php echo translateText('Curtir'); ?>" onclick="event.stopPropagation();">
                                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                             <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
                                         </svg>
                                     </button>
                                 </td>
-                                <td class="track-duration"><?php echo $musica['duracao']; ?></td>
+                                <td class="track-duration"><?php echo $musica['Duracao']; ?></td>
                             </tr>
                         <?php endforeach; ?>
                     </tbody>
                 </table>
             </section>
+            <?php endif; ?>
 
             <!-- Discografia -->
+            <?php if (!empty($discografia)): ?>
             <section class="discography-section">
                 <div class="section-header">
                     <h2><?php echo translateText('Discografia'); ?></h2>
-                    <a href="#" class="link-show-all"><?php echo translateText('Mostrar tudo'); ?></a>
                 </div>
                 <div class="albums-grid">
-                    <?php foreach ($artista['discografia'] as $album): ?>
-                        <article class="album-card" onclick="window.location.href='visualizarAlbum.php?id=<?php echo $album['id']; ?>&type=album&lang=<?php echo $currentLang; ?>'">
+                    <?php foreach ($discografia as $album): ?>
+                        <article class="album-card" onclick="window.location.href='verMusica.php?id=<?php echo $musicas_populares[0]['ID_Musica'] ?? 1; ?>&lang=<?php echo $currentLang; ?>'">
                             <div class="album-cover">
-                                <img src="<?php echo htmlspecialchars($album['capa']); ?>" alt="<?php echo htmlspecialchars($album['titulo']); ?>">
+                                <img src="<?php echo htmlspecialchars(!empty($album['Capa']) ? $album['Capa'] : '../img/sem-capa.png'); ?>" alt="<?php echo htmlspecialchars($album['Album']); ?>">
                                 <button class="album-play-btn" onclick="event.stopPropagation();" title="<?php echo translateText('Reproduzir'); ?>">
                                     <svg viewBox="0 0 24 24" fill="currentColor">
                                         <path d="m7.05 3.606 13.49 7.788a.7.7 0 0 1 0 1.212L7.05 20.394A.7.7 0 0 1 6 19.788V4.212a.7.7 0 0 1 1.05-.606"/>
@@ -217,13 +237,14 @@ $pageTitle = $artista['nome'];
                                 </button>
                             </div>
                             <div class="album-info">
-                                <h3><?php echo htmlspecialchars($album['titulo']); ?></h3>
-                                <p><?php echo $album['ano']; ?> • <?php echo translateText($album['tipo']); ?></p>
+                                <h3><?php echo htmlspecialchars($album['Album']); ?></h3>
+                                <p><?php echo $album['Ano']; ?> • <?php echo translateText($album['Tipo']); ?> • <?php echo $album['Total_faixas']; ?> <?php echo translateText('faixas'); ?></p>
                             </div>
                         </article>
                     <?php endforeach; ?>
                 </div>
             </section>
+            <?php endif; ?>
 
             <!-- Sobre o Artista -->
             <section class="sobre">
@@ -231,20 +252,20 @@ $pageTitle = $artista['nome'];
 
                 <div class="sobre-content">
                     <section class="descri-foto">
-                        <img src="<?php echo htmlspecialchars($artista['foto_perfil']); ?>" alt="<?php echo htmlspecialchars($artista['nome']); ?>">
+                        <img src="<?php echo htmlspecialchars($avatar_artista); ?>" alt="<?php echo htmlspecialchars($artista['Nome_artistico']); ?>">
                         <article class="fundo-descricao">
-                            <p id="descricao"><?php echo htmlspecialchars($artista['bio']); ?></p>
+                            <p id="descricao"><?php echo !empty($artista['Biografia']) ? nl2br(htmlspecialchars($artista['Biografia'])) : translateText('Nenhuma biografia disponível'); ?></p>
                         </article>
                     </section>
 
                     <section class="midia-infos">
                         <article class="seguidores">
-                            <h3 id="seguidores"><?php echo number_format($artista['seguidores'], 0, ',', '.'); ?></h3>
+                            <h3 id="seguidores"><?php echo number_format($seguidores, 0, ',', '.'); ?></h3>
                             <p><?php echo translateText('seguidores'); ?></p>
                         </article>
                         
-                        <?php if (isset($artista['redes_sociais']['instagram'])): ?>
-                        <a href="https://instagram.com/<?php echo ltrim($artista['redes_sociais']['instagram'], '@'); ?>" target="_blank" rel="noopener noreferrer">
+                        <?php if (isset($redes_sociais['instagram'])): ?>
+                        <a href="<?php echo htmlspecialchars($redes_sociais['instagram']); ?>" target="_blank" rel="noopener noreferrer">
                             <svg viewBox="0 0 24 24">
                                 <path d="M12 3.803c2.67 0 2.986.01 4.041.059.975.044 1.504.207 1.857.344.435.16.828.416 1.151.748.332.323.588.716.748 1.151.137.353.3.882.345 1.857.047 1.055.058 1.37.058 4.041 0 2.67-.01 2.986-.058 4.041-.045.975-.208 1.505-.345 1.857A3.32 3.32 0 0 1 17.9 19.8c-.352.137-.882.3-1.856.344-1.055.048-1.371.058-4.041.058s-2.987-.01-4.041-.058c-.975-.044-1.505-.207-1.857-.344a3.1 3.1 0 0 1-1.151-.748 3.1 3.1 0 0 1-.749-1.151c-.137-.353-.3-.883-.344-1.857-.048-1.055-.058-1.371-.058-4.041s.01-2.987.058-4.041c.045-.975.207-1.505.344-1.857a3.1 3.1 0 0 1 .749-1.151 3.1 3.1 0 0 1 1.15-.749c.353-.137.883-.3 1.858-.344 1.054-.048 1.37-.058 4.04-.058zM12.002 2c-2.716 0-3.057.012-4.124.06-1.066.05-1.793.22-2.428.466A4.9 4.9 0 0 0 3.678 3.68a4.9 4.9 0 0 0-1.153 1.772c-.247.635-.416 1.363-.465 2.427C2.012 8.943 2 9.286 2 12.002c0 2.715.012 3.056.06 4.123.05 1.066.218 1.791.465 2.426a4.9 4.9 0 0 0 1.153 1.772c.5.508 1.105.902 1.772 1.153.635.248 1.363.417 2.428.465s1.407.06 4.123.06 3.056-.01 4.123-.06 1.79-.217 2.426-.465a5.1 5.1 0 0 0 2.925-2.925c.247-.635.416-1.363.465-2.427.048-1.064.06-1.407.06-4.123s-.012-3.057-.06-4.123c-.05-1.067-.218-1.791-.465-2.426a4.9 4.9 0 0 0-1.153-1.771 4.9 4.9 0 0 0-1.772-1.155c-.635-.247-1.363-.416-2.428-.464s-1.406-.06-4.122-.06z"></path>
                                 <path d="M12 6.867a5.135 5.135 0 1 0 0 10.27 5.135 5.135 0 0 0 0-10.27m0 8.47a3.334 3.334 0 1 1 0-6.67 3.334 3.334 0 0 1 0 6.67m5.338-7.473a1.2 1.2 0 1 0 0-2.4 1.2 1.2 0 0 0 0 2.4"></path>
@@ -253,8 +274,8 @@ $pageTitle = $artista['nome'];
                         </a>
                         <?php endif; ?>
                         
-                        <?php if (isset($artista['redes_sociais']['twitter'])): ?>
-                        <a href="https://twitter.com/<?php echo ltrim($artista['redes_sociais']['twitter'], '@'); ?>" target="_blank" rel="noopener noreferrer">
+                        <?php if (isset($redes_sociais['twitter'])): ?>
+                        <a href="<?php echo htmlspecialchars($redes_sociais['twitter']); ?>" target="_blank" rel="noopener noreferrer">
                             <svg viewBox="0 0 16 16">
                                 <path d="M13.54 3.889a2.97 2.97 0 0 0 1.333-1.683 6 6 0 0 1-1.929.738 3 3 0 0 0-.996-.706 3 3 0 0 0-1.218-.254 2.92 2.92 0 0 0-2.143.889 2.93 2.93 0 0 0-.889 2.15q0 .318.08.691a8.5 8.5 0 0 1-3.484-.932A8.5 8.5 0 0 1 1.532 2.54a3 3 0 0 0-.413 1.523q0 .778.361 1.445.36.668.988 1.08a2.9 2.9 0 0 1-1.373-.374v.04q0 1.088.69 1.92a2.97 2.97 0 0 0 1.739 1.048 2.94 2.94 0 0 1-1.365.056 2.94 2.94 0 0 0 1.063 1.5 2.95 2.95 0 0 0 1.77.603 5.94 5.94 0 0 1-3.77 1.302q-.365 0-.722-.048A8.4 8.4 0 0 0 5.15 14q1.358 0 2.572-.361 1.215-.36 2.147-.988a9 9 0 0 0 1.683-1.46q.75-.834 1.234-1.798a9.5 9.5 0 0 0 .738-1.988 8.4 8.4 0 0 0 .246-2.429 6.2 6.2 0 0 0 1.508-1.563q-.84.373-1.738.476"></path>
                             </svg>
@@ -262,8 +283,8 @@ $pageTitle = $artista['nome'];
                         </a>
                         <?php endif; ?>
                         
-                        <?php if (isset($artista['redes_sociais']['tiktok'])): ?>
-                        <a href="https://tiktok.com/<?php echo ltrim($artista['redes_sociais']['tiktok'], '@'); ?>" target="_blank" rel="noopener noreferrer">
+                        <?php if (isset($redes_sociais['tiktok'])): ?>
+                        <a href="<?php echo htmlspecialchars($redes_sociais['tiktok']); ?>" target="_blank" rel="noopener noreferrer">
                             <svg viewBox="0 0 24 24">
                                 <path d="M17 2a4.313 4.313 0 0 0 4.313 4.313v2a6.296 6.296 0 0 1-4.688-2.085v8.864c-.008 2.092-.671 3.85-1.82 5.098-1.159 1.257-2.758 1.935-4.492 1.935a6.312 6.312 0 1 1 0-12.625v2a4.313 4.313 0 0 0 0 8.625c1.199 0 2.256-.46 3.02-1.29.767-.832 1.292-2.096 1.292-3.781V2H17z"></path>
                             </svg>
@@ -271,8 +292,8 @@ $pageTitle = $artista['nome'];
                         </a>
                         <?php endif; ?>
                         
-                        <?php if (isset($artista['redes_sociais']['website'])): ?>
-                        <a href="<?php echo htmlspecialchars($artista['redes_sociais']['website']); ?>" target="_blank" rel="noopener noreferrer">
+                        <?php if (isset($redes_sociais['website'])): ?>
+                        <a href="<?php echo htmlspecialchars($redes_sociais['website']); ?>" target="_blank" rel="noopener noreferrer">
                             <svg viewBox="0 0 16 16">
                                 <path d="M4.715 6.542 3.343 7.914a3 3 0 1 0 4.243 4.243l1.828-1.829A3 3 0 0 0 8.586 5.5L8 6.086a1 1 0 0 0-.154.199 2 2 0 0 1 .861 3.337L6.88 11.45a2 2 0 1 1-2.83-2.83l.793-.792a4 4 0 0 1-.128-1.287z"></path>
                                 <path d="M6.586 4.672A3 3 0 0 0 7.414 9.5l.775-.776a2 2 0 0 1-.896-3.346L9.12 3.55a2 2 0 1 1 2.83 2.83l-.793.792c.112.42.155.855.128 1.287l1.372-1.372a3 3 0 1 0-4.243-4.243z"></path>
@@ -415,18 +436,6 @@ $pageTitle = $artista['nome'];
                 if (number) number.style.display = 'block';
                 if (playBtn) playBtn.style.display = 'none';
             });
-            
-            // Simular reprodução ao clicar na linha ou botão play
-            const handlePlay = (e) => {
-                e.stopPropagation();
-                const trackId = row.dataset.trackId;
-                console.log('Reproduzindo música ID:', trackId);
-                alert('Reproduzindo música...');
-            };
-            
-            if (playBtn) {
-                playBtn.addEventListener('click', handlePlay);
-            }
         });
 
         // Curtir músicas
@@ -440,11 +449,9 @@ $pageTitle = $artista['nome'];
                 if (this.classList.contains('liked')) {
                     svg.setAttribute('fill', '#d518ee');
                     svg.setAttribute('stroke', 'none');
-                    console.log('Música curtida ID:', trackId);
                 } else {
                     svg.setAttribute('fill', 'none');
                     svg.setAttribute('stroke', 'currentColor');
-                    console.log('Música descurtida ID:', trackId);
                 }
             });
         });
@@ -453,7 +460,7 @@ $pageTitle = $artista['nome'];
         const shareBtn = document.querySelector('.btn-share');
         if (shareBtn) {
             shareBtn.addEventListener('click', function() {
-                const artistName = '<?php echo addslashes($artista['nome']); ?>';
+                const artistName = '<?php echo addslashes($artista['Nome_artistico']); ?>';
                 const url = window.location.href;
                 
                 if (navigator.share) {
