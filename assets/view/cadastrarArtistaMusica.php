@@ -1,6 +1,25 @@
 <?php
 require_once 'config.php';
 $pageTitle = translate('register_here');
+
+// Verificar se usuário está logado
+$isLoggedIn = isset($_SESSION['user_id']);
+
+// Se não estiver logado, redirecionar para login
+if (!$isLoggedIn) {
+    $_SESSION['redirect_after_login'] = 'cadastrarArtistaMusica.php';
+    header('Location: login.php?lang=' . $currentLang);
+    exit;
+}
+
+// Verificar se já possui conta de artista
+$isArtist = isset($_SESSION['is_artist']) && $_SESSION['is_artist'];
+
+// Se já for artista, redirecionar para dashboard
+if ($isArtist) {
+    header('Location: dashboardArtista.php?lang=' . $currentLang);
+    exit;
+}
 ?>
 
 <link rel="stylesheet" href="../css/style-cadArtistaMusica.css">

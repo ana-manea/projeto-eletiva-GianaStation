@@ -1,103 +1,78 @@
 <?php
 require_once 'config.php';
+require_once '../processamento/funcoesBD.php';
+
+// Verificar se usuário está logado e é artista
+if (!isset($_SESSION['user_id']) || !isset($_SESSION['artist_id'])) {
+    header('Location: login.php?lang=' . $currentLang);
+    exit;
+}
+
+$artist_id = $_SESSION['artist_id'];
 $pageTitle = translateText('Discografia');
 
-// Dados de exemplo - substituir por dados do banco
-$discografia = [
-    'albums' => [
-        [
-            'id' => 1,
-            'titulo' => 'Trevo',
-            'ano' => 2017,
-            'capa' => 'https://i.scdn.co/image/ab67616d0000b2732d9442517e36cd23c60efe50',
-            'tipo' => 'Álbum',
-            'gravadora' => 'Universal Music',
-            'descricao' => 'Álbum de estreia da dupla com grandes sucessos.',
-            'faixas' => 14,
-            'streams' => '2.5M',
-            'musicas' => [
-                ['id' => 1, 'numero' => 1, 'titulo' => 'Trevo (Tu)', 'duracao' => '3:45', 'streams' => '450K', 'destaque' => true],
-                ['id' => 2, 'numero' => 2, 'titulo' => 'Não Sinto Nada', 'duracao' => '3:28', 'streams' => '320K', 'destaque' => false],
-            ]
-        ],
-        [
-            'id' => 2,
-            'titulo' => 'O Tempo É Agora',
-            'ano' => 2018,
-            'capa' => 'https://i.scdn.co/image/ab67616d0000b2735d7cf1a8508aa994d4bde5c8',
-            'tipo' => 'Álbum',
-            'gravadora' => 'Universal Music',
-            'descricao' => 'Segundo álbum de estúdio com 12 faixas inéditas.',
-            'faixas' => 12,
-            'streams' => '3.1M',
-            'musicas' => [
-                ['id' => 3, 'numero' => 1, 'titulo' => 'Tempo', 'duracao' => '3:52', 'streams' => '280K', 'destaque' => true],
-                ['id' => 4, 'numero' => 2, 'titulo' => 'Agora', 'duracao' => '4:02', 'streams' => '245K', 'destaque' => false],
-            ]
-        ],
-        [
-            'id' => 3,
-            'titulo' => 'Esquinas',
-            'ano' => 2024,
-            'capa' => 'https://i.scdn.co/image/ab67616d0000b273190aaad879fd91cebab37efd',
-            'tipo' => 'Álbum',
-            'gravadora' => 'Universal Music',
-            'descricao' => 'O terceiro álbum de estúdio da dupla traz 12 faixas inéditas.',
-            'faixas' => 12,
-            'streams' => '1.8M',
-            'musicas' => [
-                ['id' => 5, 'numero' => 1, 'titulo' => 'Esquinas', 'duracao' => '3:45', 'streams' => '450K', 'destaque' => true],
-                ['id' => 6, 'numero' => 2, 'titulo' => 'Singular', 'duracao' => '4:02', 'streams' => '320K', 'destaque' => false],
-            ]
-        ]
-    ],
-    'eps' => [
-        [
-            'id' => 4,
-            'titulo' => 'Ao Vivo em São Paulo',
-            'ano' => 2019,
-            'capa' => 'https://i.scdn.co/image/ab67616d0000b273190aaad879fd91cebab37efd',
-            'tipo' => 'EP',
-            'gravadora' => 'Universal Music',
-            'descricao' => 'EP ao vivo gravado em São Paulo.',
-            'faixas' => 6,
-            'streams' => '890K',
-            'musicas' => []
-        ]
-    ],
-    'singles' => [
-        [
-            'id' => 5,
-            'titulo' => 'Trevo (Tu)',
-            'ano' => 2017,
-            'capa' => 'https://i.scdn.co/image/ab67616d0000b2732d9442517e36cd23c60efe50',
-            'tipo' => 'Single',
-            'gravadora' => 'Universal Music',
-            'descricao' => 'Single de estreia da dupla.',
-            'faixas' => 1,
-            'streams' => '450K',
-            'musicas' => []
-        ]
-    ]
-];
+// Buscar dados do artista
+$artista = buscarArtistaPorId($artist_id);
+if (!$artista) {
+    header('Location: pagInicial.php?lang=' . $currentLang);
+    exit;
+}
 
-// Codificar dados para JavaScript
-$discografiaJson = json_encode(array_merge($discografia['albums'], $discografia['eps'], $discografia['singles']));
+// Usar Capa_path como foto de perfil se Foto_perfil não existir
+$foto_perfil = isset($artista['Foto_perfil']) && !empty($artista['Foto_perfil']) 
+    ? $artista['Foto_perfil'] 
+    : $artista['Capa_path'];
+
+// Verificar se as tabelas existem
+$conexao = conectarBD();
+$result = mysqli_query($conexao, "SHOW TABLES LIKE 'lancamentos'");
+$tabela_lancamentos_existe = mysqli_num_rows($result) > 0;
+fecharConexao($conexao);
+
+// Buscar todos os lançamentos
+$lancamentos = [];
+if ($tabela_lancamentos_existe) {
+    $lancamentos = buscarTodosLancamentos($artist_id);
+}
+
+// Separar por tipo
+$albums = [];
+$eps = [];
+$singles = [];
+
+foreach ($lancamentos as $lancamento) {
+    if ($lancamento['Tipo'] == 'Álbum') {
+        $albums[] = $lancamento;
+    } elseif ($lancamento['Tipo'] == 'EP') {
+        $eps[] = $lancamento;
+    } elseif ($lancamento['Tipo'] == 'Single') {
+        $singles[] = $lancamento;
+    }
+}
+
+// Codificar para JavaScript
+$lancamentosJson = json_encode($lancamentos);
 ?>
 
-<link rel="stylesheet" href="../css/style-dashboardArtDiscografia.css">
-
 <!DOCTYPE html>
+<html lang="<?php echo $langCode; ?>">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" sizes="96x96" href="../img/GA-Station.png">
+    <link rel="stylesheet" href="../css/style-dashboardArtDiscografia.css">
+    <title><?php echo $pageTitle; ?> | Giana Station for Artists</title>
+</head>
 <body>
     <nav class="navbar">
         <section class="navbar-content">
             <section class="navbar-left">
                 <a href="dashboardArtista.php" class="artist-profile">
                     <section class="artist-avatar">
-                        <img src="https://image-cdn-ak.spotifycdn.com/image/ab6761860000101685ec2d2af58d2b838a744ac4" alt="AnaVitória">
+                        <img src="<?php echo !empty($foto_perfil) ? htmlspecialchars($foto_perfil) : 'https://via.placeholder.com/100'; ?>" alt="<?php echo htmlspecialchars($artista['Nome_artistico']); ?>">
                     </section>
                     <section class="artist-info">
-                        <h2><?php echo translateText('AnaVitória'); ?></h2>
+                        <h2><?php echo htmlspecialchars($artista['Nome_artistico']); ?></h2>
                         <p><?php echo translateText('Artista Verificado'); ?></p>
                     </section>
                 </a>
@@ -173,18 +148,19 @@ $discografiaJson = json_encode(array_merge($discografia['albums'], $discografia[
     <div class="mobile-menu-overlay" id="mobileMenuOverlay"></div>
   
     <main class="main-content">
+        <?php if (!$tabela_lancamentos_existe): ?>
+            <div class="alert alert-info" style="background: rgba(74, 144, 226, 0.1); border: 1px solid rgba(74, 144, 226, 0.3); border-radius: 8px; padding: 1rem; margin-bottom: 2rem;">
+                <p style="margin: 0; color: #4a90e2;">
+                    <strong>ℹ️ Configuração Inicial:</strong> Para visualizar lançamentos, execute o script SQL fornecido no README.
+                </p>
+            </div>
+        <?php endif; ?>
+
         <section class="page-header">
             <div>
                 <h1><?php echo translateText('Discografia'); ?></h1>
                 <p><?php echo translateText('Gerencie seus álbuns, EPs e singles'); ?></p>
             </div>
-            <button class="btn-primary" id="btnAddRelease">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <line x1="12" y1="5" x2="12" y2="19"/>
-                    <line x1="5" y1="12" x2="19" y2="12"/>
-                </svg>
-                <span><?php echo translateText('Adicionar Lançamento'); ?></span>
-            </button>
         </section>
 
         <section class="stats-overview" id="statsOverview">
@@ -197,7 +173,7 @@ $discografiaJson = json_encode(array_merge($discografia['albums'], $discografia[
                     </svg>
                 </div>
                 <div>
-                    <p class="stat-value" id="albumCount"><?php echo count($discografia['albums']); ?></p>
+                    <p class="stat-value"><?php echo count($albums); ?></p>
                     <p class="stat-label"><?php echo translateText('Álbuns'); ?></p>
                 </div>
             </section>
@@ -211,7 +187,7 @@ $discografiaJson = json_encode(array_merge($discografia['albums'], $discografia[
                     </svg>
                 </div>
                 <div>
-                    <p class="stat-value" id="epCount"><?php echo count($discografia['eps']); ?></p>
+                    <p class="stat-value"><?php echo count($eps); ?></p>
                     <p class="stat-label"><?php echo translateText('EPs'); ?></p>
                 </div>
             </section>
@@ -225,7 +201,7 @@ $discografiaJson = json_encode(array_merge($discografia['albums'], $discografia[
                     </svg>
                 </div>
                 <div>
-                    <p class="stat-value" id="singleCount"><?php echo count($discografia['singles']); ?></p>
+                    <p class="stat-value"><?php echo count($singles); ?></p>
                     <p class="stat-label"><?php echo translateText('Singles'); ?></p>
                 </div>
             </section>
@@ -240,108 +216,41 @@ $discografiaJson = json_encode(array_merge($discografia['albums'], $discografia[
         </section>
 
         <!-- Grid de Lançamentos -->
-        <section id="releasesContainer"></section>
+        <section class="releases-grid" id="releasesContainer">
+            <?php if (!empty($lancamentos)): ?>
+                <?php foreach ($lancamentos as $lancamento): ?>
+                    <article class="release-card" data-tipo="<?php echo htmlspecialchars($lancamento['Tipo']); ?>">
+                        <div class="release-cover" onclick="window.location.href='detalhesLancamento.php?id=<?php echo $lancamento['ID_Lancamento']; ?>&lang=<?php echo $currentLang; ?>'">
+                            <img src="<?php echo htmlspecialchars($lancamento['Capa_path']); ?>" alt="<?php echo htmlspecialchars($lancamento['Titulo']); ?>">
+                        </div>
+                        <div class="release-info">
+                            <span class="release-badge <?php 
+                                echo $lancamento['Tipo'] == 'EP' ? 'badge-blue' : 
+                                     ($lancamento['Tipo'] == 'Single' ? 'badge-purple' : ''); 
+                            ?>"><?php echo htmlspecialchars($lancamento['Tipo']); ?></span>
+                            <h3><?php echo htmlspecialchars($lancamento['Titulo']); ?></h3>
+                            <p class="release-year"><?php echo $lancamento['Ano']; ?></p>
+                            <div class="release-meta">
+                                <span><?php echo $lancamento['Total_faixas']; ?> <?php echo translateText('faixas'); ?></span>
+                                <?php if ($lancamento['Total_streams'] > 0): ?>
+                                    <span>•</span>
+                                    <span><?php echo formatarNumero($lancamento['Total_streams']); ?> streams</span>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                    </article>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <p style="grid-column: 1/-1; text-align: center; color: rgba(255,255,255,0.6); padding: 3rem;">
+                    <?php echo translateText('Nenhum lançamento cadastrado ainda.'); ?>
+                    <br><br>
+                    <a href="cadastrarMusica.php?lang=<?php echo $currentLang; ?>" style="color: #1db954; text-decoration: underline;">
+                        <?php echo translateText('Adicione seu primeiro lançamento'); ?>
+                    </a>
+                </p>
+            <?php endif; ?>
+        </section>
     </main>
-
-    <!-- Modal: Adicionar/Editar Álbum -->
-    <div class="modal-overlay" id="albumModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 id="albumModalTitle"><?php echo translateText('Adicionar Lançamento'); ?></h2>
-                <button class="modal-close" onclick="closeAlbumModal()">✕</button>
-            </div>
-            <form id="albumForm" onsubmit="handleAlbumSubmit(event)">
-                <input type="hidden" id="albumId">
-                
-                <div class="form-group">
-                    <label for="albumTitulo"><?php echo translateText('Título'); ?> *</label>
-                    <input type="text" id="albumTitulo" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="albumAno"><?php echo translateText('Ano'); ?> *</label>
-                    <input type="number" id="albumAno" min="1900" max="2100" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="albumTipo"><?php echo translateText('Tipo'); ?> *</label>
-                    <select id="albumTipo" required>
-                        <option value="Álbum">Álbum</option>
-                        <option value="EP">EP</option>
-                        <option value="Single">Single</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label for="albumGravadora"><?php echo translateText('Gravadora'); ?></label>
-                    <input type="text" id="albumGravadora">
-                </div>
-                
-                <div class="form-group">
-                    <label for="albumDescricao"><?php echo translateText('Descrição'); ?></label>
-                    <textarea id="albumDescricao" rows="4"></textarea>
-                </div>
-                
-                <div class="form-group">
-                    <label for="albumCapa"><?php echo translateText('URL da Capa'); ?></label>
-                    <input type="url" id="albumCapa" placeholder="https://...">
-                    <img id="capaPreview" class="preview-image" style="display: none;">
-                </div>
-                
-                <div class="modal-actions">
-                    <button type="button" class="btn-modal-cancel" onclick="closeAlbumModal()">
-                        <?php echo translateText('Cancelar'); ?>
-                    </button>
-                    <button type="submit" class="btn-modal-save">
-                        <?php echo translateText('Salvar'); ?>
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Modal: Adicionar/Editar Música -->
-    <div class="modal-overlay" id="musicModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 id="musicModalTitle"><?php echo translateText('Adicionar Música'); ?></h2>
-                <button class="modal-close" onclick="closeMusicModal()">✕</button>
-            </div>
-            <form id="musicForm" onsubmit="handleMusicSubmit(event)">
-                <input type="hidden" id="musicId">
-                <input type="hidden" id="musicAlbumId">
-                
-                <div class="form-group">
-                    <label for="musicTitulo"><?php echo translateText('Título da Música'); ?> *</label>
-                    <input type="text" id="musicTitulo" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="musicDuracao"><?php echo translateText('Duração (MM:SS)'); ?> *</label>
-                    <input type="text" id="musicDuracao" placeholder="3:45" pattern="\d{1,2}:\d{2}" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="musicStreams"><?php echo translateText('Streams'); ?></label>
-                    <input type="text" id="musicStreams" placeholder="0">
-                </div>
-                
-                <div class="form-group checkbox-group">
-                    <input type="checkbox" id="musicDestaque">
-                    <label for="musicDestaque"><?php echo translateText('Marcar como destaque'); ?></label>
-                </div>
-                
-                <div class="modal-actions">
-                    <button type="button" class="btn-modal-cancel" onclick="closeMusicModal()">
-                        <?php echo translateText('Cancelar'); ?>
-                    </button>
-                    <button type="submit" class="btn-modal-save">
-                        <?php echo translateText('Salvar'); ?>
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
 
     <?php
     $modalConfig = [
@@ -353,295 +262,34 @@ $discografiaJson = json_encode(array_merge($discografia['albums'], $discografia[
     ?>
 
     <script>
-        // Dados iniciais
-        let albums = <?php echo $discografiaJson; ?>;
-        let currentFilter = 'all';
-        let selectedAlbum = null;
-        
-        // Inicializar página
-        document.addEventListener('DOMContentLoaded', function() {
-            renderReleases();
-            updateStats();
-            setupFilters();
-            setupMobileMenu();
-            
-            // Preview de imagem
-            document.getElementById('albumCapa').addEventListener('input', function() {
-                const preview = document.getElementById('capaPreview');
-                if (this.value) {
-                    preview.src = this.value;
-                    preview.style.display = 'block';
-                } else {
-                    preview.style.display = 'none';
-                }
-            });
-            
-            // Botão adicionar lançamento
-            document.getElementById('btnAddRelease').addEventListener('click', openAddAlbumModal);
-        });
-        
-        // Renderizar lançamentos
-        function renderReleases() {
-            const container = document.getElementById('releasesContainer');
-            const filtered = currentFilter === 'all' ? albums : albums.filter(a => a.tipo === currentFilter);
-            
-            if (filtered.length === 0) {
-                container.innerHTML = '<p style="text-align: center; color: rgba(255,255,255,0.6); padding: 3rem;">Nenhum lançamento encontrado.</p>';
-                return;
-            }
-            
-            container.innerHTML = `
-                <section class="releases-grid">
-                    ${filtered.map(album => `
-                        <article class="release-card" data-id="${album.id}">
-                            <div class="release-actions">
-                                <button class="btn-icon" onclick="openEditAlbumModal(${album.id})" title="Editar">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-                                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
-                                    </svg>
-                                </button>
-                                <button class="btn-icon btn-danger" onclick="deleteAlbum(${album.id})" title="Excluir">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <polyline points="3 6 5 6 21 6"/>
-                                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
-                                    </svg>
-                                </button>
-                            </div>
-                            <div class="release-cover" onclick="viewAlbum(${album.id})">
-                                <img src="${album.capa}" alt="${album.titulo}">
-                            </div>
-                            <div class="release-info">
-                                <span class="release-badge ${getBadgeClass(album.tipo)}">${album.tipo}</span>
-                                <h3>${album.titulo}</h3>
-                                <p class="release-year">${album.ano}</p>
-                                <div class="release-meta">
-                                    <span>${album.musicas?.length || album.faixas || 0} faixas</span>
-                                    ${album.streams ? '<span>•</span><span>' + album.streams + ' streams</span>' : ''}
-                                </div>
-                            </div>
-                        </article>
-                    `).join('')}
-                </section>
-            `;
-        }
-        
-        function getBadgeClass(tipo) {
-            if (tipo === 'EP') return 'badge-blue';
-            if (tipo === 'Single') return 'badge-purple';
-            return '';
-        }
-        
-        // Atualizar estatísticas
-        function updateStats() {
-            document.getElementById('albumCount').textContent = albums.filter(a => a.tipo === 'Álbum').length;
-            document.getElementById('epCount').textContent = albums.filter(a => a.tipo === 'EP').length;
-            document.getElementById('singleCount').textContent = albums.filter(a => a.tipo === 'Single').length;
-        }
-        
         // Filtros
-        function setupFilters() {
-            document.querySelectorAll('.filter-tab').forEach(tab => {
+        document.addEventListener('DOMContentLoaded', function() {
+            const filterTabs = document.querySelectorAll('.filter-tab');
+            const releaseCards = document.querySelectorAll('.release-card');
+            
+            filterTabs.forEach(tab => {
                 tab.addEventListener('click', () => {
-                    document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+                    // Remover active de todos
+                    filterTabs.forEach(t => t.classList.remove('active'));
                     tab.classList.add('active');
-                    currentFilter = tab.dataset.filter;
-                    renderReleases();
+                    
+                    const filter = tab.dataset.filter;
+                    
+                    // Filtrar cards
+                    releaseCards.forEach(card => {
+                        if (filter === 'all') {
+                            card.style.display = 'block';
+                        } else {
+                            const tipo = card.dataset.tipo;
+                            card.style.display = tipo === filter ? 'block' : 'none';
+                        }
+                    });
                 });
             });
-        }
-        
-        // Visualizar álbum
-        function viewAlbum(id) {
-            const album = albums.find(a => a.id === id);
-            if (!album) return;
             
-            window.location.href = `detalhesLancamento.php?id=${id}&lang=<?php echo $currentLang; ?>`;
-        }
-        
-        // Modal Álbum
-        function openAddAlbumModal() {
-            document.getElementById('albumModalTitle').textContent = '<?php echo translateText('Adicionar Lançamento'); ?>';
-            document.getElementById('albumForm').reset();
-            document.getElementById('albumId').value = '';
-            document.getElementById('capaPreview').style.display = 'none';
-            document.getElementById('albumModal').classList.add('active');
-        }
-        
-        function openEditAlbumModal(id) {
-            const album = albums.find(a => a.id === id);
-            if (!album) return;
-            
-            document.getElementById('albumModalTitle').textContent = '<?php echo translateText('Editar Lançamento'); ?>';
-            document.getElementById('albumId').value = album.id;
-            document.getElementById('albumTitulo').value = album.titulo;
-            document.getElementById('albumAno').value = album.ano;
-            document.getElementById('albumTipo').value = album.tipo;
-            document.getElementById('albumGravadora').value = album.gravadora || '';
-            document.getElementById('albumDescricao').value = album.descricao || '';
-            document.getElementById('albumCapa').value = album.capa || '';
-            
-            if (album.capa) {
-                document.getElementById('capaPreview').src = album.capa;
-                document.getElementById('capaPreview').style.display = 'block';
-            }
-            
-            document.getElementById('albumModal').classList.add('active');
-        }
-        
-        function closeAlbumModal() {
-            document.getElementById('albumModal').classList.remove('active');
-        }
-        
-        function handleAlbumSubmit(event) {
-            event.preventDefault();
-            
-            const id = document.getElementById('albumId').value;
-            const albumData = {
-                id: id ? parseInt(id) : Date.now(),
-                titulo: document.getElementById('albumTitulo').value,
-                ano: parseInt(document.getElementById('albumAno').value),
-                tipo: document.getElementById('albumTipo').value,
-                gravadora: document.getElementById('albumGravadora').value,
-                descricao: document.getElementById('albumDescricao').value,
-                capa: document.getElementById('albumCapa').value || 'https://via.placeholder.com/300',
-                faixas: 0,
-                streams: '0',
-                musicas: []
-            };
-            
-            if (id) {
-                // Editar
-                const index = albums.findIndex(a => a.id === parseInt(id));
-                if (index !== -1) {
-                    albumData.musicas = albums[index].musicas || [];
-                    albumData.faixas = albumData.musicas.length;
-                    albums[index] = albumData;
-                }
-                alert('<?php echo translateText('Álbum atualizado com sucesso!'); ?>');
-            } else {
-                // Adicionar
-                albums.push(albumData);
-                alert('<?php echo translateText('Álbum adicionado com sucesso!'); ?>');
-            }
-            
-            closeAlbumModal();
-            renderReleases();
-            updateStats();
-        }
-        
-        // Excluir álbum
-        function deleteAlbum(id) {
-            if (!confirm('<?php echo translateText('Tem certeza que deseja excluir este lançamento?'); ?>')) {
-                return;
-            }
-            
-            albums = albums.filter(a => a.id !== id);
-            renderReleases();
-            updateStats();
-            alert('<?php echo translateText('Álbum excluído com sucesso!'); ?>');
-        }
-        
-        // Modal Música
-        function openAddMusicModal(albumId) {
-            selectedAlbum = albums.find(a => a.id === albumId);
-            if (!selectedAlbum) return;
-            
-            document.getElementById('musicModalTitle').textContent = '<?php echo translateText('Adicionar Música'); ?>';
-            document.getElementById('musicForm').reset();
-            document.getElementById('musicId').value = '';
-            document.getElementById('musicAlbumId').value = albumId;
-            document.getElementById('musicModal').classList.add('active');
-        }
-        
-        function openEditMusicModal(albumId, musicId) {
-            const album = albums.find(a => a.id === albumId);
-            if (!album) return;
-            
-            const music = album.musicas.find(m => m.id === musicId);
-            if (!music) return;
-            
-            selectedAlbum = album;
-            
-            document.getElementById('musicModalTitle').textContent = '<?php echo translateText('Editar Música'); ?>';
-            document.getElementById('musicId').value = music.id;
-            document.getElementById('musicAlbumId').value = albumId;
-            document.getElementById('musicTitulo').value = music.titulo;
-            document.getElementById('musicDuracao').value = music.duracao;
-            document.getElementById('musicStreams').value = music.streams || '0';
-            document.getElementById('musicDestaque').checked = music.destaque || false;
-            
-            document.getElementById('musicModal').classList.add('active');
-        }
-        
-        function closeMusicModal() {
-            document.getElementById('musicModal').classList.remove('active');
-            selectedAlbum = null;
-        }
-        
-        function handleMusicSubmit(event) {
-            event.preventDefault();
-            
-            const albumId = parseInt(document.getElementById('musicAlbumId').value);
-            const musicId = document.getElementById('musicId').value;
-            
-            const album = albums.find(a => a.id === albumId);
-            if (!album) return;
-            
-            if (!album.musicas) album.musicas = [];
-            
-            const musicData = {
-                id: musicId ? parseInt(musicId) : Date.now(),
-                numero: album.musicas.length + 1,
-                titulo: document.getElementById('musicTitulo').value,
-                duracao: document.getElementById('musicDuracao').value,
-                streams: document.getElementById('musicStreams').value || '0',
-                destaque: document.getElementById('musicDestaque').checked
-            };
-            
-            if (musicId) {
-                // Editar
-                const index = album.musicas.findIndex(m => m.id === parseInt(musicId));
-                if (index !== -1) {
-                    musicData.numero = album.musicas[index].numero;
-                    album.musicas[index] = musicData;
-                }
-                alert('<?php echo translateText('Música atualizada com sucesso!'); ?>');
-            } else {
-                // Adicionar
-                album.musicas.push(musicData);
-                alert('<?php echo translateText('Música adicionada com sucesso!'); ?>');
-            }
-            
-            // Atualizar contagem de faixas
-            album.faixas = album.musicas.length;
-            
-            closeMusicModal();
-            renderReleases();
-        }
-        
-        // Excluir música
-        function deleteMusic(albumId, musicId) {
-            if (!confirm('<?php echo translateText('Tem certeza que deseja excluir esta música?'); ?>')) {
-                return;
-            }
-            
-            const album = albums.find(a => a.id === albumId);
-            if (!album) return;
-            
-            album.musicas = album.musicas.filter(m => m.id !== musicId);
-            album.faixas = album.musicas.length;
-            
-            // Renumerar músicas
-            album.musicas.forEach((music, index) => {
-                music.numero = index + 1;
-            });
-            
-            renderReleases();
-            alert('<?php echo translateText('Música excluída com sucesso!'); ?>');
-        }
-        
-        // Language Modal
+            setupMobileMenu();
+        });
+
         function toggleLanguageModal() {
             const modal = document.getElementById('languageModal');
             if (modal) {
@@ -656,26 +304,15 @@ $discografiaJson = json_encode(array_merge($discografia['albums'], $discografia[
             if (event.target === modal) {
                 toggleLanguageModal();
             }
-            
-            // Fechar modais ao clicar fora
-            if (event.target.classList.contains('modal-overlay')) {
-                closeAlbumModal();
-                closeMusicModal();
-            }
         }
 
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                const langModal = document.getElementById('languageModal');
-                if (langModal && langModal.style.display === 'block') {
-                    toggleLanguageModal();
-                }
-                closeAlbumModal();
-                closeMusicModal();
+            const modal = document.getElementById('languageModal');
+            if (e.key === 'Escape' && modal && modal.style.display === 'block') {
+                toggleLanguageModal();
             }
         });
 
-        // Mobile Menu
         function toggleMobileMenu() {
             const navMobile = document.getElementById('navMobile');
             const overlay = document.getElementById('mobileMenuOverlay');

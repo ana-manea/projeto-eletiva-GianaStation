@@ -1,6 +1,87 @@
 <?php
 require_once 'config.php';
+require_once '../processamento/funcoesBD.php';
+
+// Verificar se usuário está logado e é artista
+if (!isset($_SESSION['user_id']) || !isset($_SESSION['artist_id'])) {
+    header('Location: login.php?lang=' . $currentLang);
+    exit;
+}
+
+$artist_id = $_SESSION['artist_id'];
 $pageTitle = 'Dashboard';
+
+// Buscar dados do artista
+$artista = buscarArtistaPorId($artist_id);
+if (!$artista) {
+    header('Location: pagInicial.php?lang=' . $currentLang);
+    exit;
+}
+
+// Usar Capa_path como foto de perfil se Foto_perfil não existir
+$foto_perfil = isset($artista['Foto_perfil']) && !empty($artista['Foto_perfil']) 
+    ? $artista['Foto_perfil'] 
+    : $artista['Capa_path'];
+
+// Buscar estatísticas (com verificação se existe)
+$stats = null;
+$conexao = conectarBD();
+$result = mysqli_query($conexao, "SHOW TABLES LIKE 'estatisticas_artista'");
+$tabela_existe = mysqli_num_rows($result) > 0;
+fecharConexao($conexao);
+
+if ($tabela_existe) {
+    $stats = buscarEstatisticasArtista($artist_id);
+}
+
+// Se não existir estatísticas, usar valores padrão
+if (!$stats) {
+    $stats = [
+        'Total_streams' => 0,
+        'Ouvintes_mensais' => 0,
+        'Total_lancamentos' => 0,
+        'Total_seguidores' => 0,
+        'Crescimento_streams_percentual' => 0,  
+        'Crescimento_ouvintes_percentual' => 0, 
+        'Crescimento_seguidores' => 0
+    ];
+}
+
+// Buscar performance (com verificação)
+$performance_7dias = null;
+$performance_28dias = null;
+if ($tabela_existe) {
+    $performance_7dias = buscarPerformanceArtista($artist_id, '7_dias');
+    $performance_28dias = buscarPerformanceArtista($artist_id, '28_dias');
+}
+
+// Buscar lançamentos (verificar se tabela existe)
+$lancamentos_recentes = [];
+$conexao = conectarBD();
+$result = mysqli_query($conexao, "SHOW TABLES LIKE 'lancamentos'");
+$tabela_lancamentos_existe = mysqli_num_rows($result) > 0;
+fecharConexao($conexao);
+
+if ($tabela_lancamentos_existe) {
+    $lancamentos_recentes = buscarLancamentosRecentes($artist_id, 3);
+}
+
+// Buscar top músicas (verificar se tabela existe)
+$top_musicas = [];
+$conexao = conectarBD();
+$result = mysqli_query($conexao, "SHOW TABLES LIKE 'top_musicas_artista'");
+$tabela_top_existe = mysqli_num_rows($result) > 0;
+fecharConexao($conexao);
+
+if ($tabela_top_existe) {
+    $top_musicas = buscarTopMusicasArtista($artist_id, 3);
+}
+
+// Buscar contagem de lançamentos
+$contagem_lancamentos = ['singles' => 0, 'eps' => 0, 'albums' => 0];
+if ($tabela_lancamentos_existe) {
+    $contagem_lancamentos = contarLancamentosPorTipo($artist_id);
+}
 ?>
 
 <link rel="stylesheet" href="../css/style-dashboardArtista.css">
@@ -20,10 +101,10 @@ $pageTitle = 'Dashboard';
             <section class="navbar-left">
                 <a href="dashboardArtista.php" class="artist-profile">
                     <section class="artist-avatar">
-                        <img src="https://image-cdn-ak.spotifycdn.com/image/ab6761860000101685ec2d2af58d2b838a744ac4" alt="AnaVitoria">
+                        <img src="<?php echo !empty($foto_perfil) ? htmlspecialchars($foto_perfil) : 'https://via.placeholder.com/100'; ?>" alt="<?php echo htmlspecialchars($artista['Nome_artistico']); ?>">
                     </section>
                     <section class="artist-info">
-                        <h2>AnaVitória</h2>
+                        <h2><?php echo htmlspecialchars($artista['Nome_artistico']); ?></h2>
                         <p><?php echo translateText('Artista Verificado'); ?></p>
                     </section>
                 </a>
@@ -99,28 +180,36 @@ $pageTitle = 'Dashboard';
     <div class="mobile-menu-overlay" id="mobileMenuOverlay"></div>
 
     <section class="hero-section">
-        <section class="hero-background" style="background-image: url('https://image-cdn-ak.spotifycdn.com/image/ab6761860000101685ec2d2af58d2b838a744ac4')"></section>
+        <section class="hero-background" style="background-image: url('<?php echo !empty($artista['Capa_path']) ? htmlspecialchars($artista['Capa_path']) : 'https://via.placeholder.com/1920x400'; ?>')"></section>
         <section class="hero-overlay"></section>
         <section class="hero-content">
             <section class="hero-profile">
                 <section class="hero-avatar">
-                    <img src="https://image-cdn-ak.spotifycdn.com/image/ab6761860000101685ec2d2af58d2b838a744ac4" alt="AnaVitoria">
+                    <img src="<?php echo !empty($foto_perfil) ? htmlspecialchars($foto_perfil) : 'https://via.placeholder.com/200'; ?>" alt="<?php echo htmlspecialchars($artista['Nome_artistico']); ?>">
                 </section>
                 <section class="hero-info">
                     <span class="badge-verified">
-                            <svg viewBox="0 0 24 24" fill="#4cb3ff" style="width:20px;">
-                                <path d="M10.814.5a1.66 1.66 0 0 1 2.372 0l2.512 2.572 3.595-.043a1.66 1.66 0 0 1 1.678 1.678l-.043 3.595 2.572 2.512c.667.65.667 1.722 0 2.372l-2.572 2.512.043 3.595a1.66 1.66 0 0 1-1.678 1.678l-3.595-.043-2.512 2.572a1.66 1.66 0 0 1-2.372 0l-2.512-2.572-3.595.043a1.66 1.66 0 0 1-1.678-1.678l.043-3.595L.5 13.186a1.66 1.66 0 0 1 0-2.372l2.572-2.512-.043-3.595a1.66 1.66 0 0 1 1.678-1.678l3.595.043zm6.584 9.12a1 1 0 0 0-1.414-1.413l-6.011 6.01-1.894-1.893a1 1 0 0 0-1.414 1.414l3.308 3.308z"/>
-                            </svg>
-                            <?php echo translateText('Artista verificado'); ?>
-                        </span>
-                    <h1><?php echo translateText('AnaVitória'); ?></h1>
-                    <p><?php echo translateText('21.201 ouvintes mensais'); ?></p>
+                        <svg viewBox="0 0 24 24" fill="#4cb3ff" style="width:20px;">
+                            <path d="M10.814.5a1.66 1.66 0 0 1 2.372 0l2.512 2.572 3.595-.043a1.66 1.66 0 0 1 1.678 1.678l-.043 3.595 2.572 2.512c.667.65.667 1.722 0 2.372l-2.572 2.512.043 3.595a1.66 1.66 0 0 1-1.678 1.678l-3.595-.043-2.512 2.572a1.66 1.66 0 0 1-2.372 0l-2.512-2.572-3.595.043a1.66 1.66 0 0 1-1.678-1.678l.043-3.595L.5 13.186a1.66 1.66 0 0 1 0-2.372l2.572-2.512-.043-3.595a1.66 1.66 0 0 1 1.678-1.678l3.595.043zm6.584 9.12a1 1 0 0 0-1.414-1.413l-6.011 6.01-1.894-1.893a1 1 0 0 0-1.414 1.414l3.308 3.308z"/>
+                        </svg>
+                        <?php echo translateText('Artista verificado'); ?>
+                    </span>
+                    <h1><?php echo htmlspecialchars($artista['Nome_artistico']); ?></h1>
+                    <p><?php echo formatarNumero($stats['Ouvintes_mensais']); ?> <?php echo translateText('ouvintes mensais'); ?></p>
                 </section>
             </section>
         </section>
     </section>
 
     <main class="main-content">
+        <?php if (!$tabela_existe): ?>
+            <div class="alert alert-info" style="background: rgba(74, 144, 226, 0.1); border: 1px solid rgba(74, 144, 226, 0.3); border-radius: 8px; padding: 1rem; margin-bottom: 2rem;">
+                <p style="margin: 0; color: #4a90e2;">
+                    <strong>ℹ️ Configuração Inicial:</strong> Para visualizar estatísticas completas, execute o script SQL fornecido no README.
+                </p>
+            </div>
+        <?php endif; ?>
+
         <section class="stats-grid">
             <section class="stat-card stat-primary">
                 <section class="stat-header">
@@ -131,13 +220,13 @@ $pageTitle = 'Dashboard';
                         <circle cx="18" cy="16" r="3"/>
                     </svg>
                 </section>
-                <p class="stat-value">24.5K</p>
+                <p class="stat-value"><?php echo formatarNumero($stats['Total_streams']); ?></p>
                 <p class="stat-change positive">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
                         <polyline points="17 6 23 6 23 12"/>
                     </svg>
-                    <span><?php echo translateText('+12.5% este mês'); ?></span>
+                    <span><?php echo formatarPercentual($stats['Crescimento_streams_percentual']); ?> <?php echo translateText('este mês'); ?></span>
                 </p>
             </section>
 
@@ -151,13 +240,13 @@ $pageTitle = 'Dashboard';
                         <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
                     </svg>
                 </section>
-                <p class="stat-value">21.2K</p>
+                <p class="stat-value"><?php echo formatarNumero($stats['Ouvintes_mensais']); ?></p>
                 <p class="stat-change positive">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
                         <polyline points="17 6 23 6 23 12"/>
                     </svg>
-                    <span><?php echo translateText('+8.3% este mês'); ?></span>
+                    <span><?php echo formatarPercentual($stats['Crescimento_ouvintes_percentual']); ?> <?php echo translateText('este mês'); ?></span>
                 </p>
             </section>
 
@@ -168,9 +257,13 @@ $pageTitle = 'Dashboard';
                         <polygon points="5 3 19 12 5 21 5 3"/>
                     </svg>
                 </section>
-                <p class="stat-value">12</p>
+                <p class="stat-value"><?php echo $stats['Total_lancamentos']; ?></p>
                 <p class="stat-change neutral">
-                    <span><?php echo translateText('4 singles, 5 EPs, 3 álbuns'); ?></span>
+                    <span>
+                        <?php echo $contagem_lancamentos['singles']; ?> singles, 
+                        <?php echo $contagem_lancamentos['eps']; ?> EPs, 
+                        <?php echo $contagem_lancamentos['albums']; ?> álbuns
+                    </span>
                 </p>
             </section>
 
@@ -184,13 +277,13 @@ $pageTitle = 'Dashboard';
                         <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
                     </svg>
                 </section>
-                <p class="stat-value">5.3K</p>
+                <p class="stat-value"><?php echo formatarNumero($stats['Total_seguidores']); ?></p>
                 <p class="stat-change positive">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
                         <polyline points="17 6 23 6 23 12"/>
                     </svg>
-                    <span><?php echo translateText('+170 esta semana'); ?></span>
+                    <span>+<?php echo $stats['Crescimento_seguidores']; ?> <?php echo translateText('esta semana'); ?></span>
                 </p>
             </section>
         </section>
@@ -203,41 +296,23 @@ $pageTitle = 'Dashboard';
                         <a href="dashboardArtDiscografia.php?lang=<?php echo $currentLang; ?>" class="link-primary"><?php echo translateText('Ver todos'); ?></a>
                     </section>
                     <section class="releases-grid">
-                        <article class="release-card" onclick="window.location.href='detalhesLancamento.php?id=3&type=album&lang=<?php echo $currentLang; ?>'">
-                            <div class="release-cover">
-                                <img src="https://i.scdn.co/image/ab67616d0000b273190aaad879fd91cebab37efd" alt="Esquinas">
-                            </div>
-                            <div class="release-info">
-                                <span class="release-badge">Álbum</span>
-                                <h3>Esquinas</h3>
-                                <p class="release-year">2024</p>
-                                <p class="release-streams">1.8M streams</p>
-                            </div>
-                        </article>
-
-                        <article class="release-card" onclick="window.location.href='detalhesLancamento.php?id=2&type=album&lang=<?php echo $currentLang; ?>'">
-                            <div class="release-cover">
-                                <img src="https://i.scdn.co/image/ab67616d0000b2735d7cf1a8508aa994d4bde5c8" alt="O Tempo É Agora">
-                            </div>
-                            <div class="release-info">
-                                <span class="release-badge">Álbum</span>
-                                <h3>O Tempo É Agora</h3>
-                                <p class="release-year">2018</p>
-                                <p class="release-streams">3.1M streams</p>
-                            </div>
-                        </article>
-
-                        <article class="release-card" onclick="window.location.href='detalhesLancamento.php?id=1&type=album&lang=<?php echo $currentLang; ?>'">
-                            <div class="release-cover">
-                                <img src="https://i.scdn.co/image/ab67616d0000b2732d9442517e36cd23c60efe50" alt="Trevo">
-                            </div>
-                            <div class="release-info">
-                                <span class="release-badge">Álbum</span>
-                                <h3>Trevo</h3>
-                                <p class="release-year">2017</p>
-                                <p class="release-streams">2.5M streams</p>
-                            </div>
-                        </article>
+                        <?php if (!empty($lancamentos_recentes)): ?>
+                            <?php foreach ($lancamentos_recentes as $lancamento): ?>
+                                <article class="release-card" onclick="window.location.href='detalhesLancamento.php?id=<?php echo $lancamento['ID_Lancamento']; ?>&lang=<?php echo $currentLang; ?>'">
+                                    <div class="release-cover">
+                                        <img src="<?php echo htmlspecialchars($lancamento['Capa_path']); ?>" alt="<?php echo htmlspecialchars($lancamento['Titulo']); ?>">
+                                    </div>
+                                    <div class="release-info">
+                                        <span class="release-badge"><?php echo htmlspecialchars($lancamento['Tipo']); ?></span>
+                                        <h3><?php echo htmlspecialchars($lancamento['Titulo']); ?></h3>
+                                        <p class="release-year"><?php echo $lancamento['Ano']; ?></p>
+                                        <p class="release-streams"><?php echo formatarNumero($lancamento['Total_streams']); ?> streams</p>
+                                    </div>
+                                </article>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <p style="color: rgba(255,255,255,0.6);">Nenhum lançamento cadastrado. <a href="dashboardArtDiscografia.php?lang=<?php echo $currentLang; ?>" style="color: #1db954;">Adicione seu primeiro lançamento</a></p>
+                        <?php endif; ?>
                     </section>
                 </section>
 
@@ -245,34 +320,43 @@ $pageTitle = 'Dashboard';
                     <section class="card">
                         <h2><?php echo translateText('Visão Geral de Performance'); ?></h2>
                         <section class="performance-list">
-                            <section class="performance-item">
-                                <div>
-                                    <p class="performance-label"><?php echo translateText('Últimos 7 dias'); ?></p>
-                                    <p class="performance-value">7,964</p>
-                                    <p class="performance-unit"><?php echo translateText('streams'); ?></p>
-                                </div>
-                                <section class="performance-change positive">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
-                                        <polyline points="17 6 23 6 23 12"/>
-                                    </svg>
-                                    <span>+15.3%</span>
+                            <?php if ($performance_7dias): ?>
+                                <section class="performance-item">
+                                    <div>
+                                        <p class="performance-label"><?php echo translateText('Últimos 7 dias'); ?></p>
+                                        <p class="performance-value"><?php echo number_format($performance_7dias['Total_streams'], 0, ',', '.'); ?></p>
+                                        <p class="performance-unit"><?php echo translateText('streams'); ?></p>
+                                    </div>
+                                    <section class="performance-change positive">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
+                                            <polyline points="17 6 23 6 23 12"/>
+                                        </svg>
+                                        <span><?php echo formatarPercentual($performance_7dias['Crescimento_percentual']); ?></span>
+                                    </section>
                                 </section>
-                            </section>
-                            <section class="performance-item">
-                                <div>
-                                    <p class="performance-label"><?php echo translateText('Últimos 28 dias'); ?></p>
-                                    <p class="performance-value">24,531</p>
-                                    <p class="performance-unit"><?php echo translateText('streams'); ?></p>
-                                </div>
-                                <section class="performance-change positive">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
-                                        <polyline points="17 6 23 6 23 12"/>
-                                    </svg>
-                                    <span>+8.7%</span>
+                            <?php else: ?>
+                                <p style="color: rgba(255,255,255,0.6); text-align: center; padding: 2rem;">
+                                    Dados de performance serão exibidos após a configuração inicial do banco de dados.
+                                </p>
+                            <?php endif; ?>
+                            
+                            <?php if ($performance_28dias): ?>
+                                <section class="performance-item">
+                                    <div>
+                                        <p class="performance-label"><?php echo translateText('Últimos 28 dias'); ?></p>
+                                        <p class="performance-value"><?php echo number_format($performance_28dias['Total_streams'], 0, ',', '.'); ?></p>
+                                        <p class="performance-unit"><?php echo translateText('streams'); ?></p>
+                                    </div>
+                                    <section class="performance-change positive">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
+                                            <polyline points="17 6 23 6 23 12"/>
+                                        </svg>
+                                        <span><?php echo formatarPercentual($performance_28dias['Crescimento_percentual']); ?></span>
+                                    </section>
                                 </section>
-                            </section>
+                            <?php endif; ?>
                         </section>
                     </section>
                 </section>
@@ -286,27 +370,21 @@ $pageTitle = 'Dashboard';
                             <a href="dashboardArtAudiencia.php?lang=<?php echo $currentLang; ?>" class="link-primary"><?php echo translateText('Ver detalhes'); ?></a>
                         </section>
                         <section class="top-songs-list">
-                            <section class="song-item">
-                                <span class="song-position">1</span>
-                                <section class="song-info">
-                                    <p class="song-title">Trevo (Tu)</p>
-                                    <p class="song-streams">450K streams</p>
-                                </section>
-                            </section>
-                            <section class="song-item">
-                                <span class="song-position">2</span>
-                                <section class="song-info">
-                                    <p class="song-title">Singular</p>
-                                    <p class="song-streams">320K streams</p>
-                                </section>
-                            </section>
-                            <section class="song-item">
-                                <span class="song-position">3</span>
-                                <section class="song-info">
-                                    <p class="song-title">Esquinas</p>
-                                    <p class="song-streams">280K streams</p>
-                                </section>
-                            </section>
+                            <?php if (!empty($top_musicas)): ?>
+                                <?php foreach ($top_musicas as $musica): ?>
+                                    <section class="song-item">
+                                        <span class="song-position"><?php echo $musica['Posicao']; ?></span>
+                                        <section class="song-info">
+                                            <p class="song-title"><?php echo htmlspecialchars($musica['Titulo']); ?></p>
+                                            <p class="song-streams"><?php echo formatarNumero($musica['Total_streams']); ?> streams</p>
+                                        </section>
+                                    </section>
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <p style="color: rgba(255,255,255,0.6); text-align: center; padding: 2rem;">
+                                    Configure as estatísticas para ver suas músicas mais populares.
+                                </p>
+                            <?php endif; ?>
                         </section>
                     </section>
                 </section>
@@ -317,7 +395,7 @@ $pageTitle = 'Dashboard';
                         <section class="artist-info-list">
                             <section class="info-item">
                                 <p class="info-label"><?php echo translateText('Gêneros'); ?></p>
-                                <p class="info-value"><?php echo translateText('MPB, Pop, Folk-pop'); ?></p>
+                                <p class="info-value"><?php echo htmlspecialchars($artista['Genero_art'] ?? 'Não especificado'); ?></p>
                             </section>
                             <section class="info-item">
                                 <p class="info-label"><?php echo translateText('Status'); ?></p>

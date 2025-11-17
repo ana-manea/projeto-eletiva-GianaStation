@@ -5,6 +5,7 @@ require_once 'funcoesBD.php';
 // Verificar se usuário está logado
 if (!isset($_SESSION['user_id'])) {
     $_SESSION['error_message'] = 'Você precisa estar logado para cadastrar um artista';
+    $_SESSION['redirect_after_login'] = 'cadastrarArtistaMusica.php';
     header('Location: ../view/login.php');
     exit;
 }
@@ -177,7 +178,7 @@ if ($artist_id) {
     // Mensagem de sucesso
     $_SESSION['success_message'] = 'Perfil de artista criado com sucesso! Bem-vindo ao Giana Station for Artists.';
     
-    // Redirecionar para dashboard
+    // Redirecionar para dashboard de artista
     header('Location: ../view/dashboardArtista.php?lang=' . $lang);
     exit;
 } else {

@@ -5,7 +5,13 @@ require_once '../processamento/funcoesBD.php';
 // Verifica se já está conectado
 if (isset($_SESSION['user_id'])) {
     $lang = $_SESSION['lang'] ?? 'pt-BR';
-    header('Location: ../view/pagInicial.php?lang=' . $lang);
+    
+    // Se for artista, redirecionar para dashboard
+    if (isset($_SESSION['is_artist']) && $_SESSION['is_artist']) {
+        header('Location: ../view/dashboardArtista.php?lang=' . $lang);
+    } else {
+        header('Location: ../view/pagInicial.php?lang=' . $lang);
+    }
     exit;
 }
 
@@ -70,7 +76,26 @@ if ($artista) {
 // Limpar erros
 unset($_SESSION['login_error']);
 
-// Redirecionar para página inicial
-header('Location: ../view/pagInicial.php?lang=' . $lang);
+// Verificar se há uma página de redirecionamento após login
+if (isset($_SESSION['redirect_after_login'])) {
+    $redirect = $_SESSION['redirect_after_login'];
+    unset($_SESSION['redirect_after_login']);
+    
+    // Se for artista e tentou acessar página de cadastro, redirecionar para dashboard
+    if ($artista && $redirect === 'cadastrarArtistaMusica.php') {
+        header('Location: ../view/dashboardArtista.php?lang=' . $lang);
+        exit;
+    }
+    
+    header('Location: ../view/' . $redirect . '?lang=' . $lang);
+    exit;
+}
+
+// Redirecionar baseado no tipo de usuário
+if ($artista) {
+    header('Location: ../view/dashboardArtista.php?lang=' . $lang);
+} else {
+    header('Location: ../view/pagInicial.php?lang=' . $lang);
+}
 exit;
 ?>

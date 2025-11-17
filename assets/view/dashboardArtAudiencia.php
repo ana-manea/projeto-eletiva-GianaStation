@@ -1,9 +1,64 @@
 <?php
 require_once 'config.php';
-$pageTitle = translateText('Audiência');
-?>
+require_once '../processamento/funcoesBD.php';
 
-<link rel="stylesheet" href="../css/style-dashboardArtAudiencia.css">
+// Verificar se usuário está logado e é artista
+if (!isset($_SESSION['user_id']) || !isset($_SESSION['artist_id'])) {
+    header('Location: login.php?lang=' . $currentLang);
+    exit;
+}
+
+$artist_id = $_SESSION['artist_id'];
+$pageTitle = translateText('Audiência');
+
+// Buscar dados do artista
+$artista = buscarArtistaPorId($artist_id);
+if (!$artista) {
+    header('Location: pagInicial.php?lang=' . $currentLang);
+    exit;
+}
+
+// Usar Capa_path como foto de perfil se Foto_perfil não existir
+$foto_perfil = isset($artista['Foto_perfil']) && !empty($artista['Foto_perfil']) 
+    ? $artista['Foto_perfil'] 
+    : $artista['Capa_path'];
+
+// Verificar se as tabelas existem
+$conexao = conectarBD();
+$tabelas_existem = true;
+$tabelas = ['estatisticas_artista', 'top_musicas_artista', 'demografia_pais', 'demografia_idade'];
+foreach ($tabelas as $tabela) {
+    $result = mysqli_query($conexao, "SHOW TABLES LIKE '$tabela'");
+    if (mysqli_num_rows($result) == 0) {
+        $tabelas_existem = false;
+        break;
+    }
+}
+fecharConexao($conexao);
+
+// Buscar dados se as tabelas existirem
+$stats = null;
+$top_musicas = [];
+$paises = [];
+$faixas_idade = [];
+
+if ($tabelas_existem) {
+    $stats = buscarEstatisticasArtista($artist_id);
+    $top_musicas = buscarTopMusicasArtista($artist_id, 3);
+    $paises = buscarDemografiaPais($artist_id, 3);
+    $faixas_idade = buscarDemografiaIdade($artist_id);
+}
+
+// Valores padrão se não houver dados
+if (!$stats) {
+    $stats = [
+        'Total_streams' => 0,
+        'Ouvintes_mensais' => 0,
+        'Crescimento_streams_percentual' => 0,
+        'Crescimento_ouvintes_percentual' => 0
+    ];
+}
+?>
 
 <!DOCTYPE html>
 <html lang="<?php echo $langCode; ?>">
@@ -11,6 +66,7 @@ $pageTitle = translateText('Audiência');
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" sizes="96x96" href="../img/GA-Station.png">
+    <link rel="stylesheet" href="../css/style-dashboardArtAudiencia.css">
     <title><?php echo $pageTitle; ?> | Giana Station for Artists</title>
 </head>
 <body>
@@ -19,10 +75,10 @@ $pageTitle = translateText('Audiência');
             <section class="navbar-left">
                 <a href="dashboardArtista.php" class="artist-profile">
                     <section class="artist-avatar">
-                        <img src="https://image-cdn-ak.spotifycdn.com/image/ab6761860000101685ec2d2af58d2b838a744ac4" alt="AnaVitoria">
+                        <img src="<?php echo !empty($foto_perfil) ? htmlspecialchars($foto_perfil) : 'https://via.placeholder.com/100'; ?>" alt="<?php echo htmlspecialchars($artista['Nome_artistico']); ?>">
                     </section>
                     <section class="artist-info">
-                        <h2><?php echo translateText('AnaVitória'); ?></h2>
+                        <h2><?php echo htmlspecialchars($artista['Nome_artistico']); ?></h2>
                         <p><?php echo translateText('Artista Verificado'); ?></p>
                     </section>
                 </a>
@@ -98,6 +154,14 @@ $pageTitle = translateText('Audiência');
     <div class="mobile-menu-overlay" id="mobileMenuOverlay"></div>
 
     <main class="main-content">
+        <?php if (!$tabelas_existem): ?>
+            <div class="alert alert-info" style="background: rgba(74, 144, 226, 0.1); border: 1px solid rgba(74, 144, 226, 0.3); border-radius: 8px; padding: 1rem; margin-bottom: 2rem;">
+                <p style="margin: 0; color: #4a90e2;">
+                    <strong>ℹ️ Configuração Inicial:</strong> Para visualizar métricas de audiência, execute o script SQL fornecido no README.
+                </p>
+            </div>
+        <?php endif; ?>
+
         <section class="page-header">
             <h1><?php echo translateText('Audiência'); ?></h1>
             <p><?php echo translateText('Acompanhe o desempenho das suas músicas e entenda seu público'); ?></p>
@@ -111,13 +175,13 @@ $pageTitle = translateText('Audiência');
                         <polygon points="5 3 19 12 5 21 5 3"/>
                     </svg>
                 </section>
-                <p class="stat-value">24.5K</p>
+                <p class="stat-value"><?php echo formatarNumero($stats['Total_streams']); ?></p>
                 <p class="stat-change positive">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
                         <polyline points="17 6 23 6 23 12"/>
                     </svg>
-                    <span><?php echo translateText('+12.5% vs semana passada'); ?></span>
+                    <span><?php echo formatarPercentual($stats['Crescimento_streams_percentual']); ?> <?php echo translateText('vs semana passada'); ?></span>
                 </p>
             </section>
 
@@ -131,13 +195,13 @@ $pageTitle = translateText('Audiência');
                         <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
                     </svg>
                 </section>
-                <p class="stat-value">21.2K</p>
+                <p class="stat-value"><?php echo formatarNumero($stats['Ouvintes_mensais']); ?></p>
                 <p class="stat-change positive">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
                         <polyline points="17 6 23 6 23 12"/>
                     </svg>
-                    <span><?php echo translateText('+8.3% vs semana passada'); ?></span>
+                    <span><?php echo formatarPercentual($stats['Crescimento_ouvintes_percentual']); ?> <?php echo translateText('vs semana passada'); ?></span>
                 </p>
             </section>
 
@@ -156,7 +220,7 @@ $pageTitle = translateText('Audiência');
                         <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
                         <polyline points="17 6 23 6 23 12"/>
                     </svg>
-                    <span><?php echo translateText('+24.3% vs semana passada'); ?></span>
+                    <span>+24.3% <?php echo translateText('vs semana passada'); ?></span>
                 </p>
             </section>
 
@@ -174,7 +238,7 @@ $pageTitle = translateText('Audiência');
                         <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
                         <polyline points="17 6 23 6 23 12"/>
                     </svg>
-                    <span><?php echo translateText('+3.2% vs semana passada'); ?></span>
+                    <span>+3.2% <?php echo translateText('vs semana passada'); ?></span>
                 </p>
             </section>
         </section>
@@ -184,71 +248,35 @@ $pageTitle = translateText('Audiência');
                 <section class="card">
                     <h2><?php echo translateText('Top Músicas'); ?></h2>
                     <section class="top-songs-list">
-                        <section class="song-item">
-                            <span class="song-position">1</span>
-                            <section class="song-info">
-                                <p class="song-title">Trevo (Tu)</p>
-                                <section class="song-details">
-                                    <span>Trevo</span>
-                                    <span>•</span>
-                                    <span>2017</span>
+                        <?php if (!empty($top_musicas)): ?>
+                            <?php foreach ($top_musicas as $musica): ?>
+                                <section class="song-item">
+                                    <span class="song-position"><?php echo $musica['Posicao']; ?></span>
+                                    <section class="song-info">
+                                        <p class="song-title"><?php echo htmlspecialchars($musica['Titulo']); ?></p>
+                                        <section class="song-details">
+                                            <span><?php echo htmlspecialchars($musica['Album']); ?></span>
+                                            <span>•</span>
+                                            <span><?php echo $musica['Ano']; ?></span>
+                                        </section>
+                                    </section>
+                                    <p class="song-streams"><?php echo formatarNumero($musica['Total_streams']); ?></p>
+                                    <span class="song-change positive">
+                                        <span class="song-change-text positive">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
+                                                <polyline points="17 6 23 6 23 12"/>
+                                            </svg>
+                                            <?php echo formatarPercentual($musica['Crescimento_percentual']); ?>
+                                        </span>
+                                    </span>
                                 </section>
-                            </section>
-                            <p class="song-streams">450K</p>
-                            <span class="song-change positive">
-                                <span class="song-change-text positive">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
-                                        <polyline points="17 6 23 6 23 12"/>
-                                    </svg>
-                                    +12%
-                                </span>
-                            </span>
-                        </section>
-
-                        <section class="song-item">
-                            <span class="song-position">2</span>
-                            <section class="song-info">
-                                <p class="song-title">Singular</p>
-                                <section class="song-details">
-                                    <span>Esquinas</span>
-                                    <span>•</span>
-                                    <span>2024</span>
-                                </section>
-                            </section>
-                            <p class="song-streams">320K</p>
-                            <span class="song-change positive">
-                                <span class="song-change-text positive">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
-                                        <polyline points="17 6 23 6 23 12"/>
-                                    </svg>
-                                    +8%
-                                </span>
-                            </span>
-                        </section>
-
-                        <section class="song-item">
-                            <span class="song-position">3</span>
-                            <section class="song-info">
-                                <p class="song-title">Esquinas</p>
-                                <section class="song-details">
-                                    <span>Esquinas</span>
-                                    <span>•</span>
-                                    <span>2024</span>
-                                </section>
-                            </section>
-                            <p class="song-streams">280K</p>
-                            <span class="song-change positive">
-                                <span class="song-change-text positive">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
-                                        <polyline points="17 6 23 6 23 12"/>
-                                    </svg>
-                                    +5%
-                                </span>
-                            </span>
-                        </section>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <p style="text-align: center; color: rgba(255,255,255,0.6); padding: 2rem;">
+                                <?php echo translateText('Configure as estatísticas para ver suas músicas mais populares.'); ?>
+                            </p>
+                        <?php endif; ?>
                     </section>
                 </section>
             </section>
@@ -257,85 +285,51 @@ $pageTitle = translateText('Audiência');
                 <section class="card">
                     <h2><?php echo translateText('Países (Top Ouvintes)'); ?></h2>
                     <section class="countries-list">
-                        <section class="country-item">
-                            <section class="country-header">
-                                <span class="country-name">
-                                    <span class="country-flag">🇧🇷</span>
-                                    Brasil
-                                </span>
-                                <span class="country-percentage">45%</span>
-                            </section>
-                            <div class="progress-bar">
-                                <div class="progress-fill" style="width: 45%"></div>
-                            </div>
-                            <p class="country-listeners">9.5K ouvintes</p>
-                        </section>
-
-                        <section class="country-item">
-                            <section class="country-header">
-                                <span class="country-name">
-                                    <span class="country-flag">🇺🇸</span>
-                                    Estados Unidos
-                                </span>
-                                <span class="country-percentage">22%</span>
-                            </section>
-                            <div class="progress-bar">
-                                <div class="progress-fill" style="width: 22%"></div>
-                            </div>
-                            <p class="country-listeners">4.7K ouvintes</p>
-                        </section>
-
-                        <section class="country-item">
-                            <section class="country-header">
-                                <span class="country-name">
-                                    <span class="country-flag">🇵🇹</span>
-                                    Portugal
-                                </span>
-                                <span class="country-percentage">18%</span>
-                            </section>
-                            <div class="progress-bar">
-                                <div class="progress-fill" style="width: 18%"></div>
-                            </div>
-                            <p class="country-listeners">3.8K ouvintes</p>
-                        </section>
+                        <?php if (!empty($paises)): ?>
+                            <?php foreach ($paises as $pais): ?>
+                                <section class="country-item">
+                                    <section class="country-header">
+                                        <span class="country-name">
+                                            <span class="country-flag"><?php echo $pais['Emoji_bandeira']; ?></span>
+                                            <?php echo htmlspecialchars($pais['Pais']); ?>
+                                        </span>
+                                        <span class="country-percentage"><?php echo number_format($pais['Percentual'], 0); ?>%</span>
+                                    </section>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: <?php echo $pais['Percentual']; ?>%"></div>
+                                    </div>
+                                    <p class="country-listeners"><?php echo formatarNumero($pais['Total_ouvintes']); ?> <?php echo translateText('ouvintes'); ?></p>
+                                </section>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <p style="text-align: center; color: rgba(255,255,255,0.6); padding: 2rem;">
+                                <?php echo translateText('Dados demográficos serão exibidos após a configuração.'); ?>
+                            </p>
+                        <?php endif; ?>
                     </section>
                 </section>
 
                 <section class="card">
                     <h2><?php echo translateText('Faixa Etária'); ?></h2>
                     <section class="demographics-list">
-                        <section class="demo-item">
-                            <section class="demo-header">
-                                <span class="demo-age">18-24</span>
-                                <span class="demo-percentage">35%</span>
-                            </section>
-                            <div class="progress-bar">
-                                <div class="progress-fill blue" style="width: 35%"></div>
-                            </div>
-                            <p class="demo-count">7.4K ouvintes</p>
-                        </section>
-
-                        <section class="demo-item">
-                            <section class="demo-header">
-                                <span class="demo-age">25-34</span>
-                                <span class="demo-percentage">40%</span>
-                            </section>
-                            <div class="progress-bar">
-                                <div class="progress-fill blue" style="width: 40%"></div>
-                            </div>
-                            <p class="demo-count">8.5K ouvintes</p>
-                        </section>
-
-                        <section class="demo-item">
-                            <section class="demo-header">
-                                <span class="demo-age">35+</span>
-                                <span class="demo-percentage">25%</span>
-                            </section>
-                            <div class="progress-bar">
-                                <div class="progress-fill blue" style="width: 25%"></div>
-                            </div>
-                            <p class="demo-count">5.3K ouvintes</p>
-                        </section>
+                        <?php if (!empty($faixas_idade)): ?>
+                            <?php foreach ($faixas_idade as $faixa): ?>
+                                <section class="demo-item">
+                                    <section class="demo-header">
+                                        <span class="demo-age"><?php echo htmlspecialchars($faixa['Faixa_etaria']); ?></span>
+                                        <span class="demo-percentage"><?php echo number_format($faixa['Percentual'], 0); ?>%</span>
+                                    </section>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill blue" style="width: <?php echo $faixa['Percentual']; ?>%"></div>
+                                    </div>
+                                    <p class="demo-count"><?php echo formatarNumero($faixa['Total_ouvintes']); ?> <?php echo translateText('ouvintes'); ?></p>
+                                </section>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <p style="text-align: center; color: rgba(255,255,255,0.6); padding: 2rem;">
+                                <?php echo translateText('Dados demográficos serão exibidos após a configuração.'); ?>
+                            </p>
+                        <?php endif; ?>
                     </section>
                 </section>
             </section>

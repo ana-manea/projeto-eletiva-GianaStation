@@ -1,6 +1,19 @@
 <?php 
 require_once 'config.php';
 $pageTitle = translate('home');
+
+// Verificar se usuário está logado e se é artista
+$isLoggedIn = isset($_SESSION['user_id']);
+$isArtist = isset($_SESSION['is_artist']) && $_SESSION['is_artist'];
+
+// Definir URL do botão "Comece agora"
+if ($isLoggedIn && $isArtist) {
+    $ctaUrl = "dashboardArtista.php?lang=" . $currentLang;
+} else if ($isLoggedIn && !$isArtist) {
+    $ctaUrl = "cadastrarArtistaMusica.php?lang=" . $currentLang;
+} else {
+    $ctaUrl = "cadastrarArtistaMusica.php?lang=" . $currentLang;
+}
 ?>
 
 <link rel="stylesheet" href="../css/style-homeCadArtista.css">
@@ -169,7 +182,7 @@ $pageTitle = translate('home');
     <section class="cta-banner">
         <section class="cta-content">
             <h2>Bora criar sua conta da Giana Station for Artists?</h2>
-            <a href="cadastrarArtistaMusica.php?lang=<?php echo $currentLang; ?>" class="btn-seguir">
+            <a href="<?php echo $ctaUrl; ?>" class="btn-seguir">
                 Comece agora
             </a>
         </section>
