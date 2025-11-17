@@ -12,6 +12,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['user_birth_date'] = "$ano-$mes-$dia";
         
         $_SESSION['user_gender'] = $_POST['genero'];
+        $_SESSION['returning_from_step'] = true;
     }
 }
 
@@ -22,9 +23,12 @@ if (empty($_SESSION['user_email']) || empty($_SESSION['user_password']) ||
     exit;
 }
 
+$errors = $_SESSION['cadastro_errors'] ?? [];
+unset($_SESSION['cadastro_errors']);
+
 $modalConfig = [
     'returnUrl' => 'cadUsuarioTermos.php',
-    'preserveParams' => ['email']
+    'preserveParams' => []
 ];
 ?>
 <!DOCTYPE html>
@@ -43,10 +47,20 @@ $modalConfig = [
         </section>
 
         <section class="barra-progresso"> 
-            <div class="porcentagem"></div>
+            <div class="porcentagem" style="width: 100%;"></div>
         </section>
 
+        <?php if (!empty($errors)): ?>
+            <div class="error-message">
+                <?php foreach ($errors as $error): ?>
+                    <p style="margin: 5px 0;">⚠ <?php echo htmlspecialchars($error); ?></p>
+                <?php endforeach; ?>
+            </div>
+        <?php endif; ?>
+
         <form method="POST" action="../processamento/processamentoCadUsuario.php" id="formTermos"> 
+            <input type="hidden" name="lang" value="<?php echo $currentLang; ?>">
+            
             <section class="etapa">
                 <button type="button" class="btn-voltar" id="returnInfo">
                     <img src="../img/return.png" alt="<?php echo translate('back'); ?>">
@@ -69,7 +83,7 @@ $modalConfig = [
                 </label>
 
                 <label for="aceitarTermos" class="opcao-checkbox">
-                    <input type="checkbox" name="aceitarTermos" id="aceitarTermos">
+                    <input type="checkbox" name="aceitarTermos" id="aceitarTermos" required>
                     <span>
                         <?php echo translate('agree_terms'); ?>
                         <a href="#" class="link-destaque"><?php echo translate('terms_conditions_link'); ?></a>
@@ -118,13 +132,9 @@ $modalConfig = [
                 return;
             }
             
-            const dadosUsuario = {
-                marketing: document.getElementById('marketing').checked,
-                compartilharDados: document.getElementById('compartilharDados').checked,
-                aceitarTermos: aceitarTermos.checked
-            };
-            
-            console.log('Dados do usuário:', dadosUsuario);
+            // Mostrar loading
+            submitBtn.disabled = true;
+            submitBtn.textContent = '<?php echo translateText('Processando...'); ?>';
         });
     </script>
 </body>

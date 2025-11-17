@@ -4,6 +4,7 @@ $pageTitle = translate('tell_about_you');
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['password'])) {
     $_SESSION['user_password'] = $_POST['password'];
+    $_SESSION['returning_from_step'] = true;
 }
 
 if (empty($_SESSION['user_email']) || empty($_SESSION['user_password'])) {
@@ -11,9 +12,12 @@ if (empty($_SESSION['user_email']) || empty($_SESSION['user_password'])) {
     exit;
 }
 
+$errors = $_SESSION['cadastro_errors'] ?? [];
+unset($_SESSION['cadastro_errors']);
+
 $modalConfig = [
     'returnUrl' => 'cadUsuarioInfos.php',
-    'preserveParams' => ['email']
+    'preserveParams' => []
 ];
 ?>
 <!DOCTYPE html>
@@ -32,10 +36,20 @@ $modalConfig = [
         </section>
 
         <section class="barra-progresso"> 
-            <div class="porcentagem"></div>
+            <div class="porcentagem" style="width: 66.66%;"></div>
         </section>
 
-        <form method="POST" action="cadUsuarioTermos.php?lang=<?php echo $currentLang; ?>" id="formInfo"> 
+        <?php if (!empty($errors)): ?>
+            <div class="error-message">
+                <?php foreach ($errors as $error): ?>
+                    <p style="margin: 5px 0;">⚠ <?php echo htmlspecialchars($error); ?></p>
+                <?php endforeach; ?>
+            </div>
+        <?php endif; ?>
+
+        <form method="POST" action="cadUsuarioTermos.php" id="formInfo"> 
+            <input type="hidden" name="lang" value="<?php echo $currentLang; ?>">
+            
             <section class="etapa">
                 <button type="button" class="btn-voltar" id="returnSenha">
                     <img src="../img/return.png" alt="<?php echo translate('back'); ?>">
@@ -49,7 +63,14 @@ $modalConfig = [
             <section class="form-grupo">
                 <label for="nome"><?php echo translate('name'); ?></label>
                 <p class="descricao"><?php echo translate('name_appears_profile'); ?></p>
-                <input type="text" id="nome" name="nome" required>
+                <input 
+                    type="text" 
+                    id="nome" 
+                    name="nome"
+                    class="<?php echo !empty($errors) ? 'input-error' : ''; ?>"
+                    value="<?php echo htmlspecialchars($_SESSION['user_name'] ?? ''); ?>"
+                    maxlength="50"
+                    required>
             </section>
 
             <section class="form-grupo">
@@ -59,8 +80,20 @@ $modalConfig = [
                     <a href="#" class="link-info"><?php echo translate('learn_more'); ?></a>
                 </p>
                 <section class="data-nascimento">
-                    <input type="text" id="dia" name="dia" placeholder="dd" maxlength="2" required>
-                    <select id="mes" name="mes" required>
+                    <input 
+                        type="text" 
+                        id="dia" 
+                        name="dia" 
+                        placeholder="dd" 
+                        maxlength="2"
+                        pattern="[0-9]{2}"
+                        class="<?php echo !empty($errors) ? 'input-error' : ''; ?>"
+                        required>
+                    <select 
+                        id="mes" 
+                        name="mes"
+                        class="<?php echo !empty($errors) ? 'input-error' : ''; ?>"
+                        required>
                         <option value=""><?php echo translate('month'); ?></option>
                         <option value="1"><?php echo translate('january'); ?></option>
                         <option value="2"><?php echo translate('february'); ?></option>
@@ -75,7 +108,15 @@ $modalConfig = [
                         <option value="11"><?php echo translate('november'); ?></option>
                         <option value="12"><?php echo translate('december'); ?></option>
                     </select>
-                    <input type="text" id="ano" name="ano" placeholder="aaaa" maxlength="4" required>
+                    <input 
+                        type="text" 
+                        id="ano" 
+                        name="ano" 
+                        placeholder="aaaa" 
+                        maxlength="4"
+                        pattern="[0-9]{4}"
+                        class="<?php echo !empty($errors) ? 'input-error' : ''; ?>"
+                        required>
                 </section>
             </section>
 
@@ -134,18 +175,28 @@ $modalConfig = [
         const anoInput = document.getElementById('ano');
         const generoRadios = document.querySelectorAll('input[name="genero"]');
 
+        // Permitir apenas números nos campos de data
         diaInput.addEventListener('input', function() {
-            this.value = this.value.replace(/[^0-9]/g, '');
+            this.value = this.value.replace(/[^0-9]/g, '').slice(0, 2);
+            if (this.value.length === 2 && parseInt(this.value) > 0 && parseInt(this.value) <= 31) {
+                mesSelect.focus();
+            }
             validarFormulario();
         });
 
         anoInput.addEventListener('input', function() {
-            this.value = this.value.replace(/[^0-9]/g, '');
+            this.value = this.value.replace(/[^0-9]/g, '').slice(0, 4);
             validarFormulario();
         });
 
         nomeInput.addEventListener('input', validarFormulario);
-        mesSelect.addEventListener('change', validarFormulario);
+        mesSelect.addEventListener('change', function() {
+            if (this.value && anoInput.value.length < 4) {
+                anoInput.focus();
+            }
+            validarFormulario();
+        });
+        
         generoRadios.forEach(radio => {
             radio.addEventListener('change', validarFormulario);
         });
@@ -171,21 +222,41 @@ $modalConfig = [
         }
 
         document.getElementById('formInfo').addEventListener('submit', function(e) {
-            const nome = nomeInput.value.trim();
-            const dia = diaInput.value;
-            const mes = mesSelect.value;
-            const ano = anoInput.value;
-            const generoSelecionado = document.querySelector('input[name="genero"]:checked');
+            const dia = parseInt(diaInput.value);
+            const mes = parseInt(mesSelect.value);
+            const ano = parseInt(anoInput.value);
 
-            const diaValido = dia.length === 2 && parseInt(dia) >= 1 && parseInt(dia) <= 31;
-            const mesValido = mes !== '';
-            const anoValido = ano.length === 4 && parseInt(ano) >= 1900 && parseInt(ano) <= new Date().getFullYear();
-
-            if (!nome || !diaValido || !mesValido || !anoValido || !generoSelecionado) {
+            // Validar data
+            if (!validarData(dia, mes, ano)) {
                 e.preventDefault();
-                alert('<?php echo translate('invalid_email'); ?>');
+                alert('Data de nascimento inválida');
+                return;
+            }
+
+            // Validar idade mínima (13 anos)
+            const hoje = new Date();
+            const nascimento = new Date(ano, mes - 1, dia);
+            const idade = Math.floor((hoje - nascimento) / (365.25 * 24 * 60 * 60 * 1000));
+            
+            if (idade < 13) {
+                e.preventDefault();
+                alert('Você precisa ter pelo menos 13 anos para se cadastrar');
+                return;
             }
         });
+
+        function validarData(dia, mes, ano) {
+            if (mes < 1 || mes > 12) return false;
+            
+            const diasPorMes = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+            
+            // Verificar ano bissexto
+            if ((ano % 4 === 0 && ano % 100 !== 0) || (ano % 400 === 0)) {
+                diasPorMes[1] = 29;
+            }
+            
+            return dia >= 1 && dia <= diasPorMes[mes - 1];
+        }
     </script>
 </body>
 </html>

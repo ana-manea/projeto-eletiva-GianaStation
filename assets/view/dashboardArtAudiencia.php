@@ -17,7 +17,7 @@ $pageTitle = translateText('Audiência');
     <nav class="navbar">
         <section class="navbar-content">
             <section class="navbar-left">
-                <a href="pagInicial.php" class="artist-profile">
+                <a href="dashboardArtista.php" class="artist-profile">
                     <section class="artist-avatar">
                         <img src="https://image-cdn-ak.spotifycdn.com/image/ab6761860000101685ec2d2af58d2b838a744ac4" alt="AnaVitoria">
                     </section>

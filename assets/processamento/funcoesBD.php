@@ -97,9 +97,13 @@ function atualizarUsuario($id, $nome, $foto_perfil = null) {
     $conexao = conectarBD();
     
     if ($foto_perfil != null) {
-        $sql = "UPDATE usuarios SET Nome = '$nome', Foto_perfil = '$foto_perfil' WHERE ID_Usuario = $id";
+        $sql = "UPDATE usuarios 
+        SET Nome = '$nome', Foto_perfil = '$foto_perfil' 
+        WHERE ID_Usuario = $id";
     } else {
-        $sql = "UPDATE usuarios SET Nome = '$nome' WHERE ID_Usuario = $id";
+        $sql = "UPDATE usuarios 
+        SET Nome = '$nome' 
+        WHERE ID_Usuario = $id";
     }
     
     $resultado = mysqli_query($conexao, $sql);
@@ -125,6 +129,18 @@ function inserirArtista($fk_usuario, $nome_artistico, $capa_path, $genero_art, $
         fecharConexao($conexao);
         return false;
     }
+}
+
+function verificarNomeArtisticoExiste($nome_artistico) {
+    $conexao = conectarBD();
+    
+    $sql = "SELECT ID_Artista FROM artistas WHERE Nome_artistico = '$nome_artistico'";
+    $resultado = mysqli_query($conexao, $sql);
+    
+    $existe = mysqli_num_rows($resultado) > 0;
+    
+    fecharConexao($conexao);
+    return $existe;
 }
 
 // Buscar artista - id usuario
@@ -267,6 +283,18 @@ function buscarMusicaPorId($id) {
     }
 }
 
+function verificarMusicaExiste($titulo, $artista, $album) {
+    $conexao = conectarBD();
+    
+    $sql = "SELECT ID_Musica FROM musicas WHERE Titulo = '$titulo' AND Artista = '$artista' AND Album = '$album'";
+    $resultado = mysqli_query($conexao, $sql);
+    
+    $existe = mysqli_num_rows($resultado) > 0;
+    
+    fecharConexao($conexao);
+    return $existe;
+}
+
 // Buscar discografia - artista
 function buscarDiscografiaAgrupada($artista_id) {
     $conexao = conectarBD();
@@ -344,8 +372,17 @@ function deletarMusica($id, $artista_id) {
 function criarPlaylist($fk_usuario, $nome_playlist, $capa_play_path = null) {
     $conexao = conectarBD();
     
-    $sql = "INSERT INTO playlists (FK_Usuario, Nome_playlist, Capa_play_path) 
-            VALUES ($fk_usuario, '$nome_playlist', '$capa_play_path')";
+    // Escapar dados para prevenir SQL injection
+    $nome_playlist = mysqli_real_escape_string($conexao, $nome_playlist);
+    
+    if ($capa_play_path != null) {
+        $capa_play_path = mysqli_real_escape_string($conexao, $capa_play_path);
+        $sql = "INSERT INTO playlists (FK_Usuario, Nome_playlist, Capa_play_path) 
+                VALUES ($fk_usuario, '$nome_playlist', '$capa_play_path')";
+    } else {
+        $sql = "INSERT INTO playlists (FK_Usuario, Nome_playlist) 
+                VALUES ($fk_usuario, '$nome_playlist')";
+    }
     
     $resultado = mysqli_query($conexao, $sql);
     
@@ -354,9 +391,27 @@ function criarPlaylist($fk_usuario, $nome_playlist, $capa_play_path = null) {
         fecharConexao($conexao);
         return $playlist_id;
     } else {
+        // Log do erro para debug
+        error_log("Erro ao criar playlist: " . mysqli_error($conexao));
         fecharConexao($conexao);
         return false;
     }
+}
+
+// Verificar se playlist com mesmo nome já existe para o usuário
+function verificarPlaylistExiste($user_id, $nome_playlist) {
+    $conexao = conectarBD();
+    
+    $nome_playlist = mysqli_real_escape_string($conexao, $nome_playlist);
+    
+    $sql = "SELECT ID_Playlist FROM playlists 
+            WHERE FK_Usuario = $user_id AND Nome_playlist = '$nome_playlist'";
+    
+    $resultado = mysqli_query($conexao, $sql);
+    $existe = mysqli_num_rows($resultado) > 0;
+    
+    fecharConexao($conexao);
+    return $existe;
 }
 
 // Listar playlist por usuário

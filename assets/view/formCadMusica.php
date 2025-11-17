@@ -2,121 +2,19 @@
 require_once 'config.php';
 $pageTitle = translate('register_music');
 
-$errors = [];
-$success = false;
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $titulo = trim($_POST['titulo'] ?? '');
-    $artista = trim($_POST['artista'] ?? '');
-    $album = trim($_POST['album'] ?? '');
-    $tipo = trim($_POST['tipo'] ?? '');
-    $genero = trim($_POST['genero'] ?? '');
-    $ano = trim($_POST['ano'] ?? '');
-    $duracao = trim($_POST['duracao'] ?? '');
-    $letra = trim($_POST['letra'] ?? '');
-
-    if (empty($titulo)) {
-        $errors[] = 'Título da música é obrigatório';
-    }
-    
-    if (empty($artista)) {
-        $errors[] = 'Nome do artista é obrigatório';
-    }
-    
-    if (empty($album)) {
-        $errors[] = 'Nome do álbum é obrigatório';
-    }
-    
-    if (empty($tipo)) {
-        $errors[] = 'Tipo é obrigatório';
-    }
-
-    if (!empty($duracao) && !preg_match('/^\d{1,2}:\d{2}$/', $duracao)) {
-        $errors[] = 'Formato de duração inválido. Use o formato MM:SS (ex: 3:45)';
-    }
-    
-    if (!empty($ano) && (!is_numeric($ano) || $ano < 1900 || $ano > date('Y') + 1)) {
-        $errors[] = 'Ano inválido';
-    }
-    
-    if (!isset($_FILES['audio']) || $_FILES['audio']['error'] !== UPLOAD_ERR_OK) {
-        $errors[] = 'Arquivo de áudio é obrigatório';
-    } else {
-        $allowed = ['audio/mpeg', 'audio/mp3', 'audio/wav', 'audio/flac'];
-        $fileType = $_FILES['audio']['type'];
-        
-        if (!in_array($fileType, $allowed)) {
-            $errors[] = 'Formato de áudio inválido. Use MP3, WAV ou FLAC';
-        }
-        
-        $maxSize = 50 * 1024 * 1024; 
-        if ($_FILES['audio']['size'] > $maxSize) {
-            $errors[] = 'Arquivo de áudio muito grande. Máximo 50MB';
-        }
-    }
-
-    if (isset($_FILES['capa']) && $_FILES['capa']['error'] === UPLOAD_ERR_OK) {
-        $allowed = ['image/jpeg', 'image/png', 'image/jpg'];
-        $fileType = $_FILES['capa']['type'];
-        
-        if (!in_array($fileType, $allowed)) {
-            $errors[] = 'Formato de imagem inválido. Use JPG ou PNG';
-        }
-        
-        $maxSize = 10 * 1024 * 1024; // 10MB
-        if ($_FILES['capa']['size'] > $maxSize) {
-            $errors[] = 'Arquivo de capa muito grande. Máximo 10MB';
-        }
-    }
-
-    if (empty($errors)) {
-        $musicData = [
-            'titulo' => $titulo,
-            'artista' => $artista,
-            'album' => $album,
-            'tipo' => $tipo,
-            'genero' => $genero,
-            'ano' => $ano,
-            'duracao' => $duracao,
-            'letra' => $letra,
-            'dataCadastro' => date('Y-m-d H:i:s')
-        ];
-
-        if (isset($_FILES['audio']) && $_FILES['audio']['error'] === UPLOAD_ERR_OK) {
-            $uploadDir = '../uploads/musicas/';
-            if (!is_dir($uploadDir)) {
-                mkdir($uploadDir, 0755, true);
-            }
-            
-            $filename = uniqid('audio_') . '_' . basename($_FILES['audio']['name']);
-            $uploadPath = $uploadDir . $filename;
-            
-            if (move_uploaded_file($_FILES['audio']['tmp_name'], $uploadPath)) {
-                $musicData['audio'] = $filename;
-                $musicData['audioTamanho'] = $_FILES['audio']['size'];
-            }
-        }
-
-        if (isset($_FILES['capa']) && $_FILES['capa']['error'] === UPLOAD_ERR_OK) {
-            $uploadDir = '../uploads/capas/';
-            if (!is_dir($uploadDir)) {
-                mkdir($uploadDir, 0755, true);
-            }
-            
-            $filename = uniqid('capa_') . '_' . basename($_FILES['capa']['name']);
-            $uploadPath = $uploadDir . $filename;
-            
-            if (move_uploaded_file($_FILES['capa']['tmp_name'], $uploadPath)) {
-                $musicData['capa'] = $filename;
-            }
-        }
-
-        $_SESSION['music_data'] = $musicData;
-        
-        $success = true;
-    }
+// Verificar se usuário está logado e é artista
+if (!isset($_SESSION['user_id']) || !isset($_SESSION['artist_id'])) {
+    $_SESSION['error_message'] = 'Você precisa ter um perfil de artista para cadastrar músicas';
+    header('Location: cadastrarArtistaMusica.php?lang=' . $currentLang);
+    exit;
 }
 
+// Recuperar erros e dados do formulário da sessão
+$errors = $_SESSION['musica_errors'] ?? [];
+$formData = $_SESSION['form_data'] ?? [];
+
+// Limpar mensagens após exibir
+unset($_SESSION['musica_errors']);
 ?>
 
 <link rel="stylesheet" href="../css/style-formMusica.css">
@@ -125,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <section class="container">
     <div class="form-wrapper">
-        <a href="cadastrarArtistaMusica.php?lang=<?php echo $currentLang; ?>" class="back-link">
+        <a href="dashboardArtDiscografia.php?lang=<?php echo $currentLang; ?>" class="back-link">
             <svg class="icon-small" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <line x1="19" y1="12" x2="5" y2="12"/>
                 <polyline points="12 19 5 12 12 5"/>
@@ -144,73 +42,60 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
         <?php endif; ?>
 
-        <?php if ($success): ?>
-            <div class="alert alert-success">
-                <div class="alert-icon">✓</div>
-                <div class="alert-title">Música cadastrada com sucesso!</div>
-                <div class="alert-description">
-                    Título: <?php echo htmlspecialchars($musicData['titulo']); ?>
-                </div>
-            </div>
-        <?php endif; ?>
-
-        <form class="form" method="POST" enctype="multipart/form-data">
+        <form class="form" method="POST" action="../processamento/processamentoCadMusica.php" enctype="multipart/form-data">
+            <input type="hidden" name="lang" value="<?php echo $currentLang; ?>">
+            
             <div class="form-group">
-                <label for="titulo" class="form-label"><?php echo translate('music_title'); ?></label>
+                <label for="titulo" class="form-label"><?php echo translate('music_title'); ?> *</label>
                 <input
                     type="text"
                     id="titulo"
                     name="titulo"
                     placeholder="<?php echo translate('music_title_placeholder'); ?>"
+                    maxlength="200"
                     required
                     class="form-input"
-                    value="<?php echo htmlspecialchars($_POST['titulo'] ?? ''); ?>"
+                    value="<?php echo htmlspecialchars($formData['titulo'] ?? ''); ?>"
                 />
             </div>
 
             <div class="form-group">
-                <label for="artista" class="form-label"><?php echo translate('artist'); ?></label>
+                <label for="artista" class="form-label"><?php echo translate('artist'); ?> *</label>
                 <input
                     type="text"
                     id="artista"
                     name="artista"
                     placeholder="<?php echo translate('artist_placeholder'); ?>"
+                    maxlength="200"
                     required
                     class="form-input"
-                    value="<?php echo htmlspecialchars($_POST['artista'] ?? ''); ?>"
+                    value="<?php echo htmlspecialchars($formData['artista'] ?? ''); ?>"
                 />
             </div>
 
             <div class="form-row">
                 <div class="form-group">
-                    <label for="album" class="form-label"><?php echo translate('album'); ?></label>
+                    <label for="album" class="form-label"><?php echo translate('album'); ?> *</label>
                     <input
                         type="text"
                         id="album"
                         name="album"
                         placeholder="<?php echo translate('album_placeholder'); ?>"
+                        maxlength="200"
                         required
                         class="form-input"
-                        value="<?php echo htmlspecialchars($_POST['album'] ?? ''); ?>"
+                        value="<?php echo htmlspecialchars($formData['album'] ?? ''); ?>"
                     />
                 </div>
 
                 <div class="form-group">
-                    <label for="tipo" class="form-label"><?php echo translate('type'); ?></label>
-                    <input
-                        list="opcoes-tipo"
-                        id="tipo"
-                        name="tipo"
-                        required
-                        class="form-input"
-                        value="<?php echo htmlspecialchars($_POST['tipo'] ?? ''); ?>"
-                    />
-                    
-                    <datalist id="opcoes-tipo">
-                        <option value="Álbum">
-                        <option value="EP">
-                        <option value="Single">
-                    </datalist>
+                    <label for="tipo" class="form-label"><?php echo translate('type'); ?> *</label>
+                    <select id="tipo" name="tipo" required class="form-input">
+                        <option value="">Selecione...</option>
+                        <option value="Álbum" <?php echo (isset($formData['tipo']) && $formData['tipo'] === 'Álbum') ? 'selected' : ''; ?>>Álbum</option>
+                        <option value="EP" <?php echo (isset($formData['tipo']) && $formData['tipo'] === 'EP') ? 'selected' : ''; ?>>EP</option>
+                        <option value="Single" <?php echo (isset($formData['tipo']) && $formData['tipo'] === 'Single') ? 'selected' : ''; ?>>Single</option>
+                    </select>
                 </div>
             </div>
 
@@ -223,7 +108,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         name="genero"
                         placeholder="<?php echo translate('genre_placeholder'); ?>"
                         class="form-input"
-                        value="<?php echo htmlspecialchars($_POST['genero'] ?? ''); ?>"
+                        value="<?php echo htmlspecialchars($formData['genero'] ?? ''); ?>"
                     />
                 </div>
 
@@ -234,8 +119,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         id="ano"
                         name="ano"
                         placeholder="2025"
+                        min="1900"
+                        max="<?php echo date('Y') + 1; ?>"
                         class="form-input"
-                        value="<?php echo htmlspecialchars($_POST['ano'] ?? ''); ?>"
+                        value="<?php echo htmlspecialchars($formData['ano'] ?? date('Y')); ?>"
                     />
                 </div>
             </div>
@@ -248,9 +135,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     name="duracao"
                     placeholder="Ex: 3:45"
                     pattern="\d{1,2}:\d{2}"
+                    title="Use o formato MM:SS (exemplo: 3:45)"
                     class="form-input"
-                    value="<?php echo htmlspecialchars($_POST['duracao'] ?? ''); ?>"
+                    value="<?php echo htmlspecialchars($formData['duracao'] ?? ''); ?>"
                 />
+                <p class="form-help">Formato: MM:SS (exemplo: 3:45)</p>
             </div>
 
             <div class="form-group">
@@ -260,17 +149,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     name="letra"
                     placeholder="<?php echo translate('lyrics_placeholder'); ?>"
                     rows="6"
+                    maxlength="500"
                     class="form-textarea"
-                ><?php echo htmlspecialchars($_POST['letra'] ?? ''); ?></textarea>
+                ><?php echo htmlspecialchars($formData['letra'] ?? ''); ?></textarea>
             </div>
 
             <div class="form-group">
-                <label for="audio" class="form-label"><?php echo translate('audio_file'); ?></label>
+                <label for="audio" class="form-label"><?php echo translate('audio_file'); ?> *</label>
                 <input
                     type="file"
                     id="audio"
                     name="audio"
-                    accept="audio/*"
+                    accept="audio/mpeg,audio/mp3,audio/wav,audio/flac,audio/m4a"
                     required
                     class="form-file"
                 />
@@ -283,7 +173,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     type="file"
                     id="capa"
                     name="capa"
-                    accept="image/*"
+                    accept="image/jpeg,image/png,image/jpg,image/gif,image/webp"
                     class="form-file"
                 />
                 <p class="form-help"><?php echo translate('cover_help'); ?></p>

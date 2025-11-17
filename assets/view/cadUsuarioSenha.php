@@ -4,6 +4,7 @@ $pageTitle = translate('create_password');
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['email'])) {
     $_SESSION['user_email'] = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
+    $_SESSION['returning_from_step'] = true;
 }
 
 if (empty($_SESSION['user_email'])) {
@@ -11,9 +12,12 @@ if (empty($_SESSION['user_email'])) {
     exit;
 }
 
+$errors = $_SESSION['cadastro_errors'] ?? [];
+unset($_SESSION['cadastro_errors']);
+
 $modalConfig = [
     'returnUrl' => 'cadUsuarioSenha.php',
-    'preserveParams' => ['email']
+    'preserveParams' => []
 ];
 ?>
 <!DOCTYPE html>
@@ -32,10 +36,20 @@ $modalConfig = [
         </section>
 
         <section class="barra-progresso"> 
-            <div class="porcentagem"></div>
+            <div class="porcentagem" style="width: 33.33%;"></div>
         </section>
 
-        <form method="POST" action="cadUsuarioInfos.php?lang=<?php echo $currentLang; ?>" id="formSenha"> 
+        <?php if (!empty($errors)): ?>
+            <div class="error-message">
+                <?php foreach ($errors as $error): ?>
+                    <p style="margin: 5px 0;">⚠ <?php echo htmlspecialchars($error); ?></p>
+                <?php endforeach; ?>
+            </div>
+        <?php endif; ?>
+
+        <form method="POST" action="cadUsuarioInfos.php" id="formSenha"> 
+            <input type="hidden" name="lang" value="<?php echo $currentLang; ?>">
+            
             <section class="etapa">
                 <button type="button" class="btn-voltar" id="returnCad">
                     <img src="../img/return.png" alt="<?php echo translate('back'); ?>">
@@ -49,7 +63,12 @@ $modalConfig = [
             <section class="form-grupo"> 
                 <label for="password"><?php echo translate('password'); ?></label>
                 <section class="botao-senha"> 
-                    <input type="password" id="password" name="password" required>
+                    <input 
+                        type="password" 
+                        id="password" 
+                        name="password"
+                        minlength="10"
+                        required>
                     <button type="button" class="visualizacao-senha" id="visualizacaoSenha"> 
                         <img id="verSenha" src="../img/esconder.png" alt="<?php echo translate('hide_password'); ?>"> 
                         <img id="esconderSenha" src="../img/ver.png" style="display: none;" alt="<?php echo translate('show_password'); ?>">
@@ -91,7 +110,11 @@ $modalConfig = [
 
     <script>
         document.getElementById('returnCad').addEventListener('click', function() {
-            window.location.href = 'cadastrarUsuario.php?lang=<?php echo $currentLang; ?>';
+            // Limpar dados da sessão ao voltar
+            fetch('limparSessaoCadastro.php')
+                .then(() => {
+                    window.location.href = 'cadastrarUsuario.php?lang=<?php echo $currentLang; ?>';
+                });
         });
 
         const passwordInput = document.getElementById('password');
@@ -116,7 +139,7 @@ $modalConfig = [
             const password = passwordInput.value;
 
             const hasLetter = /[a-zA-Z]/.test(password);
-            const hasNumberOrSpecial = /[0-9#?!&@$%^*()_+\-=[\]{}|;:,.<>?]/.test(password);
+            const hasNumberOrSpecial = /[0-9#?!&@$%^*()_+\-=\[\]{}|;:,.<>?]/.test(password);
             const hasMinLength = password.length >= 10;
 
             checkLetra.classList.toggle('valid', hasLetter);
@@ -130,7 +153,7 @@ $modalConfig = [
         document.getElementById('formSenha').addEventListener('submit', (e) => {
             const password = passwordInput.value;
             const hasLetter = /[a-zA-Z]/.test(password);
-            const hasNumberOrSpecial = /[0-9#?!&@$%^*()_+\-=[\]{}|;:,.<>?]/.test(password);
+            const hasNumberOrSpecial = /[0-9#?!&@$%^*()_+\-=\[\]{}|;:,.<>?]/.test(password);
             const hasMinLength = password.length >= 10;
             
             if (!hasLetter || !hasNumberOrSpecial || !hasMinLength) {

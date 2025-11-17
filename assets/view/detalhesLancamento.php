@@ -4,7 +4,7 @@ require_once 'config.php';
 // Receber ID do álbum
 $albumId = isset($_GET['id']) ? intval($_GET['id']) : 0;
 
-// Dados de exemplo - em produção, buscar do banco de dados
+// Dados de exemplo 
 $discografia = [
     1 => [
         'id' => 1,
@@ -85,7 +85,7 @@ $lancamentoJson = json_encode($lancamento);
     <nav class="navbar">
         <section class="navbar-content">
             <section class="navbar-left">
-                <a href="pagInicial.php" class="artist-profile">
+                <a href="dashboardArtista.php" class="artist-profile">
                     <section class="artist-avatar">
                         <img src="https://image-cdn-ak.spotifycdn.com/image/ab6761860000101685ec2d2af58d2b838a744ac4" alt="AnaVitória">
                     </section>
@@ -269,161 +269,6 @@ $lancamentoJson = json_encode($lancamento);
             </div>
         </section>
     </main>
-
-    <!-- Modals (reuso dos modais da página de discografia) -->
-    <style>
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(8px);
-            z-index: 10000;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .modal-overlay.active {
-            display: flex;
-        }
-        
-        .modal-content {
-            background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);
-            border: 1px solid rgba(213, 24, 238, 0.3);
-            border-radius: 16px;
-            padding: 2rem;
-            width: 90%;
-            max-width: 600px;
-            max-height: 90vh;
-            overflow-y: auto;
-            box-shadow: 0 8px 32px rgba(213, 24, 238, 0.3);
-        }
-        
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-        }
-        
-        .modal-header h2 {
-            font-size: 1.5rem;
-            font-weight: 600;
-            margin: 0;
-        }
-        
-        .modal-close {
-            background: transparent;
-            border: none;
-            color: rgba(255, 255, 255, 0.6);
-            cursor: pointer;
-            font-size: 1.5rem;
-            width: 32px;
-            height: 32px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: color 0.3s;
-        }
-        
-        .modal-close:hover {
-            color: white;
-        }
-        
-        .form-group {
-            margin-bottom: 1rem;
-        }
-        
-        .form-group label {
-            display: block;
-            font-size: 0.875rem;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-        }
-        
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
-            width: 100%;
-            padding: 0.75rem;
-            background: rgba(30, 30, 30, 0.8);
-            border: 1px solid rgba(213, 24, 238, 0.4);
-            border-radius: 6px;
-            color: white;
-            font-size: 1rem;
-            font-family: inherit;
-        }
-        
-        .form-group textarea {
-            resize: vertical;
-            min-height: 100px;
-        }
-        
-        .form-group input:focus,
-        .form-group select:focus,
-        .form-group textarea:focus {
-            outline: none;
-            border-color: var(--primary);
-        }
-        
-        .checkbox-group {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        
-        .checkbox-group input[type="checkbox"] {
-            width: 20px;
-            height: 20px;
-            cursor: pointer;
-        }
-        
-        .modal-actions {
-            display: flex;
-            gap: 1rem;
-            margin-top: 1.5rem;
-        }
-        
-        .btn-modal-cancel,
-        .btn-modal-save {
-            flex: 1;
-            padding: 0.75rem;
-            border-radius: 8px;
-            font-size: 0.875rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        
-        .btn-modal-cancel {
-            background: transparent;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: white;
-        }
-        
-        .btn-modal-cancel:hover {
-            background: rgba(255, 255, 255, 0.05);
-        }
-        
-        .btn-modal-save {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-            border: none;
-            color: white;
-        }
-        
-        .btn-modal-save:hover {
-            transform: scale(1.02);
-            box-shadow: 0 6px 20px rgba(213, 24, 238, 0.5);
-        }
-        
-        .preview-image {
-            width: 100px;
-            height: 100px;
-            margin-top: 0.5rem;
-            border-radius: 4px;
-            object-fit: cover;
-        }
-    </style>
 
     <!-- Modal: Editar Álbum -->
     <div class="modal-overlay" id="albumModal">
