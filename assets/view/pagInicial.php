@@ -87,12 +87,12 @@ $foto_perfil = !empty($usuario['Foto_perfil']) ? $usuario['Foto_perfil'] : '../i
                 
                 <section class="perfil-btn">
                     <button id="perfil" onclick="interagirMenuPerfil()">
-                        <img src="../img/sem-foto.png" alt="Perfil">
+                        <img src="<?php echo htmlspecialchars($foto_perfil); ?>" alt="Perfil">
                     </button>
                     <ul id="perfil-menu-suspenso">
                         <a href="perfilUsuario.php?lang=<?php echo $currentLang; ?>"><li><?php echo translateText('Perfil'); ?></li></a>
                         <div></div>
-                        <a href="index.php?lang=<?php echo $currentLang; ?>"><li id="sair"><?php echo translateText('Sair'); ?></li></a>
+                        <a href="logout.php"><li id="sair"><?php echo translateText('Sair'); ?></li></a>
                     </ul>
                 </section>
             </section>
@@ -312,66 +312,94 @@ $foto_perfil = !empty($usuario['Foto_perfil']) ? $usuario['Foto_perfil'] : '../i
     </footer>
 
     <script>
-        // Menu do perfil
-        function interagirMenuPerfil() {
-            const menu = document.getElementById('perfil-menu-suspenso');
-            if (menu) {
-                menu.classList.toggle('active');
-                console.log('Menu toggled:', menu.classList.contains('active'));
-            } else {
-                console.error('Menu não encontrado');
-            }
-        }
+    console.log('🔧 Inicializando scripts da página inicial...');
 
-        // Fechar menu ao clicar fora
-        document.addEventListener('click', function(e) {
-            const perfilBtn = document.querySelector('.perfil-btn');
-            const perfil = document.getElementById('perfil');
-            const menu = document.getElementById('perfil-menu-suspenso');
+    document.addEventListener('DOMContentLoaded', function() {
+        const perfilBtn = document.getElementById('perfil');
+        const perfilMenu = document.getElementById('perfil-menu-suspenso');
+        const perfilContainer = document.querySelector('.perfil-btn');
+        
+        if (!perfilBtn || !perfilMenu) {
+            console.error('⚠️ Elementos do menu não encontrados!');
+            return;
+        }
+        
+        // Função para toggle do menu
+        function interagirMenuPerfil(e) {
+            if (e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
             
-            // Se clicou fora do botão e do menu
-            if (menu && perfilBtn && !perfilBtn.contains(e.target)) {
-                menu.classList.remove('active');
-            }
-        });
-
-        // Adicionar listener direto no botão também
-        document.addEventListener('DOMContentLoaded', function() {
-            const perfilBtn = document.getElementById('perfil');
-            if (perfilBtn) {
-                perfilBtn.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    interagirMenuPerfil();
-                });
-                console.log('Event listener adicionado ao botão perfil');
+            const isActive = perfilMenu.classList.contains('active');
+            console.log('Menu status:', isActive ? 'aberto' : 'fechado');
+            
+            if (isActive) {
+                perfilMenu.classList.remove('active');
+                console.log('🔒 Menu fechado');
             } else {
-                console.error('Botão perfil não encontrado');
-            }
-        });
-
-        // Language Modal
-        function toggleLanguageModal() {
-            const modal = document.getElementById('languageModal');
-            if (modal) {
-                const isHidden = modal.style.display === 'none' || !modal.style.display;
-                modal.style.display = isHidden ? 'block' : 'none';
-                document.body.style.overflow = isHidden ? 'hidden' : '';
+                perfilMenu.classList.add('active');
+                console.log('🔓 Menu aberto');
             }
         }
-
-        window.onclick = function(event) {
-            const modal = document.getElementById('languageModal');
-            if (event.target === modal) {
-                toggleLanguageModal();
-            }
-        }
-
-        document.addEventListener('keydown', (e) => {
-            const modal = document.getElementById('languageModal');
-            if (e.key === 'Escape' && modal && modal.style.display === 'block') {
-                toggleLanguageModal();
+        
+        perfilBtn.addEventListener('click', interagirMenuPerfil);
+        
+        // Fechar ao clicar fora
+        document.addEventListener('click', function(e) {
+            if (!perfilContainer.contains(e.target)) {
+                if (perfilMenu.classList.contains('active')) {
+                    perfilMenu.classList.remove('active');
+                    console.log('🔒 Menu fechado (clique externo)');
+                }
             }
         });
+        
+        // Fechar com tecla ESC
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && perfilMenu.classList.contains('active')) {
+                perfilMenu.classList.remove('active');
+                console.log('🔒 Menu fechado (ESC)');
+            }
+        });
+    });
+
+    function toggleLanguageModal() {
+        const modal = document.getElementById('languageModal');
+        if (!modal) {
+            return;
+        }
+        
+        const isHidden = modal.style.display === 'none' || !modal.style.display;
+        modal.style.display = isHidden ? 'block' : 'none';
+        document.body.style.overflow = isHidden ? 'hidden' : '';
+    }
+
+    // Fechar modal ao clicar no fundo escuro
+    window.addEventListener('click', function(event) {
+        const modal = document.getElementById('languageModal');
+        if (event.target === modal) {
+            toggleLanguageModal();
+        }
+    });
+
+    // Fechar modal com ESC (apenas se não fechar o menu do perfil)
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            const modal = document.getElementById('languageModal');
+            const perfilMenu = document.getElementById('perfil-menu-suspenso');
+            
+            // Prioridade: fechar modal de idioma primeiro
+            if (modal && modal.style.display === 'block') {
+                toggleLanguageModal();
+            }
+            // Se não tiver modal aberto, fechar menu do perfil
+            else if (perfilMenu && perfilMenu.classList.contains('active')) {
+                perfilMenu.classList.remove('active');
+            }
+        }
+    });
     </script>
+
 </body>
 </html>

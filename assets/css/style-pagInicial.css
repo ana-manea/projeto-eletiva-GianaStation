@@ -144,6 +144,12 @@
     cursor: pointer;
     overflow: hidden;
     background: none;
+    padding: 0;
+    transition: transform 0.2s;
+}
+
+#perfil:hover {
+    transform: scale(1.05);
 }
 
 #perfil img {
@@ -165,10 +171,15 @@
     box-shadow: var(--shadow-lg);
     list-style: none;
     z-index: 1000;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: opacity 0.2s, transform 0.2s;
 }
 
 #perfil-menu-suspenso.active {
     display: block;
+    opacity: 1;
+    transform: translateY(0);
 }
 
 #perfil-menu-suspenso li {
@@ -194,6 +205,13 @@
     margin: 4px 0;
 }
 
+#perfil-menu-suspenso #sair {
+    color: var(--text-muted);
+}
+
+#perfil-menu-suspenso #sair:hover {
+    color: white;
+}
 
 /* Layout Principal */
 .conteudo {

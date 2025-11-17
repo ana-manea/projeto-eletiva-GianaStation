@@ -33,10 +33,6 @@ function criptografarSenha($senha) {
     return password_hash($senha, PASSWORD_DEFAULT);
 }
 
-function verificarSenha($senha) {
-    return password_verify($senha, $hash);
-}
-
 // Cadastrar usuário
 function inserirUsuario($nome, $email, $senha, $data_nascimento, $genero) {
     $conexao = conectarBD();
@@ -750,4 +746,43 @@ function calcularDuracaoTotal($musicas) {
         return $minutos . ' min';
     }
 }
+
+// Validar login 
+function validarLogin($email, $senha) {
+    $conexao = conectarBD();
+    
+    $email = mysqli_real_escape_string($conexao, $email);
+    $senha = mysqli_real_escape_string($conexao, $senha);
+    
+    // Buscar usuário no banco
+    $sql = "SELECT * FROM usuarios WHERE Email = '$email'";
+    $resultado = mysqli_query($conexao, $sql);
+    
+    if ($resultado && mysqli_num_rows($resultado) > 0) {
+        $usuario = mysqli_fetch_assoc($resultado);
+        
+        // Verificar senha
+        if ($senha === $usuario['Senha']) {
+            fecharConexao($conexao);
+            return $usuario;
+        }
+    }
+    
+    fecharConexao($conexao);
+    return false;
+}
+
+// Atualizar senha do usuário 
+function atualizarSenhaUsuario($id, $nova_senha) {
+    $conexao = conectarBD();
+    
+    $nova_senha = mysqli_real_escape_string($conexao, $nova_senha);
+    
+    $sql = "UPDATE usuarios SET Senha = '$nova_senha' WHERE ID_Usuario = $id";
+    $resultado = mysqli_query($conexao, $sql);
+    
+    fecharConexao($conexao);
+    return $resultado;
+}
+
 ?>

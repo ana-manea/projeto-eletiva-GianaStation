@@ -1,23 +1,42 @@
 <?php
 require_once 'config.php';
+require_once '../processamento/funcoesBD.php';
 
-// Dados do usuário (exemplo - substituir por dados do banco)
-$usuario = [
-    'id' => 1,
-    'nome' => 'Usuário Giana',
-    'foto_perfil' => '../img/sem-foto.png',
-    'playlists_publicas' => 1,
-    'seguidores' => 1,
-    'seguindo' => 56,
-    'artistas_mais_tocados' => [
-        ['id' => 1, 'nome' => 'AnaVitória', 'foto' => 'https://image-cdn-ak.spotifycdn.com/image/ab6761860000101685ec2d2af58d2b838a744ac4', 'tipo' => 'Artista'],
-        ['id' => 2, 'nome' => 'Marília Mendonça', 'foto' => '../img/sem-foto.png', 'tipo' => 'Artista'],
-        ['id' => 3, 'nome' => 'Jorge & Mateus', 'foto' => '../img/sem-foto.png', 'tipo' => 'Artista'],
-        ['id' => 4, 'nome' => 'My Chemical Romance', 'foto' => '../img/sem-foto.png', 'tipo' => 'Artista']
-    ]
+// Verificar se usuário está logado
+if (!isset($_SESSION['user_id'])) {
+    header('Location: login.php?lang=' . $currentLang);
+    exit;
+}
+
+$usuario = buscarUsuarioID($_SESSION['user_id']);
+
+if (!$usuario) {
+    session_destroy();
+    header('Location: login.php?lang=' . $currentLang);
+    exit;
+}
+
+// Buscar playlists do usuário
+$playlists_usuario = listarPlaylistsUsuario($_SESSION['user_id']);
+
+// Contar playlists públicas 
+$playlists_publicas = count($playlists_usuario);
+
+// Buscar artistas mais tocados
+$artistas_mais_tocados = buscarArtistasPopulares(4);
+
+// Preparar dados do usuário
+$dados_usuario = [
+    'id' => $usuario['ID_Usuario'],
+    'nome' => $usuario['Nome'],
+    'foto_perfil' => !empty($usuario['Foto_perfil']) ? $usuario['Foto_perfil'] : '../img/sem-foto.png',
+    'playlists_publicas' => $playlists_publicas,
+    'seguidores' => 0, 
+    'seguindo' => 0,   
+    'artistas_mais_tocados' => $artistas_mais_tocados
 ];
 
-$pageTitle = $usuario['nome'];
+$pageTitle = $dados_usuario['nome'];
 ?>
 
 <!DOCTYPE html>
@@ -26,7 +45,7 @@ $pageTitle = $usuario['nome'];
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" sizes="96x96" href="../img/GA-Station.png">
-    <title><?php echo $pageTitle; ?> | Giana Station</title>
+    <title><?php echo htmlspecialchars($pageTitle); ?> | Giana Station</title>
     <link rel="stylesheet" href="../css/style-padrao.css">
     <link rel="stylesheet" href="../css/style-perfilUsuario.css">
 </head>
@@ -73,13 +92,13 @@ $pageTitle = $usuario['nome'];
                 ?>
                 
                 <section class="perfil-btn">
-                    <button id="perfil" onclick="interagirMenuPerfil()">
-                        <img src="<?php echo htmlspecialchars($usuario['foto_perfil']); ?>" alt="Perfil">
+                    <button id="perfil">
+                        <img src="<?php echo htmlspecialchars($dados_usuario['foto_perfil']); ?>" alt="Perfil">
                     </button>
                     <ul id="perfil-menu-suspenso">
                         <a href="perfilUsuario.php?lang=<?php echo $currentLang; ?>"><li><?php echo translateText('Perfil'); ?></li></a>
                         <div></div>
-                        <a href="index.php?lang=<?php echo $currentLang; ?>"><li id="sair"><?php echo translateText('Sair'); ?></li></a>
+                        <a href="logout.php"><li id="sair"><?php echo translateText('Sair'); ?></li></a>
                     </ul>
                 </section>
             </section>
@@ -91,7 +110,7 @@ $pageTitle = $usuario['nome'];
         <aside class="lateral-menu">
             <section class="lateral-menu-top">
                 <h3><?php echo translateText('Sua Biblioteca'); ?></h3>
-                <a href="cadPlaylist.php?lang=<?php echo $currentLang; ?>">
+                <a href="cadastrarPlaylist.php?lang=<?php echo $currentLang; ?>">
                     <button id="criar-playlist">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" width="16" height="16">
                             <path d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2"/>
@@ -101,11 +120,25 @@ $pageTitle = $usuario['nome'];
                 </a>
             </section>
 
+            <?php if (empty($playlists_usuario)): ?>
             <section class="lateral-menu-content sem-playlist">
                 <h3><?php echo translateText('Crie sua primeira playlist'); ?></h3>
                 <p><?php echo translateText('É fácil, vamos te ajudar.'); ?></p>
-                <button><?php echo translateText('Criar Playlist'); ?></button>
+                <button onclick="window.location.href='cadastrarPlaylist.php?lang=<?php echo $currentLang; ?>'"><?php echo translateText('Criar Playlist'); ?></button>
             </section>
+            <?php else: ?>
+            <section class="lateral-menu-content">
+                <?php foreach ($playlists_usuario as $playlist): ?>
+                    <article class="playlist-item" onclick="window.location.href='#'">
+                        <img src="<?php echo !empty($playlist['Capa_play_path']) ? htmlspecialchars($playlist['Capa_play_path']) : '../img/playlist-default.png'; ?>" alt="<?php echo htmlspecialchars($playlist['Nome_playlist']); ?>">
+                        <div>
+                            <h4><?php echo htmlspecialchars($playlist['Nome_playlist']); ?></h4>
+                            <p><?php echo translateText('Playlist'); ?></p>
+                        </div>
+                    </article>
+                <?php endforeach; ?>
+            </section>
+            <?php endif; ?>
         </aside>
 
         <!-- Conteúdo Principal -->
@@ -114,7 +147,7 @@ $pageTitle = $usuario['nome'];
             <section class="infos">
                 <section class="espacoFoto">
                     <article id="foto-perfil">
-                        <img src="<?php echo htmlspecialchars($usuario['foto_perfil']); ?>" alt="Foto de perfil" id="foto-perfil-img">
+                        <img src="<?php echo htmlspecialchars($dados_usuario['foto_perfil']); ?>" alt="Foto de perfil" id="foto-perfil-img">
                     </article>
                     
                     <button id="definir-foto" onclick="abrirEdicao()">
@@ -128,14 +161,14 @@ $pageTitle = $usuario['nome'];
                 <section class="social-editar">
                     <p><?php echo translateText('Perfil'); ?></p>
                     <button id="editar-perfil" onclick="abrirEdicao()">
-                        <?php echo htmlspecialchars($usuario['nome']); ?>
+                        <?php echo htmlspecialchars($dados_usuario['nome']); ?>
                     </button>
                     <article class="social">
-                        <p><?php echo $usuario['playlists_publicas']; ?> <?php echo translateText('playlist'); ?><?php echo $usuario['playlists_publicas'] > 1 ? 's' : ''; ?> <?php echo translateText('públicas'); ?></p>
+                        <p><?php echo $dados_usuario['playlists_publicas']; ?> <?php echo translateText('playlist'); ?><?php echo $dados_usuario['playlists_publicas'] != 1 ? 's' : ''; ?> <?php echo translateText('públicas'); ?></p>
                         <div></div>
-                        <a href="#"><?php echo $usuario['seguidores']; ?> <?php echo translateText('seguidor'); ?><?php echo $usuario['seguidores'] > 1 ? 'es' : ''; ?></a>
+                        <a href="#"><?php echo $dados_usuario['seguidores']; ?> <?php echo translateText('seguidor'); ?><?php echo $dados_usuario['seguidores'] != 1 ? 'es' : ''; ?></a>
                         <div></div>
-                        <a href="#"><?php echo $usuario['seguindo']; ?> <?php echo translateText('seguindo'); ?></a>
+                        <a href="#"><?php echo $dados_usuario['seguindo']; ?> <?php echo translateText('seguindo'); ?></a>
                     </article>
                 </section>
             </section>
@@ -165,20 +198,20 @@ $pageTitle = $usuario['nome'];
             </section>
             
             <!-- Artistas Mais Tocados -->
+            <?php if (!empty($dados_usuario['artistas_mais_tocados'])): ?>
             <section class="cards">
                 <article class="albuns-titulo">
                     <article>
                         <h1><?php echo translateText('Artistas mais tocados este mês'); ?></h1>
                         <p><?php echo translateText('Visíveis apenas para você'); ?></p>
                     </article>
-                    <button><?php echo translateText('Mostrar tudo'); ?></button>
                 </article>
 
                 <section class="albuns">
-                    <?php foreach ($usuario['artistas_mais_tocados'] as $artista): ?>
-                        <section class="card" onclick="window.location.href='visualizarArtista.php?id=<?php echo $artista['id']; ?>&lang=<?php echo $currentLang; ?>'">
+                    <?php foreach ($dados_usuario['artistas_mais_tocados'] as $artista): ?>
+                        <section class="card" onclick="window.location.href='visualizarArtista.php?id=<?php echo $artista['ID_Artista']; ?>&lang=<?php echo $currentLang; ?>'">
                             <article class="card-img">
-                                <img src="<?php echo htmlspecialchars($artista['foto']); ?>" alt="<?php echo htmlspecialchars($artista['nome']); ?>">
+                                <img src="<?php echo htmlspecialchars($artista['Capa_path']); ?>" alt="<?php echo htmlspecialchars($artista['Nome_artistico']); ?>">
                                 <button class="card-play-btn" onclick="event.stopPropagation();">
                                     <svg viewBox="0 0 24 24" fill="currentColor">
                                         <path d="m7.05 3.606 13.49 7.788a.7.7 0 0 1 0 1.212L7.05 20.394A.7.7 0 0 1 6 19.788V4.212a.7.7 0 0 1 1.05-.606"/>
@@ -186,16 +219,16 @@ $pageTitle = $usuario['nome'];
                                 </button>
                             </article>
                             <article class="nome-categoria">
-                                <p class="nome"><?php echo htmlspecialchars($artista['nome']); ?></p>
-                                <p class="categoria"><?php echo translateText($artista['tipo']); ?></p>
+                                <p class="nome"><?php echo htmlspecialchars($artista['Nome_artistico']); ?></p>
+                                <p class="categoria"><?php echo translateText('Artista'); ?></p>
                             </article>
                         </section>
                     <?php endforeach; ?>
                 </section>
             </section>
+            <?php endif; ?>
         </section>
 
-        <!-- Pop-up de Edição -->
         <section class="pop-up" id="pop-up">
             <section class="container">
                 <section class="container-top">
@@ -208,10 +241,10 @@ $pageTitle = $usuario['nome'];
                 </section>
 
                 <section class="container-content">
-                    <form id="form-editar-perfil" method="POST" enctype="multipart/form-data">
+                    <form id="form-editar-perfil" method="POST" action="../processamento/atualizarPerfil.php" enctype="multipart/form-data">
                         <section class="espacoFoto">
                             <article>
-                                <img src="<?php echo htmlspecialchars($usuario['foto_perfil']); ?>" alt="Foto de edição" id="foto-edicao">
+                                <img src="<?php echo htmlspecialchars($dados_usuario['foto_perfil']); ?>" alt="Foto de edição" id="foto-edicao">
                             </article>
                             
                             <article class="foto-botoes">
@@ -230,7 +263,9 @@ $pageTitle = $usuario['nome'];
 
                         <section class="input-btn">
                             <label for="nome-usuario"><?php echo translateText('Nome'); ?></label>
-                            <input type="text" id="nome-usuario" name="nome_usuario" value="<?php echo htmlspecialchars($usuario['nome']); ?>" required maxlength="50">
+                            <input type="text" id="nome-usuario" name="nome_usuario" value="<?php echo htmlspecialchars($dados_usuario['nome']); ?>" required maxlength="50">
+                            <input type="hidden" name="user_id" value="<?php echo $dados_usuario['id']; ?>">
+                            <input type="hidden" name="lang" value="<?php echo $currentLang; ?>">
                             <input type="submit" value="<?php echo translateText('Salvar'); ?>" id="salvar-perfil">
                         </section>
                     </form>
@@ -320,189 +355,119 @@ $pageTitle = $usuario['nome'];
     </footer>
 
     <script>
-        // Menu do perfil
-        function interagirMenuPerfil() {
-            const menu = document.getElementById('perfil-menu-suspenso');
-            if (menu) {
-                menu.classList.toggle('aberto');
-            }
-        }
-
-        // Menu de opções
-        function interagirMenuOpcoes() {
-            const menu = document.getElementById('opcoes-menu-suspenso');
-            if (menu) {
-                menu.classList.toggle('aberto');
-            }
-        }
-
-        // Fechar menus ao clicar fora
-        document.addEventListener('click', function(e) {
-            const perfilBtn = document.querySelector('.perfil-btn');
-            const perfilMenu = document.getElementById('perfil-menu-suspenso');
-            const opcoesBtn = document.querySelector('.opcoes article');
-            const opcoesMenu = document.getElementById('opcoes-menu-suspenso');
+    document.addEventListener('DOMContentLoaded', function() {
+        const perfilBtn = document.getElementById('perfil');
+        const perfilMenu = document.getElementById('perfil-menu-suspenso');
+        const perfilContainer = document.querySelector('.perfil-btn');
+        
+        if (perfilBtn && perfilMenu) {
+            perfilBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                perfilMenu.classList.toggle('active');
+            });
             
-            if (perfilMenu && perfilBtn && !perfilBtn.contains(e.target)) {
-                perfilMenu.classList.remove('aberto');
-            }
-            
-            if (opcoesMenu && opcoesBtn && !opcoesBtn.contains(e.target) && !opcoesMenu.contains(e.target)) {
-                opcoesMenu.classList.remove('aberto');
-            }
-        });
-
-        // Abrir pop-up de edição
-        function abrirEdicao() {
-            const popup = document.getElementById('pop-up');
-            if (popup) {
-                popup.style.display = 'flex';
-                popup.classList.add('aberto');
-                document.body.style.overflow = 'hidden';
-            }
-            // Fechar menu de opções se estiver aberto
-            const opcoesMenu = document.getElementById('opcoes-menu-suspenso');
-            if (opcoesMenu) {
-                opcoesMenu.classList.remove('aberto');
-            }
-        }
-
-        // Fechar pop-up de edição
-        function fecharEdicao() {
-            const popup = document.getElementById('pop-up');
-            if (popup) {
-                popup.style.display = 'none';
-                popup.classList.remove('aberto');
-                document.body.style.overflow = '';
-            }
-        }
-
-        // Preview da foto ao selecionar
-        const inputFoto = document.getElementById('definir-foto-btn');
-        if (inputFoto) {
-            inputFoto.addEventListener('change', function(e) {
-                const file = e.target.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        const fotoEdicao = document.getElementById('foto-edicao');
-                        if (fotoEdicao) {
-                            fotoEdicao.src = e.target.result;
-                        }
-                    };
-                    reader.readAsDataURL(file);
+            document.addEventListener('click', (e) => {
+                if (!perfilContainer.contains(e.target)) {
+                    perfilMenu.classList.remove('active');
                 }
             });
         }
+    });
 
-        // Remover foto
-        function removerFoto() {
-            const fotoEdicao = document.getElementById('foto-edicao');
-            const fotoPerfil = document.getElementById('foto-perfil-img');
-            const inputFoto = document.getElementById('definir-foto-btn');
-            
-            if (fotoEdicao) {
-                fotoEdicao.src = '../img/sem-foto.png';
-            }
-            if (inputFoto) {
-                inputFoto.value = '';
-            }
-        }
+    // Menu de opções
+    function interagirMenuOpcoes() {
+        const menu = document.getElementById('opcoes-menu-suspenso');
+        if (menu) menu.classList.toggle('aberto');
+    }
 
-        // Copiar URL do perfil
-        function copiarURL() {
-            const url = window.location.href;
-            navigator.clipboard.writeText(url).then(() => {
-                alert('<?php echo translateText('URL copiada para a área de transferência!'); ?>');
-            }).catch(err => {
-                console.error('Erro ao copiar URL:', err);
-            });
-            
-            // Fechar menu de opções
-            const opcoesMenu = document.getElementById('opcoes-menu-suspenso');
-            if (opcoesMenu) {
-                opcoesMenu.classList.remove('aberto');
-            }
-        }
-
-        // Submeter formulário de edição
-        const formEditarPerfil = document.getElementById('form-editar-perfil');
-        if (formEditarPerfil) {
-            formEditarPerfil.addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                const nomeUsuario = document.getElementById('nome-usuario').value;
-                const fotoEdicao = document.getElementById('foto-edicao').src;
-                
-                // Atualizar nome no perfil
-                const btnEditarPerfil = document.getElementById('editar-perfil');
-                if (btnEditarPerfil) {
-                    btnEditarPerfil.textContent = nomeUsuario;
-                }
-                
-                // Atualizar foto no perfil
-                const fotoPerfil = document.getElementById('foto-perfil-img');
-                const fotoHeader = document.querySelector('#perfil img');
-                if (fotoPerfil) {
-                    fotoPerfil.src = fotoEdicao;
-                }
-                if (fotoHeader) {
-                    fotoHeader.src = fotoEdicao;
-                }
-                
-                // Aqui você implementaria o envio para o servidor
-                console.log('Salvando perfil:', {
-                    nome: nomeUsuario,
-                    foto: fotoEdicao
-                });
-                
-                // Fechar pop-up
-                fecharEdicao();
-                
-                // Mostrar mensagem de sucesso (opcional)
-                alert('<?php echo translateText('Perfil atualizado com sucesso!'); ?>');
-            });
-        }
-
-        // Fechar pop-up ao clicar fora
+    // Abrir pop-up de edição
+    function abrirEdicao() {
         const popup = document.getElementById('pop-up');
         if (popup) {
-            popup.addEventListener('click', function(e) {
-                if (e.target === popup) {
-                    fecharEdicao();
-                }
-            });
+            popup.style.display = 'flex';
+            popup.classList.add('aberto');
+            document.body.style.overflow = 'hidden';
         }
+        const opcoesMenu = document.getElementById('opcoes-menu-suspenso');
+        if (opcoesMenu) opcoesMenu.classList.remove('aberto');
+    }
 
-        // Fechar pop-up com ESC
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                fecharEdicao();
-                
-                // Fechar modal de idioma se estiver aberto
-                const languageModal = document.getElementById('languageModal');
-                if (languageModal && languageModal.style.display === 'block') {
-                    toggleLanguageModal();
-                }
+    // Fechar pop-up
+    function fecharEdicao() {
+        const popup = document.getElementById('pop-up');
+        if (popup) {
+            popup.style.display = 'none';
+            popup.classList.remove('aberto');
+            document.body.style.overflow = '';
+        }
+    }
+
+    // Preview da foto
+    const inputFoto = document.getElementById('definir-foto-btn');
+    if (inputFoto) {
+        inputFoto.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('foto-edicao').src = e.target.result;
+                };
+                reader.readAsDataURL(file);
             }
         });
+    }
 
-        // Language Modal
-        function toggleLanguageModal() {
-            const modal = document.getElementById('languageModal');
-            if (modal) {
-                const isHidden = modal.style.display === 'none' || !modal.style.display;
-                modal.style.display = isHidden ? 'block' : 'none';
-                document.body.style.overflow = isHidden ? 'hidden' : '';
-            }
+    // Remover foto
+    function removerFoto() {
+        document.getElementById('foto-edicao').src = '../img/sem-foto.png';
+        document.getElementById('definir-foto-btn').value = '';
+    }
+
+    // Copiar URL
+    function copiarURL() {
+        navigator.clipboard.writeText(window.location.href).then(() => {
+            alert('<?php echo translateText('URL copiada!'); ?>');
+        });
+        document.getElementById('opcoes-menu-suspenso')?.classList.remove('aberto');
+    }
+
+    // Fechar menus ao clicar fora
+    document.addEventListener('click', function(e) {
+        const opcoesBtn = document.querySelector('.opcoes article');
+        const opcoesMenu = document.getElementById('opcoes-menu-suspenso');
+        
+        if (opcoesMenu && opcoesBtn && !opcoesBtn.contains(e.target) && !opcoesMenu.contains(e.target)) {
+            opcoesMenu.classList.remove('aberto');
         }
+    });
 
-        window.onclick = function(event) {
-            const modal = document.getElementById('languageModal');
-            if (event.target === modal) {
+    // Fechar com ESC
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            fecharEdicao();
+            const languageModal = document.getElementById('languageModal');
+            if (languageModal && languageModal.style.display === 'block') {
                 toggleLanguageModal();
             }
         }
+    });
+
+    function toggleLanguageModal() {
+        const modal = document.getElementById('languageModal');
+        if (modal) {
+            const isHidden = modal.style.display === 'none' || !modal.style.display;
+            modal.style.display = isHidden ? 'block' : 'none';
+            document.body.style.overflow = isHidden ? 'hidden' : '';
+        }
+    }
+
+    window.onclick = function(event) {
+        const modal = document.getElementById('languageModal');
+        if (event.target === modal) toggleLanguageModal();
+        
+        const popup = document.getElementById('pop-up');
+        if (event.target === popup) fecharEdicao();
+    }
     </script>
 </body>
 </html>
